@@ -348,4 +348,5 @@ isn't it awesome?
 ::: {#histogram}
 :::
 
+<script src="/js/echarts.min.js"></script>
 <script src="/js/echart-histogram.js"></script>
