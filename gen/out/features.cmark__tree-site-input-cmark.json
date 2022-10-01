@@ -25,6 +25,8 @@
     {"type":"file","name":"kitchen-sink.json"},
     {"type":"file","name":"layouts.cmark"},
     {"type":"file","name":"navigation.css"},
+    {"type":"file","name":"one-time-commands-001-produce.mp4"},
+    {"type":"file","name":"one-time-commands-001-produce.webm"},
     {"type":"file","name":"other-formats.cmark"},
     {"type":"file","name":"philosophy.cmark"},
     {"type":"file","name":"search-box.js"},
@@ -33,5 +35,5 @@
     {"type":"file","name":"tags.cmark"},
     {"type":"file","name":"tags.css"}
   ]},
-  {"type":"report","directories":0,"files":32}
+  {"type":"report","directories":0,"files":34}
 ]

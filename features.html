@@ -1,4 +1,4 @@
-<!DOCTYPE HTML><html><head><meta charset="utf-8"><meta name="viewport" content="with=device-width, initial-scale=1.0"><title>The Kitchen Sink Blog Generator - Features list</title><meta name="author" content="Lucas DiCioccio"><meta name="keywords" content="haskell, authoring articles, static-site generators, design"><meta name="description" content="This article lists the main features of Kitchen Sink. We do not really compare it to the vast amount of other static-site generators."><meta name="twitter:card" content="summary"><meta name="twitter:title" content="The Kitchen Sink Blog Generator - Features list"><meta name="twitter:site" content="@lucasdicioccio"><meta name="twitter:creator" content="@lucasdicioccio"><meta property="twitter:description" content="This article lists the main features of Kitchen Sink. We do not really compare it to the vast amount of other static-site generators."><meta name="type" property="og:type" content="article"><meta name="title" property="og:title" content="The Kitchen Sink Blog Generator - Features list"><meta name="url" property="og:url" content="https://kitchensink-tech.github.io/features.html"><meta property="og:description" content="This article lists the main features of Kitchen Sink. We do not really compare it to the vast amount of other static-site generators."><meta name="ks:article_json" content="/json/features.cmark.json"><meta name="article:tag" content="haskell"><meta name="article:tag" content="authoring articles"><meta name="article:tag" content="static-site generators"><meta name="article:tag" content="design"><style>@import "/css/dev.css";@import "/css/colors.css";@import "/css/article.css";@import "/css/navigation.css";section:not(:first-of-type) {  border-left: 2px solid black;  padding-left: 1em;}#histogram {  height: 400px;}code {  color: darksalmon;  font-weight: bold;}code.language-console {  color: darkgreen;  font-weight: initial;}.op {  color: rebeccapurple;}.dt {  color: violet;}.cf {  color: red;}</style></head><body><nav id="site-navigation" class="nav"><a href="/">home</a><div id="search-box"><script type="text/javascript" src="/js/search-box.js" async></script></div></nav><div class="main"><article><header class="heading"><h1>Features list</h1><p>By <a href="https://twitter.com/lucasdicioccio">@lucasdicioccio</a>, 1418 words, 21 links, 2images.</p><div class="taglist"><div class="tag"><a class="tag-link" href="/topics/haskell.html"><span class="tag-name">haskell</span><span class="tag-count">5</span></a></div><div class="tag"><a class="tag-link" href="/topics/authoring-articles.html"><span class="tag-name">authoring articles</span><span class="tag-count">4</span></a></div></div></header><div class="main-article"><section class="main-section"><p>Kitchen-Sink consists of two related components:</p>
+<!DOCTYPE HTML><html><head><meta charset="utf-8"><meta name="viewport" content="with=device-width, initial-scale=1.0"><title>The Kitchen Sink Blog Generator - Feature list</title><meta name="author" content="Lucas DiCioccio"><meta name="keywords" content="haskell, authoring articles, static-site generators, design"><meta name="description" content="This article lists the main features of Kitchen Sink. We do not really compare it to the vast amount of other static-site generators."><meta name="twitter:card" content="summary"><meta name="twitter:title" content="The Kitchen Sink Blog Generator - Feature list"><meta name="twitter:site" content="@lucasdicioccio"><meta name="twitter:creator" content="@lucasdicioccio"><meta property="twitter:description" content="This article lists the main features of Kitchen Sink. We do not really compare it to the vast amount of other static-site generators."><meta name="type" property="og:type" content="article"><meta name="title" property="og:title" content="The Kitchen Sink Blog Generator - Feature list"><meta name="url" property="og:url" content="https://kitchensink-tech.github.io/features.html"><meta property="og:description" content="This article lists the main features of Kitchen Sink. We do not really compare it to the vast amount of other static-site generators."><meta name="ks:article_json" content="/json/features.cmark.json"><meta name="article:tag" content="haskell"><meta name="article:tag" content="authoring articles"><meta name="article:tag" content="static-site generators"><meta name="article:tag" content="design"><style>@import "/css/dev.css";@import "/css/colors.css";@import "/css/article.css";@import "/css/navigation.css";section:not(:first-of-type) {  border-left: 2px solid black;  padding-left: 1em;}#histogram, #echartzone {  height: 400px;}code {  color: darksalmon;  font-weight: bold;}code.language-console {  color: darkgreen;  font-weight: initial;}.op {  color: rebeccapurple;}.dt {  color: violet;}.cf {  color: red;}</style></head><body><nav id="site-navigation" class="nav"><a href="/">home</a><div id="search-box"><script type="text/javascript" src="/js/search-box.js" async></script></div></nav><div class="main"><article><header class="heading"><h1>Feature list</h1><p>By <a href="https://twitter.com/lucasdicioccio">@lucasdicioccio</a>, 2096 words, 34 links, 2images.</p><div class="taglist"><div class="tag"><a class="tag-link" href="/topics/haskell.html"><span class="tag-name">haskell</span><span class="tag-count">5</span></a></div><div class="tag"><a class="tag-link" href="/topics/authoring-articles.html"><span class="tag-name">authoring articles</span><span class="tag-count">4</span></a></div></div></header><div class="main-article"><section class="main-section"><p>Kitchen-Sink consists of two related components:</p>
 <ul>
 <li>i. a set of <em>libraries</em> (at the time of writing, everything is packed in a single library: it’s a kitchen sink afterall)
 </li>
@@ -97,6 +97,10 @@ injected in the layout only in dev-server mode. This setup allows to auto-reload
 <li>the <code>publish</code> button will call the <code>publishScript</code> command in the <a href="/kitchen-sink-dot-json.html">kitchen-sink.json file</a> . As a data-point, I use <a href="/gen/out/features.cmark__cat-publish-script">this publish-script</a> for this documentation site.
 </li>
 </ul>
+<video width="640" height="480" controls>
+  <source src="/videos/one-time-commands-001-produce.mp4" type="video/mp4">
+  <source src="/videos/one-time-commands-001-produce.webm" type="video/webm">
+</video>
 <h3 id="its-just-a-webserver-library">it’s just a webserver library</h3>
 <p>I’ve not really explored this avenue, but it should be possible to incorporate
 the webserver logic in most Haskell web-applications (e.g., your
@@ -192,7 +196,7 @@ with each HTML article and is linked in the HTML <code>meta</code> tag with name
 information. As we get more mileage, we’ll likely add more of such paths and
 formalize a bit their expected content.  However, keep in mind that
 Kitchen-Sink generates more than just the static aspects of the HTML: it
-provides a bunch of extra information.</p>
+provides a bunch of extra information which can be useful for <a href="#content-analysis">creative and advanced analyses</a>.</p>
 <h3 id="command-based-generators">command-based generators</h3>
 <p>In this article I’ve already pointed to a number of links (e.g., the source of
 this article, some directory listings).  In short, you can add one-off data
@@ -210,18 +214,83 @@ blog (e.g. <code>uname -a</code>). However you could get creative such as</p>
 <h3 id="microscriptable-in-dhall">microscriptable in Dhall</h3>
 <p>I have written a <a href="https://lucasdicioccio.github.io/dhall-section-demo.html">full article</a> on my personal blog a while ago to motivate the whole usage of <a href="https://dhall-lang.org/">Dhall</a>. Keep in mind that I’m still happy about the choice. Dhall “powers” my photo galleries and my <a href="https://lucasdicioccio.github.io/notes.html">stream of notes</a> on my personal blog.</p>
 </section><section class="main-section"><h2 id="article-organization">article organization</h2>
-<h3 id="article-summaries">article summaries</h3>
-<h3 id="social-links">social links</h3>
-<h3 id="open-graph-and-twitter-card-metas">open-graph and twitter-card metas</h3>
-<h3 id="special-support-for-dotfiles">special-support for dotfiles</h3>
+<p>An article needs some <em>decorum</em> to help readers of your site as well as other
+applications relaying your articles. For instance, who is the author? what
+topics are covered? can you summarize it for me? Kitchen-Sink has a number of
+features to answer such questions. Most if not all of these features are
+controlled by specific <a href="/sections.html">sections</a> in the section-based-format.
+Here we merely give an overview of what is feasible.</p>
 <h3 id="categories-using-tags">categories using tags</h3>
+<p>Article can be labelled with a set of tags. Kitchen-Sink then collects all
+articles for a given tag under special categories and under the <code>/topics</code>
+route. This is not especially innovative but I believe it’s a must have even if
+I suppose most readers do not really use these topics listing a lot, they are
+used to connect articles in the [site map](#sitemap graph).</p>
+<h3 id="article-summaries">article summaries</h3>
+<p>Article have summaries. The use case for summaries is to entice readers into
+committing more time to read an article in full.</p>
+<p>Technically, summaries are inserted in article listings. The main listing is
+the home-page of a blog.  <a href="#categories-using-tags">Categories listings</a> also
+repeat the listings. The summary also is used in some <code>&lt;meta&gt;</code> headers, in
+particular to provide neat summaries when people share your articles (cf. <a href="#open-graph-and-twitter-card-metas">open-graph</a>).</p>
+<h3 id="social-links">social links</h3>
+<p>In this age of pervasive Internet, you may have accounts in a number of online
+social-networks. Kitchen-Sink supports some of these: list your handles and
+enable features (as of today: it’s only a link to your canonical profile, in
+the future we could imagine more interactions).</p>
+<h3 id="open-graph-and-twitter-card-metas">open-graph and twitter-card metas</h3>
+<p>You’ve probably already seen how some chat-applications (e.g., Discord, Slack)
+and social-services (e.g., LinkedIn, Twitter) provide a preview of webpages
+that are linked. These previews can embed images. You need to follow some
+specifications to control these, and that is what Kitchen-Sink does.  Indeed
+Kitchen-Sink generates <code>&lt;meta&gt;</code> HTML headers for <a href="https://ogp.me/">OpenGraph</a>
+and <a href="https://developer.twitter.com/en/docs/twitter-for-websites/cards/overview/abouts-cards">Twitter
+cards</a>.</p>
 </section><section class="main-section"><h2 id="content-analysis">content-analysis</h2>
+<p>Whether you write individual articles or a long series of multiple articles, it
+is useful to have some way to summarize what you have written. For instance,
+you want to know whether an article is connected to other articles, you want to
+understand if sections are well-balanced or not.</p>
+<p>All of these reasons were decisive factors when deciding to write and while <a href="/design-points.html">designing</a> Kitchen-Sink. I’ve merely scratched the surface of the analyses I want to make on my own writing and I hope you’ll find some of these helpful too.</p>
 <h3 id="site-listing-and-search-box">site listing and search-box</h3>
-<h3 id="wordcounts">wordcounts</h3>
-<h3 id="sitemap-graph">sitemap graph</h3>
-<h3 id="article-skylines">article skylines</h3>
+<p>Static sites lack a good user-driven search as there are no servers to answer
+search queries. Topics listing alleviate some of these need. Topics merely are
+pre-computed indexes. Thus, KitchenSink also want to pre-compute search
+indexes. At the moment, the search-box is primitive and only allows to search
+into filenames (and I use it all the time when authoring articles to find
+<a href="/json/paths.json">links to images and generated outputs</a>).  However we could
+definitely go a step further by also searching, or displaying summaries in the
+search box. As people say: watch this space!</p>
+<h3 id="wordcounts-and-article-staircases">wordcounts and article staircases</h3>
+<p>One key aspect of writing content for the web is to control the length of an
+article. While writing for a printed format (my experience is with academic
+publishing) the number of pages and the number of column-per-page for articles
+is a good indication of the size of the content.  Infinitely-long pages on the
+web blur this signal. Thus, to rebuild some understanding of how-long an
+article is, we need to run word counts.</p>
+<p>As a result, Kitchen-Sink compute a word count for each article (in addition to
+images, links counts). Even further, Kitchen-Sink computes a word-count per
+title-section. Which allows us to display what I call article staircases with visualization libraries (here we use <a href="https://echarts.apache.org/en/index.html">Apache ECharts</a>):</p>
 <div id="histogram">
 </div>
 <script src="/js/echarts.min.js"></script>
 <script src="/js/echart-histogram.js"></script>
+<p>The above histogram shows, for each section in the article, the number of words
+and the cumulated number of words in the article. This histogram allows me,
+when writing an article, to spot which sections are abnormally-long or
+abnormally short. I interpret this graph to find opportunities to split or
+merge sections together, hopefully improving my writing for users.</p>
+<p>Kitchen-Sink also computes <a href="/json/filecounts.json">whole-site summaries</a>
+although I have no great use-case yet for these.</p>
+<h3 id="sitemap-graph">sitemap graph</h3>
+<p>Kitchen-Sink processes all of the above information (topics, links between
+pages, image lists, etc.) to populate a <a href="/json/topicsgraph.json">JSON representation of a
+graph</a> summarizing the structure of the whole site.
+This special target is built with the website and you can be creative with it.
+So far, Kitchen-Sink provides a minimal <a href="/js/site-graph.js">JavaScript</a> to turn
+the graph into an interactive-picture using <a href="https://echarts.apache.org/en/index.html">Apache
+Echarts</a>.</p>
+<div id="echartzone">
+</div>
+<script src="js/site-graph.js"></script>
 </section></div><footer class="footing"><div class="social-links"><a href="https://twitter.com/lucasdicioccio">twitter: @lucasdicioccio</a><a href="https://github.com/lucasdicioccio">github: lucasdicioccio</a><a href="https://linkedin.com/in/lucasdicioccio">linkedin: lucasdicioccio</a></div></footer></article></div></body></html>

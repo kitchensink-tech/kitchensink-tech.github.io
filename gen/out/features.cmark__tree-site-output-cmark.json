@@ -77,8 +77,10 @@
       {"type":"file","name":"auto-reload-001-dot.mp4"},
       {"type":"file","name":"auto-reload-001-dot.webm"},
       {"type":"file","name":"auto-reload-002-liveedit.mp4"},
-      {"type":"file","name":"auto-reload-002-liveedit.webm"}
+      {"type":"file","name":"auto-reload-002-liveedit.webm"},
+      {"type":"file","name":"one-time-commands-001-produce.mp4"},
+      {"type":"file","name":"one-time-commands-001-produce.webm"}
     ]}
   ]},
-  {"type":"report","directories":10,"files":59}
+  {"type":"report","directories":10,"files":61}
 ]
