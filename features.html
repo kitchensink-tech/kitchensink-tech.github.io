@@ -1,4 +1,4 @@
-<!DOCTYPE HTML><html><head><meta charset="utf-8"><meta name="viewport" content="with=device-width, initial-scale=1.0"><title>The Kitchen Sink Blog Generator - Features list</title><meta name="author" content="Lucas DiCioccio"><meta name="keywords" content="haskell, authoring articles, static-site generators, design"><meta name="description" content="This article lists the main features of Kitchen Sink. We do not really compare it to the vast amount of other static-site generators."><meta name="twitter:card" content="summary"><meta name="twitter:title" content="The Kitchen Sink Blog Generator - Features list"><meta name="twitter:site" content="@lucasdicioccio"><meta name="twitter:creator" content="@lucasdicioccio"><meta property="twitter:description" content="This article lists the main features of Kitchen Sink. We do not really compare it to the vast amount of other static-site generators."><meta name="type" property="og:type" content="article"><meta name="title" property="og:title" content="The Kitchen Sink Blog Generator - Features list"><meta name="url" property="og:url" content="https://kitchensink-tech.github.io/features.html"><meta property="og:description" content="This article lists the main features of Kitchen Sink. We do not really compare it to the vast amount of other static-site generators."><meta name="ks:article_json" content="/json/features.cmark.json"><meta name="article:tag" content="haskell"><meta name="article:tag" content="authoring articles"><meta name="article:tag" content="static-site generators"><meta name="article:tag" content="design"><style>@import "/css/dev.css";@import "/css/colors.css";@import "/css/article.css";@import "/css/navigation.css";section:not(:first-of-type) {  border-left: 2px solid black;  padding-left: 1em;}#histogram {  height: 400px;}code {  color: darksalmon;  font-weight: bold;}code.language-console {  color: darkgreen;  font-weight: initial;}.op {  color: rebeccapurple;}.dt {  color: violet;}.cf {  color: red;}</style></head><body><nav id="site-navigation" class="nav"><a href="/">home</a><div id="search-box"><script type="text/javascript" src="/js/search-box.js" async></script></div></nav><div class="main"><article><header class="heading"><h1>Features list</h1><p>By <a href="https://twitter.com/lucasdicioccio">@lucasdicioccio</a>, 1155 words, 15 links, 2images.</p><div class="taglist"><div class="tag"><a class="tag-link" href="/topics/haskell.html"><span class="tag-name">haskell</span><span class="tag-count">5</span></a></div><div class="tag"><a class="tag-link" href="/topics/authoring-articles.html"><span class="tag-name">authoring articles</span><span class="tag-count">4</span></a></div></div></header><div class="main-article"><section class="main-section"><p>Kitchen-Sink consists of two related components:</p>
+<!DOCTYPE HTML><html><head><meta charset="utf-8"><meta name="viewport" content="with=device-width, initial-scale=1.0"><title>The Kitchen Sink Blog Generator - Features list</title><meta name="author" content="Lucas DiCioccio"><meta name="keywords" content="haskell, authoring articles, static-site generators, design"><meta name="description" content="This article lists the main features of Kitchen Sink. We do not really compare it to the vast amount of other static-site generators."><meta name="twitter:card" content="summary"><meta name="twitter:title" content="The Kitchen Sink Blog Generator - Features list"><meta name="twitter:site" content="@lucasdicioccio"><meta name="twitter:creator" content="@lucasdicioccio"><meta property="twitter:description" content="This article lists the main features of Kitchen Sink. We do not really compare it to the vast amount of other static-site generators."><meta name="type" property="og:type" content="article"><meta name="title" property="og:title" content="The Kitchen Sink Blog Generator - Features list"><meta name="url" property="og:url" content="https://kitchensink-tech.github.io/features.html"><meta property="og:description" content="This article lists the main features of Kitchen Sink. We do not really compare it to the vast amount of other static-site generators."><meta name="ks:article_json" content="/json/features.cmark.json"><meta name="article:tag" content="haskell"><meta name="article:tag" content="authoring articles"><meta name="article:tag" content="static-site generators"><meta name="article:tag" content="design"><style>@import "/css/dev.css";@import "/css/colors.css";@import "/css/article.css";@import "/css/navigation.css";section:not(:first-of-type) {  border-left: 2px solid black;  padding-left: 1em;}#histogram {  height: 400px;}code {  color: darksalmon;  font-weight: bold;}code.language-console {  color: darkgreen;  font-weight: initial;}.op {  color: rebeccapurple;}.dt {  color: violet;}.cf {  color: red;}</style></head><body><nav id="site-navigation" class="nav"><a href="/">home</a><div id="search-box"><script type="text/javascript" src="/js/search-box.js" async></script></div></nav><div class="main"><article><header class="heading"><h1>Features list</h1><p>By <a href="https://twitter.com/lucasdicioccio">@lucasdicioccio</a>, 1418 words, 21 links, 2images.</p><div class="taglist"><div class="tag"><a class="tag-link" href="/topics/haskell.html"><span class="tag-name">haskell</span><span class="tag-count">5</span></a></div><div class="tag"><a class="tag-link" href="/topics/authoring-articles.html"><span class="tag-name">authoring articles</span><span class="tag-count">4</span></a></div></div></header><div class="main-article"><section class="main-section"><p>Kitchen-Sink consists of two related components:</p>
 <ul>
 <li>i. a set of <em>libraries</em> (at the time of writing, everything is packed in a single library: it’s a kitchen sink afterall)
 </li>
@@ -163,6 +163,13 @@ well-defined classes for styling in CSS.</p>
 <span id="3"><a href="#3" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><p>Overall I found that skylighting does the job and since the library requires no
 extra JavaScript on the resulting website or external-dependencies at
 code-generation time: it’s good.</p>
+<h3 id="copies-other-images-css">copies other images, css</h3>
+<p>An article often comes with extra medias. Images (with <code>jpeg</code>, <code>png</code>
+extensions), JavaScript (<code>.js</code>) and CSS (<code>.css</code>) files are copied to
+their own target at known location.  That is, KitchenSink wants everything in a
+directory but applies rule so that you get something a bit cleaner in return,
+isn’t it awesome?</p>
+<p>You can see for yourself, compare the <a href="/gen/out/features.cmark__tree-site-input-cmark.json">listing of this website source directory</a> with the <a href="/gen/out/features.cmark__tree-site-output-cmark.json">listing of the website output directory</a> (courtesy of <code>tree -J</code>).</p>
 <h3 id="generate-images-from-dot">generate images from <code>.dot</code></h3>
 <p>There is a special room in my heart for <a href="https://graphviz.org/">GraphViz</a> <span class="emoji" data-emoji="heart">❤️</span>. I use it a lot to render diagrams and illustrate simple ideas. Thus I found natural to add some special support for files with the <code>.dot</code> extensions.</p>
 <p><img src="/gen/images/features-002-dot-demo.dot.png" alt="all in the kitchen-sink" /></p>
@@ -172,16 +179,36 @@ enough to edit technical articles without ever leaving my editor as illustrated 
   <source src="/videos/auto-reload-001-dot.mp4" type="video/mp4">
   <source src="/videos/auto-reload-001-dot.webm" type="video/webm">
 </video>
-<h3 id="copies-other-images-css">copies other images, css</h3>
-<p>An article often comes with extra medias. Images (with <code>jpeg</code>, <code>png</code>
-extensions), JavaScript (<code>.js</code>) and CSS (<code>.css</code>) files are copied and moved to
-their own target at known location.  That is, KitchenSink wants everything in a
-directory but applies rule so that you get something a bit cleaner in return,
-isn’t it awesome?</p>
 </section><section class="main-section"><h2 id="content-generation">content-generation</h2>
+<p>The core-business of a static-site generator is to generate HTML output from
+various input.  Thus, we could pedentically say that all content is
+“generated”. Here we discuss cases where Kitchen-Sink goes the extra-mile to
+provide extra features.</p>
 <h3 id="embedded-data">embedded data</h3>
-<h3 id="microscriptable-in-dhall">microscriptable in Dhall</h3>
+<p>Kitchen-Sink generate a host of data while assembling targets from input files.
+Intermediary-representations. In particular, there is a <code>json</code> file generated
+with each HTML article and is linked in the HTML <code>meta</code> tag with name
+<code>ks:article_json</code>. So that individual scripts can then locate these
+information. As we get more mileage, we’ll likely add more of such paths and
+formalize a bit their expected content.  However, keep in mind that
+Kitchen-Sink generates more than just the static aspects of the HTML: it
+provides a bunch of extra information.</p>
 <h3 id="command-based-generators">command-based generators</h3>
+<p>In this article I’ve already pointed to a number of links (e.g., the source of
+this article, some directory listings).  In short, you can add one-off data
+collections that produce their own targets.</p>
+<p>A typical usage is to turn some information about the system generating the
+blog (e.g. <code>uname -a</code>). However you could get creative such as</p>
+<ul>
+<li>fetch the latest news-article
+</li>
+<li>run some database query to be displayed in javascript later
+</li>
+<li>taking a <a href="/gen/out/features.cmark__latest-selfie.jpg">selfie</a> on demand (yes, this picture happens to be my face when I generate this website – hat tip to <code>fswebcam</code>)
+</li>
+</ul>
+<h3 id="microscriptable-in-dhall">microscriptable in Dhall</h3>
+<p>I have written a <a href="https://lucasdicioccio.github.io/dhall-section-demo.html">full article</a> on my personal blog a while ago to motivate the whole usage of <a href="https://dhall-lang.org/">Dhall</a>. Keep in mind that I’m still happy about the choice. Dhall “powers” my photo galleries and my <a href="https://lucasdicioccio.github.io/notes.html">stream of notes</a> on my personal blog.</p>
 </section><section class="main-section"><h2 id="article-organization">article organization</h2>
 <h3 id="article-summaries">article summaries</h3>
 <h3 id="social-links">social links</h3>
