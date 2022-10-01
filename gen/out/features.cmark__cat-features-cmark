@@ -168,11 +168,10 @@ of source files on the file-system.  We also bundle a [small JavaScript](/js/aut
 subscribes to changes and reload the page on a change. This JavaScript gets
 injected in the layout only in dev-server mode. This setup allows to auto-reload on change.
 
-::: { .todo }
-
-insert a video
-
-:::
+<video width="640" height="480" controls>
+  <source src="/videos/auto-reload-002-liveedit.webm" type="video/webm">
+  <source src="/videos/auto-reload-002-liveedit.mp4" type="video/mp4">
+</video>
 
 To use the dev-server mode, use `--servMode DEV`. That is, the full-command to run with the default executable is:
 
@@ -303,7 +302,12 @@ There is a special room in my heart for [GraphViz](https://graphviz.org/) :heart
 ![all in the kitchen-sink](/gen/images/features-002-dot-demo.dot.png)
 
 Coupled with [auto-reload](#auto-reload), GraphViz-made diagrams work well
-enough to edit technical articles without ever leaving my editor.
+enough to edit technical articles without ever leaving my editor as illustrated in the following video:
+
+<video width="640" height="480" controls>
+  <source src="/videos/auto-reload-001-dot.mp4" type="video/mp4">
+  <source src="/videos/auto-reload-001-dot.webm" type="video/webm">
+</video>
 
 ### copies other images, css
 
