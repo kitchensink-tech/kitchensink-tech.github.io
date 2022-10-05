@@ -15,6 +15,7 @@
     {"type":"file","name":"echart-histogram.js"},
     {"type":"file","name":"echarts.min.js"},
     {"type":"file","name":"engine.cmark"},
+    {"type":"file","name":"favicon.png"},
     {"type":"file","name":"features-001-targetsizes-timeseries.png"},
     {"type":"file","name":"features-002-dot-demo.dot"},
     {"type":"file","name":"features.cmark"},
@@ -35,5 +36,5 @@
     {"type":"file","name":"tags.cmark"},
     {"type":"file","name":"tags.css"}
   ]},
-  {"type":"report","directories":0,"files":34}
+  {"type":"report","directories":0,"files":35}
 ]
