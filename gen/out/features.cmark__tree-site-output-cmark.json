@@ -29,6 +29,7 @@
     ]},
     {"type":"file","name":"getting-started.html"},
     {"type":"directory","name":"images","contents":[
+      {"type":"file","name":"favicon.png"},
       {"type":"file","name":"features-001-targetsizes-timeseries.png"}
     ]},
     {"type":"file","name":"index.html"},
@@ -82,5 +83,5 @@
       {"type":"file","name":"one-time-commands-001-produce.webm"}
     ]}
   ]},
-  {"type":"report","directories":10,"files":61}
+  {"type":"report","directories":10,"files":62}
 ]
