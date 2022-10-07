@@ -56,7 +56,8 @@
       {"type":"file","name":"philosophy.cmark.json"},
       {"type":"file","name":"sections.cmark.json"},
       {"type":"file","name":"tags.cmark.json"},
-      {"type":"file","name":"topicsgraph.json"}
+      {"type":"file","name":"topicsgraph.json"},
+      {"type":"file","name":"wishlist.cmark.json"}
     ]},
     {"type":"file","name":"kitchen-sink-dot-json.html"},
     {"type":"file","name":"layouts.html"},
@@ -84,5 +85,5 @@
     ]},
     {"type":"file","name":"wishlist.html"}
   ]},
-  {"type":"report","directories":10,"files":63}
+  {"type":"report","directories":10,"files":64}
 ]

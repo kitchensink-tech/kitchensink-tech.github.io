@@ -30,6 +30,7 @@
     {"type":"file","name":"one-time-commands-001-produce.webm"},
     {"type":"file","name":"other-formats.cmark"},
     {"type":"file","name":"philosophy.cmark"},
+    {"type":"file","name":"robots.txt"},
     {"type":"file","name":"search-box.js"},
     {"type":"file","name":"sections.cmark"},
     {"type":"file","name":"site-graph.js"},
@@ -37,5 +38,5 @@
     {"type":"file","name":"tags.css"},
     {"type":"file","name":"wishlist.cmark"}
   ]},
-  {"type":"report","directories":0,"files":36}
+  {"type":"report","directories":0,"files":37}
 ]
