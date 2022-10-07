@@ -1,0 +1,12 @@
+https://kitchensink-tech.github.io/features.html
+https://kitchensink-tech.github.io/philosophy.html
+https://kitchensink-tech.github.io/other-formats.html
+https://kitchensink-tech.github.io/sections.html
+https://kitchensink-tech.github.io/development.html
+https://kitchensink-tech.github.io/engine.html
+https://kitchensink-tech.github.io/getting-started.html
+https://kitchensink-tech.github.io/layouts.html
+https://kitchensink-tech.github.io/wishlist.html
+https://kitchensink-tech.github.io/kitchen-sink-dot-json.html
+https://kitchensink-tech.github.io/design-points.html
+https://kitchensink-tech.github.io/index.html
