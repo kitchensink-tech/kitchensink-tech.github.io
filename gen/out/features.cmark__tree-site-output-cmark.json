@@ -81,7 +81,8 @@
       {"type":"file","name":"auto-reload-002-liveedit.webm"},
       {"type":"file","name":"one-time-commands-001-produce.mp4"},
       {"type":"file","name":"one-time-commands-001-produce.webm"}
-    ]}
+    ]},
+    {"type":"file","name":"wishlist.html"}
   ]},
-  {"type":"report","directories":10,"files":62}
+  {"type":"report","directories":10,"files":63}
 ]

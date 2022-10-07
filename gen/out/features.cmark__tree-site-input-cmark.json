@@ -34,7 +34,8 @@
     {"type":"file","name":"sections.cmark"},
     {"type":"file","name":"site-graph.js"},
     {"type":"file","name":"tags.cmark"},
-    {"type":"file","name":"tags.css"}
+    {"type":"file","name":"tags.css"},
+    {"type":"file","name":"wishlist.cmark"}
   ]},
-  {"type":"report","directories":0,"files":35}
+  {"type":"report","directories":0,"files":36}
 ]
