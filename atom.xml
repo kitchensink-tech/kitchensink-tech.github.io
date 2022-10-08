@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <title type="text">
+        The Kitchen Sink Blog Generator
+    </title>
+    <id>
+        https://kitchensink-tech.github.io/atom.xml
+    </id>
+    <updated>
+        1970-01-01
+    </updated>
+    <entry>
+        <id>
+            https://kitchensink-tech.github.io/features.html
+        </id>
+        <title type="text">
+            Feature list
+        </title>
+        <updated>
+            1970-01-01
+        </updated>
+        <author>
+            <name>
+                Lucas DiCioccio
+            </name>
+        </author>
+        <link href="https://kitchensink-tech.github.io/features.html" rel="alternate"/>
+        <summary type="text">
+            This article lists the main features of Kitchen Sink. We do not really compare it to the vast amount of other static-site generators.
+        </summary>
+    </entry>
+    <entry>
+        <id>
+            https://kitchensink-tech.github.io/philosophy.html
+        </id>
+        <title type="text">
+            The Kitchen Sink philosophy
+        </title>
+        <updated>
+            1970-01-01
+        </updated>
+        <author>
+            <name>
+                Lucas DiCioccio
+            </name>
+        </author>
+        <link href="https://kitchensink-tech.github.io/philosophy.html" rel="alternate"/>
+        <summary type="text">
+            In these pages, I sometimes use &#34;__It&#39;s a kitchen-sink!__&#34; as a placeholder for apologetic or unapologetic statements regarding the lack of sophistication of Kitchen-Sink. This article positions a few tenents for Kitchen-Sink, and hopefully helps you get a feel the experience we want to build around this software.
+        </summary>
+    </entry>
+    <entry>
+        <id>
+            https://kitchensink-tech.github.io/other-formats.html
+        </id>
+        <title type="text">
+            Other types of files
+        </title>
+        <updated>
+            1970-01-01
+        </updated>
+        <author>
+            <name>
+                Lucas DiCioccio
+            </name>
+        </author>
+        <link href="https://kitchensink-tech.github.io/other-formats.html" rel="alternate"/>
+        <summary type="text">
+            There is more to a blog than just CommonMark HTML. This article explains briefly how the KitchenSink engine handles other format.
+        </summary>
+    </entry>
+    <entry>
+        <id>
+            https://kitchensink-tech.github.io/sections.html
+        </id>
+        <title type="text">
+            The section-based format
+        </title>
+        <updated>
+            1970-01-01
+        </updated>
+        <author>
+            <name>
+                Lucas DiCioccio
+            </name>
+        </author>
+        <link href="https://kitchensink-tech.github.io/sections.html" rel="alternate"/>
+        <summary type="text">
+            Writing articles in KitchenSink requires to write text files with a specific format called the section-based authoring format. A section-based format consists of delimited sections of text. Sections either configure the page (e.g., the tile of the page) or provide _meaty content_ for readers to read. This article describes the section-based format and sections available to write articles.
+        </summary>
+    </entry>
+    <entry>
+        <id>
+            https://kitchensink-tech.github.io/wishlist.html
+        </id>
+        <title type="text">
+            Whishlist
+        </title>
+        <updated>
+            1970-01-01
+        </updated>
+        <author>
+            <name>
+                Lucas DiCioccio
+            </name>
+        </author>
+        <link href="https://kitchensink-tech.github.io/wishlist.html" rel="alternate"/>
+        <summary type="text">
+            A whishlist, which actually is a todolist.
+        </summary>
+    </entry>
+    <entry>
+        <id>
+            https://kitchensink-tech.github.io/kitchen-sink-dot-json.html
+        </id>
+        <title type="text">
+            The kitchen-sink-dot-json file
+        </title>
+        <updated>
+            1970-01-01
+        </updated>
+        <author>
+            <name>
+                Lucas DiCioccio
+            </name>
+        </author>
+        <link href="https://kitchensink-tech.github.io/kitchen-sink-dot-json.html" rel="alternate"/>
+        <summary type="text">
+            The `kitchen-sink.json` file is simpble but quite important as it configures things like the URL of your blog.
+        </summary>
+    </entry>
+</feed>

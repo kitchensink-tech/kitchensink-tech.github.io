@@ -67,6 +67,7 @@
     ]},
     {"type":"file","name":"robots.txt"},
     {"type":"file","name":"sections.html"},
+    {"type":"file","name":"sitemap.txt"},
     {"type":"directory","name":"topics","contents":[
       {"type":"file","name":"authoring-articles.html"},
       {"type":"file","name":"design.html"},
@@ -86,5 +87,5 @@
     ]},
     {"type":"file","name":"wishlist.html"}
   ]},
-  {"type":"report","directories":10,"files":65}
+  {"type":"report","directories":10,"files":66}
 ]
