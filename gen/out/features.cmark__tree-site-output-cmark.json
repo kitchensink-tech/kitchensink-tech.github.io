@@ -1,5 +1,6 @@
 [
   {"type":"directory","name":"website-www","contents":[
+    {"type":"file","name":"atom.xml"},
     {"type":"directory","name":"css","contents":[
       {"type":"file","name":"article.css"},
       {"type":"file","name":"articles-listing.css"},
@@ -87,5 +88,5 @@
     ]},
     {"type":"file","name":"wishlist.html"}
   ]},
-  {"type":"report","directories":10,"files":66}
+  {"type":"report","directories":10,"files":67}
 ]

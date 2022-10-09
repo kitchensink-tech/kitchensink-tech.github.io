@@ -7,7 +7,7 @@
         https://kitchensink-tech.github.io/atom.xml
     </id>
     <updated>
-        1970-01-01
+        1970-01-01T00:00:00Z
     </updated>
     <entry>
         <id>
@@ -17,7 +17,7 @@
             Feature list
         </title>
         <updated>
-            1970-01-01
+            1970-01-01T00:00:00Z
         </updated>
         <author>
             <name>
@@ -37,7 +37,7 @@
             The Kitchen Sink philosophy
         </title>
         <updated>
-            1970-01-01
+            1970-01-01T00:00:00Z
         </updated>
         <author>
             <name>
@@ -57,7 +57,7 @@
             Other types of files
         </title>
         <updated>
-            1970-01-01
+            1970-01-01T00:00:00Z
         </updated>
         <author>
             <name>
@@ -77,7 +77,7 @@
             The section-based format
         </title>
         <updated>
-            1970-01-01
+            1970-01-01T00:00:00Z
         </updated>
         <author>
             <name>
@@ -97,7 +97,7 @@
             Whishlist
         </title>
         <updated>
-            1970-01-01
+            1970-01-01T00:00:00Z
         </updated>
         <author>
             <name>
@@ -117,7 +117,7 @@
             The kitchen-sink-dot-json file
         </title>
         <updated>
-            1970-01-01
+            1970-01-01T00:00:00Z
         </updated>
         <author>
             <name>
