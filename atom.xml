@@ -91,6 +91,26 @@
     </entry>
     <entry>
         <id>
+            https://kitchensink-tech.github.io/getting-started.html
+        </id>
+        <title type="text">
+            Getting started
+        </title>
+        <updated>
+            1970-01-01T00:00:00Z
+        </updated>
+        <author>
+            <name>
+                Lucas DiCioccio
+            </name>
+        </author>
+        <link href="https://kitchensink-tech.github.io/getting-started.html" rel="alternate"/>
+        <summary type="text">
+            This article gets you started with KitchenSink. As of date, you need some amount of programming know-how.
+        </summary>
+    </entry>
+    <entry>
+        <id>
             https://kitchensink-tech.github.io/wishlist.html
         </id>
         <title type="text">

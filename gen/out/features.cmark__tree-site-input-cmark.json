@@ -1,6 +1,7 @@
 [
   {"type":"directory","name":"website-src","contents":[
     {"type":"file","name":"add-dev-route.js"},
+    {"type":"file","name":"architecture-01-pipeline.dot"},
     {"type":"file","name":"article.css"},
     {"type":"file","name":"articles-listing.css"},
     {"type":"file","name":"auto-reload-001-dot.mp4"},
@@ -38,5 +39,5 @@
     {"type":"file","name":"tags.css"},
     {"type":"file","name":"wishlist.cmark"}
   ]},
-  {"type":"report","directories":0,"files":37}
+  {"type":"report","directories":0,"files":38}
 ]

@@ -1,19 +1,95 @@
-<!DOCTYPE HTML><html><head><meta charset="utf-8"><meta name="viewport" content="with=device-width, initial-scale=1.0"><title>The Kitchen Sink Blog Generator - Getting started</title><link rel="icon" type="image/x-icon" href="/images/favicon.png"><link rel="alternate" type="application/atom+xml" title="Atom Feed" href="/atom.xml"><meta name="author" content="Lucas DiCioccio"><meta name="keywords" content="authoring articles, how-to, static-site generators, design"><meta name="description" content="This article gets you started. As of date, you need some amount of programming know-how."><meta name="twitter:card" content="summary"><meta name="twitter:title" content="The Kitchen Sink Blog Generator - Getting started"><meta name="twitter:site" content="@lucasdicioccio"><meta name="twitter:creator" content="@lucasdicioccio"><meta property="twitter:description" content="This article gets you started. As of date, you need some amount of programming know-how."><meta name="type" property="og:type" content="article"><meta name="title" property="og:title" content="The Kitchen Sink Blog Generator - Getting started"><meta name="url" property="og:url" content="https://kitchensink-tech.github.io/getting-started.html"><meta property="og:description" content="This article gets you started. As of date, you need some amount of programming know-how."><meta name="ks:article_json" content="/json/getting-started.cmark.json"><meta name="article:tag" content="authoring articles"><meta name="article:tag" content="how-to"><meta name="article:tag" content="static-site generators"><meta name="article:tag" content="design"><style>@import "/css/dev.css";@import "/css/colors.css";@import "/css/article.css";@import "/css/navigation.css";</style></head><body><nav id="site-navigation" class="nav"><a href="/">home</a><div id="search-box"><script type="text/javascript" src="/js/search-box.js" async></script></div></nav><div class="main"><article><header class="heading"><h1>Getting started</h1><p>By <a href="https://twitter.com/lucasdicioccio">@lucasdicioccio</a>, 62 words, 1 links, 0images.</p><div class="taglist"><div class="tag"><a class="tag-link" href="/topics/authoring-articles.html"><span class="tag-name">authoring articles</span><span class="tag-count">4</span></a></div><div class="tag"><a class="tag-link" href="/topics/how-to.html"><span class="tag-name">how-to</span><span class="tag-count">4</span></a></div></div></header><div class="upcoming-notice"><p>This article is still considered unfinished and content may change significantly.</p></div><div id="histogram"></div><div class="main-article"><section class="main-section"><h1 id="usage">usage</h1>
-<h2 id="requirements">requirements</h2>
+<!DOCTYPE HTML><html><head><meta charset="utf-8"><meta name="viewport" content="with=device-width, initial-scale=1.0"><title>The Kitchen Sink Blog Generator - Getting started</title><link rel="icon" type="image/x-icon" href="/images/favicon.png"><link rel="alternate" type="application/atom+xml" title="Atom Feed" href="/atom.xml"><meta name="author" content="Lucas DiCioccio"><meta name="keywords" content="authoring articles, how-to, static-site generators, design"><meta name="description" content="This article gets you started with KitchenSink. As of date, you need some amount of programming know-how."><meta name="twitter:card" content="summary"><meta name="twitter:title" content="The Kitchen Sink Blog Generator - Getting started"><meta name="twitter:site" content="@lucasdicioccio"><meta name="twitter:creator" content="@lucasdicioccio"><meta property="twitter:description" content="This article gets you started with KitchenSink. As of date, you need some amount of programming know-how."><meta name="type" property="og:type" content="article"><meta name="title" property="og:title" content="The Kitchen Sink Blog Generator - Getting started"><meta name="url" property="og:url" content="https://kitchensink-tech.github.io/getting-started.html"><meta property="og:description" content="This article gets you started with KitchenSink. As of date, you need some amount of programming know-how."><meta name="ks:article_json" content="/json/getting-started.cmark.json"><meta name="article:tag" content="authoring articles"><meta name="article:tag" content="how-to"><meta name="article:tag" content="static-site generators"><meta name="article:tag" content="design"><style>@import "/css/dev.css";@import "/css/colors.css";@import "/css/article.css";@import "/css/navigation.css";.figure img {  max-width: 80%;  display: block;}</style></head><body><nav id="site-navigation" class="nav"><a href="/">home</a><div id="search-box"><script type="text/javascript" src="/js/search-box.js" async></script></div></nav><div class="main"><article><header class="heading"><h1>Getting started</h1><p>By <a href="https://twitter.com/lucasdicioccio">@lucasdicioccio</a>, 575 words, 6 links, 1images.</p><div class="taglist"><div class="tag"><a class="tag-link" href="/topics/authoring-articles.html"><span class="tag-name">authoring articles</span><span class="tag-count">4</span></a></div><div class="tag"><a class="tag-link" href="/topics/how-to.html"><span class="tag-name">how-to</span><span class="tag-count">4</span></a></div></div></header><div class="main-article"><section class="main-section"><h2 id="expectations">expectations</h2>
+<p>At its core, KitchenSink is a static-site generator <em>library</em> with merely a
+<em>default theme</em>. That is, you can have multiple integration modes to run
+a KitchenSink-generated blog.</p>
+<p>In this article, we browse you through the simple case where you are happy with
+a website that looks like this one – or at least has a similar HTML structure.
+As <a href="http://www.csszengarden.com/">the CSS Zen Garden</a> has demonstrated, one can
+do wonders with only styling. Future releases of KitchenSink may include
+layouts or websites that are not “showcased” on this documentation site.</p>
+<h2 id="pipeline">pipeline</h2>
+<p>Before you get a website to entertain your readers, a number of steps are
+required.  This guide navigates you through a subset of the complexity and
+assumes some familiarity with programming toolchains and workflows.</p>
+<p>You need a few broad steps to get started:</p>
 <ul>
-<li>some Haskell installation with cabal (tested with GHC 9.2.4), we recommend <a href="https://www.haskell.org/ghcup/">ghcup</a> if you have no Haskell toolchain preference yet
+<li>get KitchenSink source code
 </li>
-<li>(optional) graphviz for generating images from dot-sources
+<li>(optional, advanced) adapt the layout or the commands
+</li>
+<li>compile KitchenSink
+</li>
+<li>write some content
+</li>
+<li>produce some HTML
+</li>
+<li>publish your website
 </li>
 </ul>
-<h2 id="build-and-install">build and install</h2>
-<pre><code>cabal build
+<p>We illustrate these steps in the following picture (which we refer as <em>the dependency graph</em> here):</p>
+<div class="figure">
+<p><img src="http://localhost:7654/gen/images/architecture-01-pipeline.dot.png" alt="KitchenSink building pipeline" /></p>
+</div>
+<p>The dependency graph starts from the left with tooling and move to the right towards an HTML
+website making readers happy. In the above pictures “egg” shapes represent
+tools whereas data files use a “file” shape.</p>
+<p>The rest of this guide covers only some subset of the whole experience.  In
+particular, we assume that the advanced-topic of editing KitchenSink layouts is
+out of scope. Also, we skip the “publish website” part; you should find some
+help on “hosting a static website” elsewhere – at this point we believe
+KitchenSink is so niche that you will figure out this part. We also assume that
+you know how to install and run programming tools on your machine.</p>
+<h2 id="requirements">requirements</h2>
+<p>Requirements correspond to the “left leaves” tools in the dependency graph.</p>
+<ul>
+<li>some <code>git</code> installation
+</li>
+<li>some Haskell installation with <code>cabal</code> (tested with <code>ghc</code> 9.2.4), we recommend <a href="https://www.haskell.org/ghcup/">ghcup</a> if you have no Haskell toolchain preference yet
+</li>
+<li>(optional) <code>graphviz</code> for generating images from dot-sources
+</li>
+<li>(optional) other commands you may want to use to generate contents
+</li>
+<li>(not covered) some publication script to host a directory of static-files online (e.g., GitHub pages, Netlify)
+</li>
+</ul>
+<h2 id="build-and-install-from-source">build and install from source</h2>
+<p>The goal here is to build <code>kitchen-sink-exe</code> in the dependency graph.
+Cabal’s install directory must be in your execution <code>PATH</code> environment variable afterwards.</p>
+<pre><code>git clone https://github.com/kitchensink-tech/kitchensink.git
+cd kitchensink/hs
+cabal build
 cabal install
 </code></pre>
 <h2 id="minimal-site-setup">minimal site setup</h2>
+<p>The goal here is to run KitchenSink in server-mode (i.e., we do not output
+<code>.html</code> files directly as shown in the dependency graph but we edit them live).</p>
+<p><strong>prepare a directory structure</strong></p>
 <pre><code>bash scaffolding/outputdir.sh www
 bash scaffolding/sourcedir.sh site-source
-kitchen-sink serve --srcDir site-source/ --outDir www/ --servMode DEV --port 7654
 </code></pre>
-<p>Then navigate to http://localhost:7654/ you’ll notice there are a few things to tune.</p>
+<p><strong>start the live-edit server</strong></p>
+<pre><code>kitchen-sink serve --srcDir site-source/ --outDir www/ --servMode DEV --port 7654
+</code></pre>
+<p>Then navigate to <code>http://localhost:7654/</code> you’ll notice there are a few things
+to tune.  Things like the page title must be changed in the
+<a href="/kitchen-sink-dot-json"><code>kitchen-sink.json</code></a> file (note: as of today when you
+edit this file, you need to restart the server for all parameters to be taken
+into account).</p>
+<p><strong>learn how to write articles</strong></p>
+<p>In your editor then you can add or edit new <code>.cmark</code> files, try adding some
+“hello world” first.  Then you can experiment with adding more involved
+<a href="/sections.html">sections</a> or various types of <a href="/other-formats.html">contents</a></p>
+<h2 id="producing-html-contents">producing html contents</h2>
+<p>Before producing some HTML contents to upload, you should modify the
+<a href="/kitchen-sink-dot-json"><code>kitchen-sink.json</code></a> file to give some title to your
+website and prepare tell the URL that will host your website once it is
+uploaded.</p>
+<p>You either <strong>run <code>produce</code> on the live preview</strong> (note: as of today when you edit
+the <code>kitchen-sink.json</code> file, you need to restart the server for all parameters
+to be taken into account) while running KitchenSink in serve mode.</p>
+<p><strong>Alternatively</strong> you separately run the following command:</p>
+<pre><code>kitchen-sink produce --srcDir site-source/ --outDir www/
+</code></pre>
+<p>At this point the <code>www</code> output dir should have the content for your website.</p>
 </section></div><footer class="footing"><div class="social-links"><a href="https://twitter.com/lucasdicioccio">twitter: @lucasdicioccio</a><a href="https://github.com/lucasdicioccio">github: lucasdicioccio</a><a href="https://linkedin.com/in/lucasdicioccio">linkedin: lucasdicioccio</a></div></footer></article></div></body></html>
