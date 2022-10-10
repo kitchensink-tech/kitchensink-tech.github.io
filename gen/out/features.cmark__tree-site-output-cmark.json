@@ -16,6 +16,7 @@
     {"type":"file","name":"features.html"},
     {"type":"directory","name":"gen","contents":[
       {"type":"directory","name":"images","contents":[
+        {"type":"file","name":"architecture-01-pipeline.dot.png"},
         {"type":"file","name":"features-002-dot-demo.dot.png"}
       ]},
       {"type":"directory","name":"out","contents":[
@@ -88,5 +89,5 @@
     ]},
     {"type":"file","name":"wishlist.html"}
   ]},
-  {"type":"report","directories":10,"files":67}
+  {"type":"report","directories":10,"files":68}
 ]
