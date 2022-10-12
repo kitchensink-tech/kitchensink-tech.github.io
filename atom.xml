@@ -169,4 +169,24 @@
             The `kitchen-sink.json` file is simpble but quite important as it configures things like the URL of your blog.
         </summary>
     </entry>
+    <entry>
+        <id>
+            https://kitchensink-tech.github.io/design-points.html
+        </id>
+        <title type="text">
+            Design points
+        </title>
+        <updated>
+            1970-01-01T00:00:00Z
+        </updated>
+        <author>
+            <name>
+                Lucas DiCioccio
+            </name>
+        </author>
+        <link href="https://kitchensink-tech.github.io/design-points.html" rel="alternate"/>
+        <summary type="text">
+            This article gives a number of design points and architecture tradeoffs.
+        </summary>
+    </entry>
 </feed>
