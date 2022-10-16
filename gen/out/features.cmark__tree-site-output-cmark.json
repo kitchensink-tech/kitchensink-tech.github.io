@@ -17,6 +17,8 @@
     {"type":"directory","name":"gen","contents":[
       {"type":"directory","name":"images","contents":[
         {"type":"file","name":"architecture-01-pipeline.dot.png"},
+        {"type":"file","name":"architecture-02-engine-pipeline.dot.png"},
+        {"type":"file","name":"architecture-03-in-depth-engine-pipeline.dot.png"},
         {"type":"file","name":"features-002-dot-demo.dot.png"}
       ]},
       {"type":"directory","name":"out","contents":[
@@ -76,6 +78,7 @@
       {"type":"file","name":"design.html"},
       {"type":"file","name":"haskell.html"},
       {"type":"file","name":"how-to.html"},
+      {"type":"file","name":"internals.html"},
       {"type":"file","name":"modding.html"},
       {"type":"file","name":"philosophy.html"},
       {"type":"file","name":"sections.html"}
@@ -90,5 +93,5 @@
     ]},
     {"type":"file","name":"wishlist.html"}
   ]},
-  {"type":"report","directories":10,"files":69}
+  {"type":"report","directories":10,"files":72}
 ]
