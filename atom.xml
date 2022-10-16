@@ -111,6 +111,26 @@
     </entry>
     <entry>
         <id>
+            https://kitchensink-tech.github.io/engine.html
+        </id>
+        <title type="text">
+            Engine
+        </title>
+        <updated>
+            1970-01-01T00:00:00Z
+        </updated>
+        <author>
+            <name>
+                Lucas DiCioccio
+            </name>
+        </author>
+        <link href="https://kitchensink-tech.github.io/engine.html" rel="alternate"/>
+        <summary type="text">
+            This article answers questions the engine (i.e., the glue-code performing the dance to understand what layout code to apply to generate results).
+        </summary>
+    </entry>
+    <entry>
+        <id>
             https://kitchensink-tech.github.io/getting-started.html
         </id>
         <title type="text">
