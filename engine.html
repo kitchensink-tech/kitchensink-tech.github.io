@@ -1,9 +1,54 @@
-<!DOCTYPE HTML><html><head><meta charset="utf-8"><meta name="viewport" content="with=device-width, initial-scale=1.0"><title>The Kitchen Sink Blog Generator - Engine</title><link rel="icon" type="image/x-icon" href="/images/favicon.png"><link rel="alternate" type="application/atom+xml" title="Atom Feed" href="/atom.xml"><meta name="author" content="Lucas DiCioccio"><meta name="keywords" content="how-to, haskell, static-site generators, design"><meta name="description" content="This article answers questions the engine (i.e., the generator proper)."><meta name="twitter:card" content="summary"><meta name="twitter:title" content="The Kitchen Sink Blog Generator - Engine"><meta name="twitter:site" content="@lucasdicioccio"><meta name="twitter:creator" content="@lucasdicioccio"><meta property="twitter:description" content="This article answers questions the engine (i.e., the generator proper)."><meta name="type" property="og:type" content="article"><meta name="title" property="og:title" content="The Kitchen Sink Blog Generator - Engine"><meta name="url" property="og:url" content="https://kitchensink-tech.github.io/engine.html"><meta property="og:description" content="This article answers questions the engine (i.e., the generator proper)."><meta name="ks:article_json" content="/json/engine.cmark.json"><meta name="article:tag" content="how-to"><meta name="article:tag" content="haskell"><meta name="article:tag" content="static-site generators"><meta name="article:tag" content="design"><style>@import "/css/dev.css";@import "/css/colors.css";@import "/css/article.css";@import "/css/navigation.css";</style></head><body><nav id="site-navigation" class="nav"><a href="/">home</a><div id="search-box"><script type="text/javascript" src="/js/search-box.js" async></script></div></nav><div class="main"><article><header class="heading"><h1>Engine</h1><p>By <a href="https://twitter.com/lucasdicioccio">@lucasdicioccio</a>, 5 words, 0 links, 0images.</p><div class="taglist"><div class="tag"><a class="tag-link" href="/topics/how-to.html"><span class="tag-name">how-to</span><span class="tag-count">4</span></a></div><div class="tag"><a class="tag-link" href="/topics/haskell.html"><span class="tag-name">haskell</span><span class="tag-count">5</span></a></div></div></header><div class="upcoming-notice"><p>This article is still considered unfinished and content may change significantly.</p></div><div id="histogram"></div><div class="main-article"><section class="main-section"><ul>
-<li>special json targets
+<!DOCTYPE HTML><html><head><meta charset="utf-8"><meta name="viewport" content="with=device-width, initial-scale=1.0"><title>The Kitchen Sink Blog Generator - Engine</title><link rel="icon" type="image/x-icon" href="/images/favicon.png"><link rel="alternate" type="application/atom+xml" title="Atom Feed" href="/atom.xml"><meta name="author" content="Lucas DiCioccio"><meta name="keywords" content="internals, static-site generators, design"><meta name="description" content="This article answers questions the engine (i.e., the glue-code performing the dance to understand what layout code to apply to generate results)."><meta name="twitter:card" content="summary"><meta name="twitter:title" content="The Kitchen Sink Blog Generator - Engine"><meta name="twitter:site" content="@lucasdicioccio"><meta name="twitter:creator" content="@lucasdicioccio"><meta property="twitter:description" content="This article answers questions the engine (i.e., the glue-code performing the dance to understand what layout code to apply to generate results)."><meta name="type" property="og:type" content="article"><meta name="title" property="og:title" content="The Kitchen Sink Blog Generator - Engine"><meta name="url" property="og:url" content="https://kitchensink-tech.github.io/engine.html"><meta property="og:description" content="This article answers questions the engine (i.e., the glue-code performing the dance to understand what layout code to apply to generate results)."><meta name="ks:article_json" content="/json/engine.cmark.json"><meta name="article:tag" content="internals"><meta name="article:tag" content="static-site generators"><meta name="article:tag" content="design"><style>@import "/css/dev.css";@import "/css/colors.css";@import "/css/article.css";@import "/css/navigation.css";.figure img {  max-width: 80%;  display: block;}</style></head><body><nav id="site-navigation" class="nav"><a href="/">home</a><div id="search-box"><script type="text/javascript" src="/js/search-box.js" async></script></div></nav><div class="main"><article><header class="heading"><h1>Engine</h1><p>By <a href="https://twitter.com/lucasdicioccio">@lucasdicioccio</a>, 381 words, 1 links, 3images.</p><div class="taglist"><div class="tag"><a class="tag-link" href="/topics/internals.html"><span class="tag-name">internals</span><span class="tag-count">1</span></a></div></div></header><div class="upcoming-notice"><p>This article is still considered unfinished and content may change significantly.</p></div><div id="histogram"></div><div class="main-article"><section class="main-section"><p>In the <a href="/getting-started.html">getting started</a> article, we present the
+following picture:</p>
+<div class="figure">
+<p><img src="/gen/images/architecture-01-pipeline.dot.png" alt="pipeline" /></p>
+</div>
+<p>Each steps are pretty handwavy at this point. Between written content and
+<code>.html</code> outputs, there is a vague <code>produce html</code> function. The focus of this
+article is to expand on this particular step. Indeed the “core” of the Engine
+is to turn source files into a static website. Asked to zoom in one level
+closer to understand what this step is, I would draw such a picture (I actually
+did on my personal blog).</p>
+<p><img src="/gen/images/architecture-02-engine-pipeline.dot.png" alt="pipeline" /></p>
+<p>Alas such a level of detail is still underwhelming: the picture merely
+illustrate the rather uninteresting life of a static-site generator:</p>
+<ul>
+<li><em>read</em>: find and load input data and configuration files
 </li>
-<li>autoreload script
+<li><em>assemble</em>: build an in-memory representation of everything the site contains
 </li>
-<li>add-dev-routes script
+<li><em>produce</em>: generate output files in the proper location
 </li>
 </ul>
+<h1 id="in-depth">In depth</h1>
+<p><img src="/gen/images/architecture-03-in-depth-engine-pipeline.dot.png" alt="pipeline" /></p>
+<h1 id="server-development-mode-specifics">Server development-mode specifics</h1>
+<p>Generating files from pipelines is mundane, and I wrote KitchenSink to support
+some advanced features that help me stay “in the flow” while writing article
+contents.</p>
+<p>Among the <code>scaffolding</code> source files, some two interesting JavaScript files
+exist only for the support of the live-server: <code>autoreload.js</code> and
+<code>add-dev-route.js</code>.  Their respective name may change in future versions but
+the feature will be maintained.</p>
+<h2 id="the-autoreloadjs-script">The <code>autoreload.js</code> script</h2>
+<p>The auto-reload script is a small loop that tries to make sure that at any given time,
+the page shown on the web-browser is up-to-date.
+Since we are focused.</p>
+<p>The interesting bit is on the engine-side: the server monitors for filesystem changes.
+Upon changes, a thread on the server wakes-up all waiting clients.</p>
+<p>In some case we change the generator-code or the layout itself. In that case,
+no filesystem changes will ever be notices, we need another mechanism for
+clients to know the server has new content.  The client remembers what is the
+“server-id” and the server returns whether it recognizes its own server-id.</p>
+<p>For now the server-id information is passed in a query parameter as we cannot
+pass a bunch of informations in a HTTP-get at reload times (alternatives are
+some form of storage on the client-side – we’ll eventually get there).</p>
+<h2 id="the-add-dev-routejs-script">The <code>add-dev-route.js</code> script</h2>
+<p>Another nicety is that we can trigger a full-rebuild of the website without
+leaving one’s preview browser. The gain is little but there is some
+satisfaction to press a button on an interface and see your website being
+generated or published.</p>
+<p>Upon loading, the <code>add-dev-route.js</code> script creates a few buttons in the
+<code>#navigation</code> bar (i.e., the layout has to cooperate a bit, we’ll change that a
+bit later).  Buttons then trigger actions handled by the server.</p>
 </section></div><footer class="footing"><div class="social-links"><a href="https://twitter.com/lucasdicioccio">twitter: @lucasdicioccio</a><a href="https://github.com/lucasdicioccio">github: lucasdicioccio</a><a href="https://linkedin.com/in/lucasdicioccio">linkedin: lucasdicioccio</a></div></footer></article></div></body></html>
