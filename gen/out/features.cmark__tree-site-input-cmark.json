@@ -23,6 +23,7 @@
     {"type":"file","name":"features-002-dot-demo.dot"},
     {"type":"file","name":"features.cmark"},
     {"type":"file","name":"getting-started.cmark"},
+    {"type":"file","name":"googlebd11be407c1a85ac.html"},
     {"type":"file","name":"index.cmark"},
     {"type":"file","name":"index.css"},
     {"type":"file","name":"kitchen-sink-dot-json.cmark"},
@@ -41,5 +42,5 @@
     {"type":"file","name":"tags.css"},
     {"type":"file","name":"wishlist.cmark"}
   ]},
-  {"type":"report","directories":0,"files":40}
+  {"type":"report","directories":0,"files":41}
 ]
