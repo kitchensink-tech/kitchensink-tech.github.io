@@ -45,7 +45,8 @@
       {"type":"file","name":"echarts.min.js"},
       {"type":"file","name":"explorer.js"},
       {"type":"file","name":"search-box.js"},
-      {"type":"file","name":"site-graph.js"}
+      {"type":"file","name":"site-graph.js"},
+      {"type":"file","name":"topicgraph.js"}
     ]},
     {"type":"directory","name":"json","contents":[
       {"type":"file","name":"design-points.cmark.json"},
@@ -94,5 +95,5 @@
     ]},
     {"type":"file","name":"wishlist.html"}
   ]},
-  {"type":"report","directories":10,"files":73}
+  {"type":"report","directories":10,"files":74}
 ]
