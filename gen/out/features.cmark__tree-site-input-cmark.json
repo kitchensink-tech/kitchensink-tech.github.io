@@ -12,6 +12,7 @@
     {"type":"file","name":"auto-reload-002-liveedit.webm"},
     {"type":"file","name":"autoreload.js"},
     {"type":"file","name":"colors.css"},
+    {"type":"file","name":"copy-snippets.js"},
     {"type":"file","name":"design-points.cmark"},
     {"type":"file","name":"dev.css"},
     {"type":"file","name":"development.cmark"},
@@ -42,5 +43,5 @@
     {"type":"file","name":"topicgraph.js"},
     {"type":"file","name":"wishlist.cmark"}
   ]},
-  {"type":"report","directories":0,"files":41}
+  {"type":"report","directories":0,"files":42}
 ]

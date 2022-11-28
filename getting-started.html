@@ -56,7 +56,7 @@ you know how to install and run programming tools on your machine.</p>
 <h2 id="build-and-install-from-source">build and install from source</h2>
 <p>The goal here is to build <code>kitchen-sink-exe</code> in the dependency graph.
 Cabal’s install directory must be in your execution <code>PATH</code> environment variable afterwards.</p>
-<pre><code>git clone https://github.com/kitchensink-tech/kitchensink.git
+<pre><code class="language-console">git clone https://github.com/kitchensink-tech/kitchensink.git
 cd kitchensink/hs
 cabal build
 cabal install
@@ -65,11 +65,11 @@ cabal install
 <p>The goal here is to run KitchenSink in server-mode (i.e., we do not output
 <code>.html</code> files directly as shown in the dependency graph but we edit them live).</p>
 <p><strong>prepare a directory structure</strong></p>
-<pre><code>bash scaffolding/outputdir.sh www
+<pre><code class="language-console">bash scaffolding/outputdir.sh www
 bash scaffolding/sourcedir.sh site-source
 </code></pre>
 <p><strong>start the live-edit server</strong></p>
-<pre><code>kitchen-sink serve --srcDir site-source/ --outDir www/ --servMode DEV --port 7654
+<pre><code class="language-console">kitchen-sink serve --srcDir site-source/ --outDir www/ --servMode DEV --port 7654
 </code></pre>
 <p>Then navigate to <code>http://localhost:7654/</code> you’ll notice there are a few things
 to tune.  Things like the page title must be changed in the
@@ -89,7 +89,8 @@ uploaded.</p>
 the <code>kitchen-sink.json</code> file, you need to restart the server for all parameters
 to be taken into account) while running KitchenSink in serve mode.</p>
 <p><strong>Alternatively</strong> you separately run the following command:</p>
-<pre><code>kitchen-sink produce --srcDir site-source/ --outDir www/
+<pre><code class="language-console">kitchen-sink produce --srcDir site-source/ --outDir www/
 </code></pre>
 <p>At this point the <code>www</code> output dir should have the content for your website.</p>
+<script src="js/copy-snippets.js"></script>
 </section></div><footer class="footing"><div class="social-links"><a href="https://twitter.com/lucasdicioccio">twitter</a><a href="https://github.com/lucasdicioccio">github</a><a href="https://linkedin.com/in/lucasdicioccio">linkedin</a></div></footer></article></div></body></html>
