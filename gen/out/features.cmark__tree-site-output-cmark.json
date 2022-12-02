@@ -41,6 +41,7 @@
     {"type":"directory","name":"js","contents":[
       {"type":"file","name":"add-dev-route.js"},
       {"type":"file","name":"autoreload.js"},
+      {"type":"file","name":"copy-snippets.js"},
       {"type":"file","name":"echart-histogram.js"},
       {"type":"file","name":"echarts.min.js"},
       {"type":"file","name":"explorer.js"},
@@ -95,5 +96,5 @@
     ]},
     {"type":"file","name":"wishlist.html"}
   ]},
-  {"type":"report","directories":10,"files":74}
+  {"type":"report","directories":10,"files":75}
 ]
