@@ -1,0 +1,132 @@
+=base:build-info.json
+{"layout":"article"
+,"publicationStatus":"Upcoming"
+}
+
+=base:preamble.json
+{"author": "Lucas DiCioccio"
+,"title": "Dhall support in depth"
+,"faviconUrl": "/images/favicon.png"
+}
+
+=base:topic.json
+{"tags":["wip", "sections"]
+,"keywords":["static-site generators", "design"]
+}
+
+=base:social.json
+{"twitter": "lucasdicioccio"
+,"linkedin": "lucasdicioccio"
+,"github": "lucasdicioccio"
+}
+
+=base:main-css.css
+@import "/css/dev.css";
+@import "/css/colors.css";
+@import "/css/article.css";
+@import "/css/navigation.css";
+
+=base:summary.cmark
+
+Documenting the special features of Dhall-sections.
+
+=base:main-content.cmark
+
+__present__
+- mechanism: find `.dhall` extensions and evaluate the dhall expression to substitute the content
+- evaluation time: for now a site-loading time
+- starting context: empty
+- substitution: a `kitchensink object`
+
+__future work__
+- carry-over more context from previous sections
+- move evaluation a bit more lazily
+- some non-load-time evaluation (e.g., in layouts to generate new targets -- but needs IO for this)
+
+## kitchensink object
+
+```dhall
+{ file : Text -- contains the source file for the cmark
+}
+```
+
+=base:main-content.cmark
+
+# a section in CommonMark
+
+__example__
+
+    =base:main-content.dhall
+    
+    { contents = ["__generated from dhall__", "\n", kitchensink.file ], format = "cmark" }
+
+
+
+=base:main-content.cmark
+
+# a section in html
+
+You can return HTML directly-formatted.
+
+__example__
+
+    =base:main-content.dhall
+    
+    { contents = ["__generated from dhall__", "\n", kitchensink.file ], format = "html" }
+
+
+=base:main-content.cmark
+
+# a generated-generator command
+
+Dhall can substitute itself to JSON objects as well.
+Jut replace a `.json` with `.dhall` and KitchenSink will interpret a Dhall expression to fill-in the JSON.
+
+A few use cases are envisioned:
+- generating a _commands_ from Dhall expressions
+- generating a command requiring the filename
+- avoiding redundant information like social infos using Dhall's support for remote includes
+
+__example 1__
+
+    =generator:cmd.dhall
+    let
+      ping = { cmd = "ping"
+             , args = ["-c", "3", "8.8.4.4"]
+             , target = "latency"
+             }
+    in
+    { contents = ping
+    , format = "json"
+    }
+
+__example 2__
+
+    =generator:cmd.dhall
+    let
+      cmd = { cmd = "cat"
+            , args = [kitchensink.file]
+            , target = "cat-this-file"
+            }
+    in
+    { contents = cmd
+    , format = "json"
+    }
+
+__example 3__
+
+    =base:social.dhall
+    { contents = ./social.dhall
+    , format = "json"
+    }
+
+=generator:cmd.dhall
+let
+  cmd = { cmd = "cat"
+        , args = [kitchensink.file]
+        , target = "cat-this-file"
+        }
+in
+{ contents = cmd
+, format = "json"
+}
