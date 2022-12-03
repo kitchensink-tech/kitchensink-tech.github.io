@@ -38,10 +38,11 @@
     {"type":"file","name":"robots.txt"},
     {"type":"file","name":"search-box.js"},
     {"type":"file","name":"sections.cmark"},
+    {"type":"file","name":"sections-dhall.cmark"},
     {"type":"file","name":"tags.cmark"},
     {"type":"file","name":"tags.css"},
     {"type":"file","name":"topicgraph.js"},
     {"type":"file","name":"wishlist.cmark"}
   ]},
-  {"type":"report","directories":0,"files":42}
+  {"type":"report","directories":0,"files":43}
 ]

@@ -66,7 +66,7 @@ blog_watches{status="matching"} 2.0
 blog_watches{status="outdated"} 1.0
 # HELP blog_reloads number of time the site is reloaded
 # TYPE blog_reloads counter
-blog_reloads 9.0
+blog_reloads 12.0
 # HELP blog_ontheflybuild_time time spent building targets on disk
 # TYPE blog_ontheflybuild_time summary
 blog_ontheflybuild_time{path="/css/index-narrow.css",quantile="0.5"} 3.7012e-5
