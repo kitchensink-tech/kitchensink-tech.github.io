@@ -28,7 +28,8 @@
         {"type":"file","name":"features.cmark__latest-selfie.jpg"},
         {"type":"file","name":"features.cmark__tree-site-input-cmark.json"},
         {"type":"file","name":"features.cmark__tree-site-output-cmark.json"},
-        {"type":"file","name":"index.cmark__gen-git-head-sha.txt"}
+        {"type":"file","name":"index.cmark__gen-git-head-sha.txt"},
+        {"type":"file","name":"sections-dhall.cmark__cat-this-file"}
       ]}
     ]},
     {"type":"file","name":"getting-started.html"},
@@ -99,5 +100,5 @@
     ]},
     {"type":"file","name":"wishlist.html"}
   ]},
-  {"type":"report","directories":10,"files":78}
+  {"type":"report","directories":10,"files":79}
 ]
