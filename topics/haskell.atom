@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <title type="text">
+        The Kitchen Sink Blog Generator
+    </title>
+    <id>
+        https://kitchensink-tech.github.io/atom.xml
+    </id>
+    <updated>
+        1970-01-01T00:00:00Z
+    </updated>
+    <entry>
+        <id>
+            https://kitchensink-tech.github.io/development.html
+        </id>
+        <title type="text">
+            Development
+        </title>
+        <updated>
+            1970-01-01T00:00:00Z
+        </updated>
+        <author>
+            <name>
+                Lucas DiCioccio
+            </name>
+        </author>
+        <link href="https://kitchensink-tech.github.io/development.html" rel="alternate"/>
+        <summary type="text">
+            You want to change, extend, or restrict Kitchen-Sink? found a bug? want to extract some feature out of it or on the opposite, embed it in a larger application?
+        </summary>
+    </entry>
+    <entry>
+        <id>
+            https://kitchensink-tech.github.io/other-formats.html
+        </id>
+        <title type="text">
+            Other types of files
+        </title>
+        <updated>
+            1970-01-01T00:00:00Z
+        </updated>
+        <author>
+            <name>
+                Lucas DiCioccio
+            </name>
+        </author>
+        <link href="https://kitchensink-tech.github.io/other-formats.html" rel="alternate"/>
+        <summary type="text">
+            There is more to a blog than just CommonMark HTML. This article explains briefly how the KitchenSink engine handles other format.
+        </summary>
+    </entry>
+    <entry>
+        <id>
+            https://kitchensink-tech.github.io/features.html
+        </id>
+        <title type="text">
+            Feature list
+        </title>
+        <updated>
+            1970-01-01T00:00:00Z
+        </updated>
+        <author>
+            <name>
+                Lucas DiCioccio
+            </name>
+        </author>
+        <link href="https://kitchensink-tech.github.io/features.html" rel="alternate"/>
+        <summary type="text">
+            This article lists the main features of Kitchen Sink. We do not really compare it to the vast amount of other static-site generators.
+        </summary>
+    </entry>
+</feed>

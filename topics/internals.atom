@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <title type="text">
+        The Kitchen Sink Blog Generator
+    </title>
+    <id>
+        https://kitchensink-tech.github.io/atom.xml
+    </id>
+    <updated>
+        1970-01-01T00:00:00Z
+    </updated>
+    <entry>
+        <id>
+            https://kitchensink-tech.github.io/engine.html
+        </id>
+        <title type="text">
+            Engine
+        </title>
+        <updated>
+            1970-01-01T00:00:00Z
+        </updated>
+        <author>
+            <name>
+                Lucas DiCioccio
+            </name>
+        </author>
+        <link href="https://kitchensink-tech.github.io/engine.html" rel="alternate"/>
+        <summary type="text">
+            This article answers questions the engine (i.e., the glue-code performing the dance to understand what layout code to apply to generate results).
+        </summary>
+    </entry>
+</feed>
