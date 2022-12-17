@@ -74,6 +74,10 @@
     {"type":"file","name":"other-formats.html"},
     {"type":"file","name":"philosophy.html"},
     {"type":"directory","name":"raw","contents":[
+      {"type":"directory","name":"data","contents":[
+        {"type":"file","name":"sections.cmark__1.csv"},
+        {"type":"file","name":"sections.cmark__2.json"}
+      ]}
     ]},
     {"type":"file","name":"robots.txt"},
     {"type":"file","name":"sections-dhall.html"},
@@ -100,5 +104,5 @@
     ]},
     {"type":"file","name":"wishlist.html"}
   ]},
-  {"type":"report","directories":10,"files":79}
+  {"type":"report","directories":11,"files":81}
 ]
