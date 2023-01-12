@@ -1,5 +1,5 @@
 [
-  {"type":"link","name":"website-src","contents":[
+  {"type":"directory","name":"website-src","contents":[
     {"type":"file","name":"add-dev-route.js"},
     {"type":"file","name":"architecture-01-pipeline.dot"},
     {"type":"file","name":"architecture-02-engine-pipeline.dot"},
@@ -24,6 +24,7 @@
     {"type":"file","name":"features-002-dot-demo.dot"},
     {"type":"file","name":"features.cmark"},
     {"type":"file","name":"getting-started.cmark"},
+    {"type":"file","name":"glossary.cmark"},
     {"type":"file","name":"googlebd11be407c1a85ac.html"},
     {"type":"file","name":"index.cmark"},
     {"type":"file","name":"index.css"},
@@ -39,10 +40,10 @@
     {"type":"file","name":"search-box.js"},
     {"type":"file","name":"sections.cmark"},
     {"type":"file","name":"sections-dhall.cmark"},
-    {"type":"file","name":"tags.cmark"},
-    {"type":"file","name":"tags.css"},
     {"type":"file","name":"topicgraph.js"},
+    {"type":"file","name":"topics.cmark"},
+    {"type":"file","name":"topics.css"},
     {"type":"file","name":"wishlist.cmark"}
   ]},
-  {"type":"report","directories":0,"files":43}
+  {"type":"report","directories":0,"files":44}
 ]

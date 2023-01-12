@@ -1,4 +1,4 @@
-<!DOCTYPE HTML><html><head><meta charset="utf-8"><meta name="viewport" content="with=device-width, initial-scale=1.0"><title>The Kitchen Sink Blog Generator - Design points</title><link rel="icon" type="image/x-icon" href="/images/favicon.png"><link rel="alternate" type="application/atom+xml" title="Atom Feed" href="https://kitchensink-tech.github.io/atom.xml"><meta name="author" content="Lucas DiCioccio"><meta name="keywords" content="philosophy, design, static-site generators"><meta name="description" content="This article gives a number of design points and architecture tradeoffs."><meta name="twitter:card" content="summary"><meta name="twitter:title" content="The Kitchen Sink Blog Generator - Design points"><meta name="twitter:site" content="@lucasdicioccio"><meta name="twitter:creator" content="@lucasdicioccio"><meta property="twitter:description" content="This article gives a number of design points and architecture tradeoffs."><meta name="type" property="og:type" content="article"><meta name="title" property="og:title" content="The Kitchen Sink Blog Generator - Design points"><meta name="url" property="og:url" content="https://kitchensink-tech.github.io/design-points.html"><meta property="og:description" content="This article gives a number of design points and architecture tradeoffs."><meta name="ks:article_json" content="/json/design-points.cmark.json"><meta name="article:tag" content="philosophy"><meta name="article:tag" content="design"><meta name="article:tag" content="static-site generators"><style>@import "/css/dev.css";@import "/css/colors.css";@import "/css/article.css";@import "/css/navigation.css";</style></head><body><nav id="site-navigation" class="nav"><a href="/">home</a><div id="search-box"><script type="text/javascript" src="/js/search-box.js" async></script></div></nav><div class="main"><article><header class="heading"><h1>Design points</h1><p>By <a href="https://twitter.com/lucasdicioccio">@lucasdicioccio</a>, 644 words, 0 code snippets, 1 links, 0images.</p><div class="taglist"><div class="tag"><a class="tag-link" href="/topics/philosophy.html"><span class="tag-name">philosophy</span><span class="tag-count">1/3</span></a><div class="tag-prevnext"><span class="tag-prev-link"></span><span class="tag-next-link"><a href="/other-formats.html">[next]</a></span></div></div><div class="tag"><a class="tag-link" href="/topics/design.html"><span class="tag-name">design</span><span class="tag-count">1/2</span></a><div class="tag-prevnext"><span class="tag-prev-link"></span><span class="tag-next-link"><a href="/wishlist.html">[next]</a></span></div></div></div></header><div class="main-article"><section class="main-section"><h1 id="the-default-site-loader-is-a-kitchen-sink">The default site-loader is a kitchen-sink</h1>
+<!DOCTYPE HTML><html><head><meta charset="utf-8"><meta name="viewport" content="with=device-width, initial-scale=1.0"><title>The Kitchen Sink Blog Generator - Design points</title><link rel="icon" type="image/x-icon" href="/images/favicon.png"><link rel="alternate" type="application/atom+xml" title="Atom Feed" href="https://kitchensink-tech.github.io/atom.xml"><meta name="author" content="Lucas DiCioccio"><meta name="keywords" content="philosophy, design, static-site generators"><meta name="description" content="This article gives a number of design points and architecture tradeoffs."><meta name="twitter:card" content="summary"><meta name="twitter:title" content="The Kitchen Sink Blog Generator - Design points"><meta name="twitter:site" content="@lucasdicioccio"><meta name="twitter:creator" content="@lucasdicioccio"><meta property="twitter:description" content="This article gives a number of design points and architecture tradeoffs."><meta name="type" property="og:type" content="article"><meta name="title" property="og:title" content="The Kitchen Sink Blog Generator - Design points"><meta name="url" property="og:url" content="https://kitchensink-tech.github.io/design-points.html"><meta property="og:description" content="This article gives a number of design points and architecture tradeoffs."><meta name="ks:article_json" content="/json/design-points.cmark.json"><meta name="article:tag" content="philosophy"><meta name="article:tag" content="design"><meta name="article:tag" content="static-site generators"><style>@import "/css/dev.css";@import "/css/colors.css";@import "/css/article.css";@import "/css/navigation.css";</style></head><body><nav id="site-navigation" class="nav"><a href="/">home</a><div id="search-box"><script type="text/javascript" src="/js/search-box.js" async></script></div></nav><div class="main"><article><header class="heading"><h1>Design points</h1><p>By <a href="https://twitter.com/lucasdicioccio">@lucasdicioccio</a>, 716 words, 0 code snippets, 2 links, 0images.</p><div class="topiclist"><div class="topic"><a class="topic-link" href="/topics/philosophy.html"><span class="topic-name">philosophy</span><span class="topic-count">1/3</span></a><div class="topic-prevnext"><span class="topic-prev-link"></span><span class="topic-next-link"><a href="/other-formats.html">[next]</a></span></div></div><div class="topic"><a class="topic-link" href="/topics/design.html"><span class="topic-name">design</span><span class="topic-count">1/2</span></a><div class="topic-prevnext"><span class="topic-prev-link"></span><span class="topic-next-link"><a href="/wishlist.html">[next]</a></span></div></div></div></header><div class="main-article"><section class="main-section"><h1 id="the-default-site-loader-is-a-kitchen-sink">The default site-loader is a kitchen-sink</h1>
 <p>This tradeoff gave name to the whole tool. In short, KitchenSink loads site
 contents in a directory which has no organization whatsoever.  All files must
 be in a same directory and map to a target based on filenames and filetypes.</p>
@@ -12,7 +12,7 @@ someone who took all the time to setup a static-site generator.</p>
 <ul>
 <li>we prevents the annoyance of conflicts in names, prefixing by year and so on can go in filenames
 </li>
-<li>we reduce the URL churn because we often move and shake hierarchies around but leaves not so much (I’ve no data for this but it’s a feeling)
+<li>we reduce the URL churn because we often move and shake hierarchies around but the content of leaves remains unchanged (I’ve no data for this but it’s a feeling)
 </li>
 <li>when you look for some file you know where it is
 </li>
@@ -21,7 +21,31 @@ someone who took all the time to setup a static-site generator.</p>
 <li>if someones grows out of the limitation of the single-directory approach, they met success and will be ready to allocate some time to either adapt KitchenSink to load the site from different place or to switch to another static-site generator
 </li>
 </ul>
-<h1 id="lack-of-overloading-repeating-many-things-across-articles">lack of overloading (repeating many things across articles)</h1>
+<h1 id="layouts-are-hard-to-change">Layouts are hard to change</h1>
+<ul>
+<li>Wordpress, Blogspot online services are a testimonial that tuning layouts may not be that much important for people; tuning layouts for people who really want to do it is feasible because the code is open-source, and corporations or professionals should afford to pay something more “hand-tuned” (they may even consider KitchenSink is not a good solution to their needs)
+</li>
+<li>nowadays we can significantly alter the look and even some UX-interactivity with CSS only
+</li>
+<li>you can even do JavaScript in KitchenSink pages to add even more “interactivity
+</li>
+<li>you can even provide control of all the page to a single-page application if you want
+</li>
+<li>I believe people should focus more time on the content rather than on the wrapping, thus having fewer knobs makes it a liberating constraint
+</li>
+</ul>
+<p><span class="emoji" data-emoji="point_right">👉</span> note that some re-engineering is going on in KitchenSink to separate the layout engine more cleanly from the rest of the engine. We could soon support some form of templates, however it is clearly not a direction I need personally at this point.</p>
+<h1 id="generator-sections-dont-take-input-data">Generator sections don’t take input data</h1>
+<ul>
+<li>design is still unclear to me (static-website with dynamic envy)
+</li>
+<li>sequence of steps may be better handled outside the generator
+</li>
+<li>definitely a security risk that prevent some ‘hosting scenarios’
+</li>
+</ul>
+<h1 id="lack-of-overloading-repeating-many-things-across-articles">Lack of overloading (repeating many things across articles)</h1>
+<p><span class="emoji" data-emoji="bulb">💡</span> Much of this concerned is now addressable using <a href="/sections-dhall.html">Dhall-sections</a> sections because Dhall has local (and even remote) imports. However we keep the discussion below for archival reasons.</p>
 <p>Oftentimes you would like one parameter to take effect on multiple pages (e.g., the social links).
 KitchenSink edges on the side of caution where we prefer to repeat the same small bit of information many times rather than forcing an overloading hierarchy:</p>
 <p>Often you end up requiring to overload some “global parameter”, which means you
@@ -43,26 +67,4 @@ for yourself – much like the scaffolding in the <a href="/getting-started.html
 article</a>). In the eventual case where one needs to
 change values (e.g., they changed their Twitter handle), it is still possible
 to modify articles in batch with some shell scripting and <code>sed -i</code>.</p>
-<h1 id="layouts-are-hard-to-change">Layouts are hard to change</h1>
-<ul>
-<li>Wordpress, Blogspot online services are a testimonial that tuning layouts may not be that much important for people; tuning layouts for people who really want to do it is feasible because the code is open-source, and corporations or professionals should afford to pay something more “hand-tuned” (they may even consider KitchenSink is not a good solution to their needs)
-</li>
-<li>nowadays we can significantly alter the look and even some UX-interactivity with CSS only
-</li>
-<li>you can even do JavaScript in KitchenSink pages to add even more “interactivity
-</li>
-<li>you can even provide control of all the page to a single-page application if you want
-</li>
-<li>I believe people should focus more time on the content rather than on the wrapping, thus having fewer knobs makes it a liberating constraint
-</li>
-</ul>
-<h1 id="generator-sections-dont-take-input-data">Generator sections don’t take input data</h1>
-<ul>
-<li>design is still unclear to me (static-website with dynamic envy)
-</li>
-<li>sequence of steps may be better handled outside the generator
-</li>
-<li>definitely a security risk that prevent some ‘hosting scenarios’
-</li>
-</ul>
 </section></div><footer class="footing"><div class="social-links"><a href="https://twitter.com/lucasdicioccio">twitter</a><a href="https://github.com/lucasdicioccio">github</a><a href="https://linkedin.com/in/lucasdicioccio">linkedin</a></div></footer></article></div></body></html>

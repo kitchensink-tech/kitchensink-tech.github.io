@@ -1,5 +1,5 @@
 [
-  {"type":"link","name":"website-www","contents":[
+  {"type":"directory","name":"website-www","contents":[
     {"type":"file","name":"atom.xml"},
     {"type":"directory","name":"css","contents":[
       {"type":"file","name":"article.css"},
@@ -8,7 +8,8 @@
       {"type":"file","name":"dev.css"},
       {"type":"file","name":"index.css"},
       {"type":"file","name":"navigation.css"},
-      {"type":"file","name":"tags.css"}
+      {"type":"file","name":"tags.css"},
+      {"type":"file","name":"topics.css"}
     ]},
     {"type":"file","name":"design-points.html"},
     {"type":"file","name":"development.html"},
@@ -33,6 +34,7 @@
       ]}
     ]},
     {"type":"file","name":"getting-started.html"},
+    {"type":"file","name":"glossary.html"},
     {"type":"file","name":"googlebd11be407c1a85ac.html"},
     {"type":"directory","name":"images","contents":[
       {"type":"file","name":"favicon.png"},
@@ -57,6 +59,7 @@
       {"type":"file","name":"features.cmark.json"},
       {"type":"file","name":"filecounts.json"},
       {"type":"file","name":"getting-started.cmark.json"},
+      {"type":"file","name":"glossary.cmark.json"},
       {"type":"file","name":"index.cmark.json"},
       {"type":"file","name":"kitchen-sink-dot-json.cmark.json"},
       {"type":"file","name":"layouts.cmark.json"},
@@ -66,6 +69,7 @@
       {"type":"file","name":"sections.cmark.json"},
       {"type":"file","name":"sections-dhall.cmark.json"},
       {"type":"file","name":"tags.cmark.json"},
+      {"type":"file","name":"topics.cmark.json"},
       {"type":"file","name":"topicsgraph.json"},
       {"type":"file","name":"wishlist.cmark.json"}
     ]},
@@ -84,14 +88,23 @@
     {"type":"file","name":"sections.html"},
     {"type":"file","name":"sitemap.txt"},
     {"type":"directory","name":"topics","contents":[
+      {"type":"file","name":"authoring-articles.atom"},
       {"type":"file","name":"authoring-articles.html"},
+      {"type":"file","name":"design.atom"},
       {"type":"file","name":"design.html"},
+      {"type":"file","name":"haskell.atom"},
       {"type":"file","name":"haskell.html"},
+      {"type":"file","name":"how-to.atom"},
       {"type":"file","name":"how-to.html"},
+      {"type":"file","name":"internals.atom"},
       {"type":"file","name":"internals.html"},
+      {"type":"file","name":"modding.atom"},
       {"type":"file","name":"modding.html"},
+      {"type":"file","name":"philosophy.atom"},
       {"type":"file","name":"philosophy.html"},
+      {"type":"file","name":"sections.atom"},
       {"type":"file","name":"sections.html"},
+      {"type":"file","name":"wip.atom"},
       {"type":"file","name":"wip.html"}
     ]},
     {"type":"directory","name":"videos","contents":[
@@ -104,5 +117,5 @@
     ]},
     {"type":"file","name":"wishlist.html"}
   ]},
-  {"type":"report","directories":11,"files":81}
+  {"type":"report","directories":11,"files":94}
 ]
