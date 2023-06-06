@@ -3,7 +3,7 @@
 blog_forceReloads 0.0
 # HELP blog_targets_number number of targets
 # TYPE blog_targets_number gauge
-blog_targets_number 165.0
+blog_targets_number 43.0
 # HELP blog_publishes number of time the site has been published
 # TYPE blog_publishes counter
 blog_publishes 0.0
@@ -27,3 +27,65 @@ blog_fullbuild_time{quantile="0.9"} NaN
 blog_fullbuild_time{quantile="0.99"} NaN
 blog_fullbuild_time_sum 0.0
 blog_fullbuild_time_count 0
+# HELP blog_single_build_time time spent building single targets on disk
+# TYPE blog_single_build_time summary
+blog_single_build_time{path="/features.html",quantile="0.5"} NaN
+blog_single_build_time{path="/features.html",quantile="0.9"} NaN
+blog_single_build_time{path="/features.html",quantile="0.99"} NaN
+blog_single_build_time_sum{path="/features.html"} 0.0
+blog_single_build_time_count{path="/features.html"} 0
+blog_single_build_time{path="/gen/out/features.cmark__cat-features-cmark",quantile="0.5"} 2.598369e-3
+blog_single_build_time{path="/gen/out/features.cmark__cat-features-cmark",quantile="0.9"} 2.598369e-3
+blog_single_build_time{path="/gen/out/features.cmark__cat-features-cmark",quantile="0.99"} 2.598369e-3
+blog_single_build_time_sum{path="/gen/out/features.cmark__cat-features-cmark"} 2.598369e-3
+blog_single_build_time_count{path="/gen/out/features.cmark__cat-features-cmark"} 1
+blog_single_build_time{path="/gen/out/features.cmark__cat-publish-script",quantile="0.5"} 1.5193812e-2
+blog_single_build_time{path="/gen/out/features.cmark__cat-publish-script",quantile="0.9"} 1.5193812e-2
+blog_single_build_time{path="/gen/out/features.cmark__cat-publish-script",quantile="0.99"} 1.5193812e-2
+blog_single_build_time_sum{path="/gen/out/features.cmark__cat-publish-script"} 1.5193812e-2
+blog_single_build_time_count{path="/gen/out/features.cmark__cat-publish-script"} 1
+blog_single_build_time{path="/gen/out/features.cmark__gen-local-server-metrics.txt",quantile="0.5"} NaN
+blog_single_build_time{path="/gen/out/features.cmark__gen-local-server-metrics.txt",quantile="0.9"} NaN
+blog_single_build_time{path="/gen/out/features.cmark__gen-local-server-metrics.txt",quantile="0.99"} NaN
+blog_single_build_time_sum{path="/gen/out/features.cmark__gen-local-server-metrics.txt"} 0.0
+blog_single_build_time_count{path="/gen/out/features.cmark__gen-local-server-metrics.txt"} 0
+blog_single_build_time{path="/gen/out/features.cmark__tree-site-input-cmark.json",quantile="0.5"} 1.3967496e-2
+blog_single_build_time{path="/gen/out/features.cmark__tree-site-input-cmark.json",quantile="0.9"} 1.3967496e-2
+blog_single_build_time{path="/gen/out/features.cmark__tree-site-input-cmark.json",quantile="0.99"} 1.3967496e-2
+blog_single_build_time_sum{path="/gen/out/features.cmark__tree-site-input-cmark.json"} 1.3967496e-2
+blog_single_build_time_count{path="/gen/out/features.cmark__tree-site-input-cmark.json"} 1
+blog_single_build_time{path="/gen/out/features.cmark__tree-site-output-cmark.json",quantile="0.5"} 5.3141854e-2
+blog_single_build_time{path="/gen/out/features.cmark__tree-site-output-cmark.json",quantile="0.9"} 5.3141854e-2
+blog_single_build_time{path="/gen/out/features.cmark__tree-site-output-cmark.json",quantile="0.99"} 5.3141854e-2
+blog_single_build_time_sum{path="/gen/out/features.cmark__tree-site-output-cmark.json"} 5.3141854e-2
+blog_single_build_time_count{path="/gen/out/features.cmark__tree-site-output-cmark.json"} 1
+blog_single_build_time{path="/gen/out/index.cmark__gen-git-head-sha.txt",quantile="0.5"} NaN
+blog_single_build_time{path="/gen/out/index.cmark__gen-git-head-sha.txt",quantile="0.9"} NaN
+blog_single_build_time{path="/gen/out/index.cmark__gen-git-head-sha.txt",quantile="0.99"} NaN
+blog_single_build_time_sum{path="/gen/out/index.cmark__gen-git-head-sha.txt"} 0.0
+blog_single_build_time_count{path="/gen/out/index.cmark__gen-git-head-sha.txt"} 0
+blog_single_build_time{path="/gen/out/sections-dhall.cmark__cat-this-file",quantile="0.5"} 2.793918e-3
+blog_single_build_time{path="/gen/out/sections-dhall.cmark__cat-this-file",quantile="0.9"} 2.793918e-3
+blog_single_build_time{path="/gen/out/sections-dhall.cmark__cat-this-file",quantile="0.99"} 2.793918e-3
+blog_single_build_time_sum{path="/gen/out/sections-dhall.cmark__cat-this-file"} 2.793918e-3
+blog_single_build_time_count{path="/gen/out/sections-dhall.cmark__cat-this-file"} 1
+blog_single_build_time{path="/other-formats.html",quantile="0.5"} 4.689011e-3
+blog_single_build_time{path="/other-formats.html",quantile="0.9"} 4.689011e-3
+blog_single_build_time{path="/other-formats.html",quantile="0.99"} 4.689011e-3
+blog_single_build_time_sum{path="/other-formats.html"} 4.689011e-3
+blog_single_build_time_count{path="/other-formats.html"} 1
+blog_single_build_time{path="/philosophy.html",quantile="0.5"} 1.7041181e-2
+blog_single_build_time{path="/philosophy.html",quantile="0.9"} 1.7041181e-2
+blog_single_build_time{path="/philosophy.html",quantile="0.99"} 1.7041181e-2
+blog_single_build_time_sum{path="/philosophy.html"} 1.7041181e-2
+blog_single_build_time_count{path="/philosophy.html"} 1
+blog_single_build_time{path="/raw/data/sections.cmark__1.csv",quantile="0.5"} 1.51867e-4
+blog_single_build_time{path="/raw/data/sections.cmark__1.csv",quantile="0.9"} 1.51867e-4
+blog_single_build_time{path="/raw/data/sections.cmark__1.csv",quantile="0.99"} 1.51867e-4
+blog_single_build_time_sum{path="/raw/data/sections.cmark__1.csv"} 1.51867e-4
+blog_single_build_time_count{path="/raw/data/sections.cmark__1.csv"} 1
+blog_single_build_time{path="/raw/data/sections.cmark__2.json",quantile="0.5"} 1.73662e-4
+blog_single_build_time{path="/raw/data/sections.cmark__2.json",quantile="0.9"} 1.73662e-4
+blog_single_build_time{path="/raw/data/sections.cmark__2.json",quantile="0.99"} 1.73662e-4
+blog_single_build_time_sum{path="/raw/data/sections.cmark__2.json"} 1.73662e-4
+blog_single_build_time_count{path="/raw/data/sections.cmark__2.json"} 1
