@@ -9,4 +9,24 @@
     <updated>
         1970-01-01T00:00:00Z
     </updated>
+    <entry>
+        <id>
+            https://kitchensink-tech.github.io/layouts.html
+        </id>
+        <title type="text">
+            Layouts and extensions
+        </title>
+        <updated>
+            1970-01-01T00:00:00Z
+        </updated>
+        <author>
+            <name>
+                Lucas DiCioccio
+            </name>
+        </author>
+        <link href="https://kitchensink-tech.github.io/layouts.html" rel="alternate"/>
+        <summary type="text">
+            There are two notions of layouts in KitchenSink: article layouts and website layouts. This article answers questions like: how do you change the layout of the blog? how do you extend KitchenSink?
+        </summary>
+    </entry>
 </feed>
