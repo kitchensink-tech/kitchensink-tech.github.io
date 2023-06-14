@@ -80,7 +80,8 @@
     {"type":"directory","name":"raw","contents":[
       {"type":"directory","name":"data","contents":[
         {"type":"file","name":"sections.cmark__1.csv"},
-        {"type":"file","name":"sections.cmark__2.json"}
+        {"type":"file","name":"sections.cmark__2.json"},
+        {"type":"file","name":"sections-dhall.cmark__1.json"}
       ]}
     ]},
     {"type":"file","name":"robots.txt"},
@@ -117,5 +118,5 @@
     ]},
     {"type":"file","name":"wishlist.html"}
   ]},
-  {"type":"report","directories":11,"files":94}
+  {"type":"report","directories":11,"files":95}
 ]

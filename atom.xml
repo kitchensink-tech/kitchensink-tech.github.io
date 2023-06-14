@@ -131,6 +131,26 @@
     </entry>
     <entry>
         <id>
+            https://kitchensink-tech.github.io/sections-dhall.html
+        </id>
+        <title type="text">
+            Dhall support in depth
+        </title>
+        <updated>
+            1970-01-01T00:00:00Z
+        </updated>
+        <author>
+            <name>
+                Lucas DiCioccio
+            </name>
+        </author>
+        <link href="https://kitchensink-tech.github.io/sections-dhall.html" rel="alternate"/>
+        <summary type="text">
+            Documenting the special feature of Dhall-sections.
+        </summary>
+    </entry>
+    <entry>
+        <id>
             https://kitchensink-tech.github.io/getting-started.html
         </id>
         <title type="text">
