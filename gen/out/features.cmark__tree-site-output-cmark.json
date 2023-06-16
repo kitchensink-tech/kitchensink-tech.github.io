@@ -36,6 +36,12 @@
     {"type":"file","name":"getting-started.html"},
     {"type":"file","name":"glossary.html"},
     {"type":"file","name":"googlebd11be407c1a85ac.html"},
+    {"type":"directory","name":"hashtags","contents":[
+      {"type":"file","name":"hash-tags.atom"},
+      {"type":"file","name":"hash-tags.html"},
+      {"type":"file","name":"note-taking.atom"},
+      {"type":"file","name":"note-taking.html"}
+    ]},
     {"type":"directory","name":"images","contents":[
       {"type":"file","name":"favicon.png"},
       {"type":"file","name":"features-001-targetsizes-timeseries.png"}
@@ -60,6 +66,7 @@
       {"type":"file","name":"filecounts.json"},
       {"type":"file","name":"getting-started.cmark.json"},
       {"type":"file","name":"glossary.cmark.json"},
+      {"type":"file","name":"hashtags.cmark.json"},
       {"type":"file","name":"index.cmark.json"},
       {"type":"file","name":"kitchen-sink-dot-json.cmark.json"},
       {"type":"file","name":"layouts.cmark.json"},
@@ -118,5 +125,5 @@
     ]},
     {"type":"file","name":"wishlist.html"}
   ]},
-  {"type":"report","directories":11,"files":95}
+  {"type":"report","directories":12,"files":100}
 ]
