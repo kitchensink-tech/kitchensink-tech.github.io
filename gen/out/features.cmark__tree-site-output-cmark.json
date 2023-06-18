@@ -1,5 +1,5 @@
 [
-  {"type":"link","name":"website-www","contents":[
+  {"type":"directory","name":"website-www","contents":[
     {"type":"file","name":"atom.xml"},
     {"type":"directory","name":"css","contents":[
       {"type":"file","name":"article.css"},

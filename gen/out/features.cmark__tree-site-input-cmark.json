@@ -1,5 +1,5 @@
 [
-  {"type":"link","name":"website-src","contents":[
+  {"type":"directory","name":"website-src","contents":[
     {"type":"file","name":"add-dev-route.js"},
     {"type":"file","name":"architecture-01-pipeline.dot"},
     {"type":"file","name":"architecture-02-engine-pipeline.dot"},
