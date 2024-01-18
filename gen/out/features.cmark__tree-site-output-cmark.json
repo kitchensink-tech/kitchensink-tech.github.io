@@ -1,6 +1,9 @@
 [
-  {"type":"directory","name":"website-www","contents":[
+  {"type":"link","name":"website-www","contents":[
     {"type":"file","name":"atom.xml"},
+    {"type":"directory","name":"audios","contents":[
+      {"type":"file","name":"0001-we-wish-u-a-merry-xmas.mp3"}
+    ]},
     {"type":"directory","name":"css","contents":[
       {"type":"file","name":"article.css"},
       {"type":"file","name":"articles-listing.css"},
@@ -125,5 +128,5 @@
     ]},
     {"type":"file","name":"wishlist.html"}
   ]},
-  {"type":"report","directories":12,"files":100}
+  {"type":"report","directories":13,"files":101}
 ]
