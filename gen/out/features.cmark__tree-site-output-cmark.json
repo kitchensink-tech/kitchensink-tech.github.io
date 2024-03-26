@@ -3,7 +3,7 @@
     {"type":"file","name":"atom.xml"},
     {"type":"directory","name":"audios","contents":[
       {"type":"file","name":"0001-we-wish-u-a-merry-xmas.mp3"}
-    ]},
+  ]},
     {"type":"directory","name":"css","contents":[
       {"type":"file","name":"article.css"},
       {"type":"file","name":"articles-listing.css"},
@@ -13,7 +13,7 @@
       {"type":"file","name":"navigation.css"},
       {"type":"file","name":"tags.css"},
       {"type":"file","name":"topics.css"}
-    ]},
+  ]},
     {"type":"file","name":"design-points.html"},
     {"type":"file","name":"development.html"},
     {"type":"file","name":"engine.html"},
@@ -24,7 +24,7 @@
         {"type":"file","name":"architecture-02-engine-pipeline.dot.png"},
         {"type":"file","name":"architecture-03-in-depth-engine-pipeline.dot.png"},
         {"type":"file","name":"features-002-dot-demo.dot.png"}
-      ]},
+    ]},
       {"type":"directory","name":"out","contents":[
         {"type":"file","name":"features.cmark__cat-features-cmark"},
         {"type":"file","name":"features.cmark__cat-publish-script"},
@@ -34,8 +34,8 @@
         {"type":"file","name":"features.cmark__tree-site-output-cmark.json"},
         {"type":"file","name":"index.cmark__gen-git-head-sha.txt"},
         {"type":"file","name":"sections-dhall.cmark__cat-this-file"}
-      ]}
-    ]},
+    ]}
+  ]},
     {"type":"file","name":"getting-started.html"},
     {"type":"file","name":"glossary.html"},
     {"type":"file","name":"googlebd11be407c1a85ac.html"},
@@ -44,11 +44,11 @@
       {"type":"file","name":"hash-tags.html"},
       {"type":"file","name":"note-taking.atom"},
       {"type":"file","name":"note-taking.html"}
-    ]},
+  ]},
     {"type":"directory","name":"images","contents":[
       {"type":"file","name":"favicon.png"},
       {"type":"file","name":"features-001-targetsizes-timeseries.png"}
-    ]},
+  ]},
     {"type":"file","name":"index.html"},
     {"type":"directory","name":"js","contents":[
       {"type":"file","name":"add-dev-route.js"},
@@ -60,7 +60,7 @@
       {"type":"file","name":"search-box.js"},
       {"type":"file","name":"site-graph.js"},
       {"type":"file","name":"topicgraph.js"}
-    ]},
+  ]},
     {"type":"directory","name":"json","contents":[
       {"type":"file","name":"design-points.cmark.json"},
       {"type":"file","name":"development.cmark.json"},
@@ -82,7 +82,7 @@
       {"type":"file","name":"topics.cmark.json"},
       {"type":"file","name":"topicsgraph.json"},
       {"type":"file","name":"wishlist.cmark.json"}
-    ]},
+  ]},
     {"type":"file","name":"kitchen-sink-dot-json.html"},
     {"type":"file","name":"layouts.html"},
     {"type":"file","name":"other-formats.html"},
@@ -91,9 +91,12 @@
       {"type":"directory","name":"data","contents":[
         {"type":"file","name":"sections.cmark__1.csv"},
         {"type":"file","name":"sections.cmark__2.json"},
-        {"type":"file","name":"sections-dhall.cmark__1.json"}
-      ]}
-    ]},
+        {"type":"file","name":"sections.cmark__some-csv-dataset1.csv"},
+        {"type":"file","name":"sections.cmark__some-json-dataset2.json"},
+        {"type":"file","name":"sections-dhall.cmark__1.json"},
+        {"type":"file","name":"sections-dhall.cmark__example1.json"}
+    ]}
+  ]},
     {"type":"file","name":"robots.txt"},
     {"type":"file","name":"sections-dhall.html"},
     {"type":"file","name":"sections.html"},
@@ -117,7 +120,7 @@
       {"type":"file","name":"sections.html"},
       {"type":"file","name":"wip.atom"},
       {"type":"file","name":"wip.html"}
-    ]},
+  ]},
     {"type":"directory","name":"videos","contents":[
       {"type":"file","name":"auto-reload-001-dot.mp4"},
       {"type":"file","name":"auto-reload-001-dot.webm"},
@@ -125,8 +128,9 @@
       {"type":"file","name":"auto-reload-002-liveedit.webm"},
       {"type":"file","name":"one-time-commands-001-produce.mp4"},
       {"type":"file","name":"one-time-commands-001-produce.webm"}
-    ]},
-    {"type":"file","name":"wishlist.html"}
   ]},
-  {"type":"report","directories":13,"files":101}
+    {"type":"file","name":"wishlist.html"}
+  ]}
+,
+  {"type":"report","directories":13,"files":104}
 ]
