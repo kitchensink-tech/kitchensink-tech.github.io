@@ -23,7 +23,8 @@
         {"type":"file","name":"architecture-01-pipeline.dot.png"},
         {"type":"file","name":"architecture-02-engine-pipeline.dot.png"},
         {"type":"file","name":"architecture-03-in-depth-engine-pipeline.dot.png"},
-        {"type":"file","name":"features-002-dot-demo.dot.png"}
+        {"type":"file","name":"features-002-dot-demo.dot.png"},
+        {"type":"file","name":"toto.dot.png"}
     ]},
       {"type":"directory","name":"out","contents":[
         {"type":"file","name":"features.cmark__cat-features-cmark"},
@@ -94,6 +95,7 @@
         {"type":"file","name":"sections.cmark__some-csv-dataset1.csv"},
         {"type":"file","name":"sections.cmark__some-json-dataset2.json"},
         {"type":"file","name":"sections-dhall.cmark__1.json"},
+        {"type":"file","name":"sections-dhall.cmark__alice-bob2.json"},
         {"type":"file","name":"sections-dhall.cmark__example1.json"}
     ]}
   ]},
@@ -132,5 +134,5 @@
     {"type":"file","name":"wishlist.html"}
   ]}
 ,
-  {"type":"report","directories":13,"files":104}
+  {"type":"report","directories":13,"files":106}
 ]
