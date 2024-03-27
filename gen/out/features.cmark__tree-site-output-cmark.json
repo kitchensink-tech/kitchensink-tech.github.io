@@ -94,6 +94,7 @@
         {"type":"file","name":"sections.cmark__2.json"},
         {"type":"file","name":"sections.cmark__some-csv-dataset1.csv"},
         {"type":"file","name":"sections.cmark__some-json-dataset2.json"},
+        {"type":"file","name":"sections.cmark__users3.json"},
         {"type":"file","name":"sections-dhall.cmark__1.json"},
         {"type":"file","name":"sections-dhall.cmark__alice-bob2.json"},
         {"type":"file","name":"sections-dhall.cmark__example1.json"}
@@ -134,5 +135,5 @@
     {"type":"file","name":"wishlist.html"}
   ]}
 ,
-  {"type":"report","directories":13,"files":106}
+  {"type":"report","directories":13,"files":107}
 ]
