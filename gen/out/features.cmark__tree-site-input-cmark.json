@@ -45,9 +45,8 @@
     {"type":"file","name":"topicgraph.js"},
     {"type":"file","name":"topics.cmark"},
     {"type":"file","name":"topics.css"},
-    {"type":"file","name":"toto.dot"},
     {"type":"file","name":"wishlist.cmark"}
   ]}
 ,
-  {"type":"report","directories":0,"files":47}
+  {"type":"report","directories":0,"files":46}
 ]

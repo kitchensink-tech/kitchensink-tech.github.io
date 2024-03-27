@@ -34,6 +34,8 @@
         {"type":"file","name":"features.cmark__tree-site-input-cmark.json"},
         {"type":"file","name":"features.cmark__tree-site-output-cmark.json"},
         {"type":"file","name":"index.cmark__gen-git-head-sha.txt"},
+        {"type":"file","name":"index.cmark__trivia"},
+        {"type":"file","name":"sections.cmark__jqified-datasets"},
         {"type":"file","name":"sections-dhall.cmark__cat-this-file"}
     ]}
   ]},
@@ -92,9 +94,14 @@
       {"type":"directory","name":"data","contents":[
         {"type":"file","name":"sections.cmark__1.csv"},
         {"type":"file","name":"sections.cmark__2.json"},
+        {"type":"file","name":"sections.cmark__items12.json"},
+        {"type":"file","name":"sections.cmark__items21.json"},
         {"type":"file","name":"sections.cmark__some-csv-dataset1.csv"},
+        {"type":"file","name":"sections.cmark__some-csv-dataset3.csv"},
         {"type":"file","name":"sections.cmark__some-json-dataset2.json"},
+        {"type":"file","name":"sections.cmark__some-json-dataset4.json"},
         {"type":"file","name":"sections.cmark__users3.json"},
+        {"type":"file","name":"sections.cmark__users5.json"},
         {"type":"file","name":"sections-dhall.cmark__1.json"},
         {"type":"file","name":"sections-dhall.cmark__alice-bob2.json"},
         {"type":"file","name":"sections-dhall.cmark__example1.json"}
@@ -135,5 +142,5 @@
     {"type":"file","name":"wishlist.html"}
   ]}
 ,
-  {"type":"report","directories":13,"files":107}
+  {"type":"report","directories":13,"files":114}
 ]
