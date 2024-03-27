@@ -1,0 +1,24 @@
+{
+  "items1": [
+    {
+      "letter": "alpha"
+    },
+    {
+      "letter": "beta"
+    },
+    {
+      "letter": "gamma"
+    }
+  ],
+  "items2": [
+    {
+      "name": "foo"
+    },
+    {
+      "name": "bar"
+    },
+    {
+      "name": "baz"
+    }
+  ]
+}
