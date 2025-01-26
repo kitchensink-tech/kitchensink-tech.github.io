@@ -1,11 +1,11 @@
 git commits:
-165
+161
 src files:
 54
 code size (lines):
-5069
+5081
 code size (bytes):
-182773
+183279
 details:
    220    952   6232 ./hs/src/KitchenSink/Commonmark/Free.hs
     55    165   1364 ./hs/src/KitchenSink/Commonmark/HashTag.hs
@@ -35,7 +35,7 @@ details:
     94    401   3673 ./hs/src/KitchenSink/Engine/OnTheFly.hs
     35     98    818 ./hs/src/KitchenSink/Engine/SiteConfig.hs
     79    361   3297 ./hs/src/KitchenSink/Engine/Counters.hs
-   348   1651  15240 ./hs/src/KitchenSink/Engine/MultiSite.hs
+   359   1693  15673 ./hs/src/KitchenSink/Engine/MultiSite.hs
    153    640   6079 ./hs/src/KitchenSink/Engine/Serve.hs
     60    227   2073 ./hs/src/KitchenSink/Engine/Produce.hs
     57    184   1656 ./hs/src/KitchenSink/Engine/Api.hs
@@ -60,5 +60,5 @@ details:
     57    196   1744 ./hs/src/KitchenSink/Layout/Blog/Analyses/GlossaryGrouping.hs
     22     85    715 ./hs/src/KitchenSink/Layout/Blog/Analyses/Wordcount.hs
     16     41    455 ./hs/src/KitchenSink/Layout/Blog.hs
-    48    227   1701 ./hs/src/KitchenSink/Engine.hs
-  5069  20969 182773 total
+    49    236   1774 ./hs/src/KitchenSink/Engine.hs
+  5081  21020 183279 total
