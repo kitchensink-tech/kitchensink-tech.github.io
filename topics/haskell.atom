@@ -1,104 +1,674 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom">
-    <title type="text">
-        The Kitchen Sink Blog Generator
-    </title>
-    <id>
-        https://kitchensink-tech.github.io/atom.xml
-    </id>
-    <updated>
-        1970-01-01T00:00:00Z
-    </updated>
-    <entry>
-        <id>
-            https://kitchensink-tech.github.io/layouts.html
-        </id>
-        <title type="text">
-            Layouts and extensions
-        </title>
-        <updated>
-            1970-01-01T00:00:00Z
-        </updated>
-        <author>
-            <name>
-                Lucas DiCioccio
-            </name>
-        </author>
-        <content type="html">
-            &lt;div class="main-article"&gt;&lt;section class="main-section"&gt;&lt;p&gt;There are two notions of layouts in KitchenSink: &lt;em&gt;article layouts&lt;/em&gt; and &lt;em&gt;website layouts&lt;/em&gt;. This article first discusses how they differ, then we deep-dive in Website Layouts.&lt;/p&gt; &lt;h2 id="article-vs-website-layouts"&gt;Article vs. Website layouts&lt;/h2&gt; &lt;p&gt;Article Layouts are per-article configurations which allow to tune what a rendered-article looks like. This configuration is set in the &lt;code&gt;base:build-info.json&lt;/code&gt; &lt;a href="/sections.html"&gt;section&lt;/a&gt;. For instance, while writing this text, this page is an &lt;strong&gt;Upcoming Article&lt;/strong&gt;, when I’ll find that the content is ready, I’ll change this configuration to a &lt;strong&gt;Published Article&lt;/strong&gt; . An example configuration is as follows:.&lt;/p&gt; &lt;pre&gt;&lt;code&gt;=base:build-info.json {&amp;quot;layout&amp;quot;:&amp;quot;article&amp;quot; ,&amp;quot;publicationStatus&amp;quot;:&amp;quot;Upcoming&amp;quot; } &lt;/code&gt;&lt;/pre&gt; &lt;p&gt;The &lt;code&gt;layout&lt;/code&gt; directive indicates how KitchenSink should intepret (in a broad sense) the rest of the &lt;code&gt;.cmark&lt;/code&gt; article. The layout not only influences the HTML output of the article content: the layout also can influence the presence of the navigation bar at the top, or just about anything. If the directive were &lt;code&gt;application&lt;/code&gt; instead, we would have no default CSS and no navigation bar as we expect the article content to take-over the whole page. Currently, these layouts are mostly documented in the documentation about the build-info &lt;a href="/sections.html"&gt;section&lt;/a&gt;.&lt;/p&gt; &lt;p&gt;In addition, KitchenSink utilises the &lt;code&gt;publicationStatus&lt;/code&gt; to further tweak some behaviours here and there. For instance, an &lt;code&gt;Upcoming&lt;/code&gt; article will have a warning banner. Upcoming articles will show up grayed-out in article listings. Upcoming articles will not appear in the Atom feed. We’ve yet to document all such behaviors. However, if you wonder where KitchenSink takes all these rules, we can give you the answer right away: from the Website Layout &lt;span class="emoji" data-emoji="bulb"&gt;💡&lt;/span&gt;!&lt;/p&gt; &lt;p&gt;Website Layouts carry most of the “business rules” in KitchenSink. Creating a Website Layout is a significant modification of KitchenSink. Indeed, Website Layouts control how the collection of files in the KitchenSink directory are interpreted into a website in a broad sense. The Website Layout dictates the directory structure, the HTML contents, CSS files, videos, what have you.&lt;/p&gt; &lt;p&gt;Writing your own Layout allows you to:&lt;/p&gt; &lt;ul&gt; &lt;li&gt;support more or fewer Section types &lt;/li&gt; &lt;li&gt;redefine the set of Targets and their contents &lt;/li&gt; &lt;/ul&gt; &lt;p&gt;Layouts in KitchenSink are implemented in the &lt;a href="https://haskell.org/"&gt;Haskell&lt;/a&gt; programming language and require some firm understanding of Haskell if you want to modify a layout, let-alone build a layout from scratch.&lt;/p&gt; &lt;h2 id="article-layouts"&gt;Article layouts&lt;/h2&gt; &lt;p&gt;Website layouts define the behaviour of Article layouts. Kitchen-Sink currently supports a single website-layout (the one for this website). For now, I’ll refer you to &lt;a href="/sections.html#build-info-mandatory"&gt;the build-info section documentation&lt;/a&gt;.&lt;/p&gt; &lt;h2 id="writing-website-layouts"&gt;Writing website layouts&lt;/h2&gt; &lt;p&gt;The Website Layout is so important that the KichenSink code merely speak about Layout. This section describes KitchenSink’s Layout type in depth.&lt;/p&gt; &lt;p&gt;Previous paragraphs introduced Website Layouts as the way to customize the business rules to turn &lt;code&gt;.cmark&lt;/code&gt; section-files into &lt;code&gt;.html&lt;/code&gt; and other sort of files. Hence, so far we’ve answered &lt;strong&gt;what&lt;/strong&gt; is the purpose of Website Layouts. We now discuss &lt;strong&gt;how&lt;/strong&gt; Website Layouts operate. As often in Haskell, the best way to describe &lt;strong&gt;how&lt;/strong&gt; something works is to show and scrutinize type signatures. Hence, let’s dive-in the &lt;code&gt;Layout&lt;/code&gt; type and see for ourselves. As of today, the &lt;code&gt;Layout&lt;/code&gt; type is defined as follows:&lt;/p&gt; &lt;div class="code code--highlighted"&gt;&lt;div class="sourceCode"&gt;&lt;pre class="sourceCode"&gt;&lt;code class="sourceCode"&gt;&lt;span id="1"&gt;&lt;a href="#1" aria-hidden="true" tabindex="-1"&gt;&lt;/a&gt;&lt;span class="kw"&gt;data&lt;/span&gt; &lt;span class="dt"&gt;Layout&lt;/span&gt; ext meta summary&lt;/span&gt; &lt;span id="2"&gt;&lt;a href="#2" aria-hidden="true" tabindex="-1"&gt;&lt;/a&gt; &lt;span class="ot"&gt;=&lt;/span&gt; &lt;span class="dt"&gt;Layout&lt;/span&gt;&lt;/span&gt; &lt;span id="3"&gt;&lt;a href="#3" aria-hidden="true" tabindex="-1"&gt;&lt;/a&gt; {&lt;span class="ot"&gt; siteTargets ::&lt;/span&gt; &lt;span class="dt"&gt;OutputPrefix&lt;/span&gt; &lt;span class="ot"&gt;-&amp;gt;&lt;/span&gt; meta &lt;span class="ot"&gt;-&amp;gt;&lt;/span&gt; &lt;span class="dt"&gt;Site&lt;/span&gt; ext &lt;span class="ot"&gt;-&amp;gt;&lt;/span&gt; [&lt;span class="dt"&gt;Target&lt;/span&gt; ext summary]&lt;/span&gt; &lt;span id="4"&gt;&lt;a href="#4" aria-hidden="true" tabindex="-1"&gt;&lt;/a&gt; ,&lt;span class="ot"&gt; extraSectiontypes ::&lt;/span&gt; [&lt;span class="dt"&gt;ExtraSectionType&lt;/span&gt; ext]&lt;/span&gt; &lt;span id="5"&gt;&lt;a href="#5" aria-hidden="true" tabindex="-1"&gt;&lt;/a&gt; }&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;&lt;p&gt;It helps to squint a bit and ignore type-level parameters. Simplifying the above, we could write Layout as:&lt;/p&gt; &lt;div class="code code--highlighted"&gt;&lt;div class="sourceCode"&gt;&lt;pre class="sourceCode"&gt;&lt;code class="sourceCode"&gt;&lt;span id="1"&gt;&lt;a href="#1" aria-hidden="true" tabindex="-1"&gt;&lt;/a&gt;&lt;span class="kw"&gt;data&lt;/span&gt; &lt;span class="dt"&gt;Layout&lt;/span&gt;&lt;/span&gt; &lt;span id="2"&gt;&lt;a href="#2" aria-hidden="true" tabindex="-1"&gt;&lt;/a&gt; &lt;span class="ot"&gt;=&lt;/span&gt; &lt;span class="dt"&gt;Layout&lt;/span&gt;&lt;/span&gt; &lt;span id="3"&gt;&lt;a href="#3" aria-hidden="true" tabindex="-1"&gt;&lt;/a&gt; {&lt;span class="ot"&gt; siteTargets ::&lt;/span&gt; &lt;span class="dt"&gt;Site&lt;/span&gt; &lt;span class="ot"&gt;-&amp;gt;&lt;/span&gt; [&lt;span class="dt"&gt;Target&lt;/span&gt;]&lt;/span&gt; &lt;span id="4"&gt;&lt;a href="#4" aria-hidden="true" tabindex="-1"&gt;&lt;/a&gt; ,&lt;span class="ot"&gt; extraSectiontypes ::&lt;/span&gt; [&lt;span class="dt"&gt;ExtraSectionType&lt;/span&gt;]&lt;/span&gt; &lt;span id="5"&gt;&lt;a href="#5" aria-hidden="true" tabindex="-1"&gt;&lt;/a&gt; }&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;&lt;p&gt;In short, a &lt;code&gt;Layout&lt;/code&gt; has two main purposes:&lt;/p&gt; &lt;ul&gt; &lt;li&gt;provide a &lt;code&gt;siteTargets&lt;/code&gt; that turns a &lt;code&gt;Site&lt;/code&gt; into a list of &lt;code&gt;Target&lt;/code&gt; &lt;/li&gt; &lt;li&gt;provide a &lt;code&gt;extraSectiontypes&lt;/code&gt; which is a list of Sections KitchenSink should learn how to parse &lt;/li&gt; &lt;/ul&gt; &lt;p&gt;The type parameters &lt;code&gt;ext&lt;/code&gt;, &lt;code&gt;summary&lt;/code&gt;, &lt;code&gt;meta&lt;/code&gt; and so on and so forth are required to let the Haskell compiler ensure that everything is consistent (e.g., you can only build Targets in &lt;code&gt;siteTargets&lt;/code&gt; for an extension if the extension is declared in &lt;code&gt;extraSectiontypes&lt;/code&gt;).&lt;/p&gt; &lt;h3 id="understanding-sitetargets"&gt;understanding &lt;code&gt;siteTargets&lt;/code&gt;&lt;/h3&gt; &lt;p&gt;A Layout gets to decide how to translate the in-memory represention of a whole Site into files, including their content-generation logic.&lt;/p&gt; &lt;p&gt;Thus what is important is to get some example of &lt;code&gt;siteTargets&lt;/code&gt; function. And understand, at least at a shallow-level, what is a Target.&lt;/p&gt; &lt;pre&gt;&lt;code&gt;data Target ext a = Target { destination :: DestinationLocation , productionRule :: ProductionRule ext , summary :: a } deriving (Functor) &lt;/code&gt;&lt;/pre&gt; &lt;p&gt;The &lt;code&gt;destination&lt;/code&gt; is roughly the HTTP path of where the content is placed. The &lt;code&gt;productionRule&lt;/code&gt; is roughly the IO-inducing code to generate the content (e.g., rendering some HTML, copying some file, or executing a command). Finally, the &lt;code&gt;summary&lt;/code&gt; serves the purpose of having previews (e.g., in the search box).&lt;/p&gt; &lt;p&gt;In short, a Target contains enough information &lt;strong&gt;to locate, describe, and build&lt;/strong&gt; some document piece of your website.&lt;/p&gt; &lt;p&gt;Let’s now open KitchenSink’s default &lt;code&gt;siteTargets&lt;/code&gt; function at a first-level of details:&lt;/p&gt; &lt;pre&gt;&lt;code&gt;siteTargets :: OutputPrefix -&amp;gt; MetaData -&amp;gt; Site -&amp;gt; [Target] siteTargets prefix extra site = allTargets where allTargets = mconcat [ embeddedGeneratorTargets , embeddedDataTargets , fmap fst articleTargets , imageTargets prefix site , dotimageTargets prefix site , videoTargets prefix site , rawTargets prefix site , documentTargets prefix site , cssTargets prefix site , jsTargets prefix site , htmlTargets prefix site , topicIndexesTargets (lookupSpecialArticle SpecialArticles.Topics site) , topicAtomTargets (lookupSpecialArticle SpecialArticles.Topics site) , glossaryTargets (lookupSpecialArticleSource SpecialArticles.Glossary site) , jsonDataTargets , seoTargets ] &lt;/code&gt;&lt;/pre&gt; &lt;p&gt;Unsurprisingly, the default &lt;code&gt;siteTargets&lt;/code&gt; parrots what the documentation pages about &lt;a href="/sections.html"&gt;sections&lt;/a&gt; and &lt;a href="/other-formats.html"&gt;other types of files&lt;/a&gt; decribe. Each family of document, each specific section in article files, each magic-file (like glossaries) gets a specific target. Each of these functions then have different techniques (e.g., HTML targets will render some HTML using an HTML-layout library, JSON targets will use Aeson-encoding of some structure etc.)&lt;/p&gt; &lt;p&gt;As you can guess, writing a whole new &lt;code&gt;siteTargets&lt;/code&gt; is a lot of work. That’s why we recommend to start contacting me before jumping into such an endeavor. Longer-term I’d like to have support for templated-targets, much like Dhall, but with a mini language better-suited for markup (like Mustache or ERB for instance).&lt;/p&gt; &lt;h3 id="some-words-on-extrasectiontypes"&gt;some words on &lt;code&gt;extraSectiontypes&lt;/code&gt;&lt;/h3&gt; &lt;p&gt;The way KitchenSink divides work operates in two phases:&lt;/p&gt; &lt;ul&gt; &lt;li&gt;load the &lt;code&gt;Site&lt;/code&gt; object &lt;ul&gt; &lt;li&gt;read articles from disk (we discuss only &lt;code&gt;.cmark&lt;/code&gt;, but other files like &lt;code&gt;.png&lt;/code&gt; are listed too) &lt;/li&gt; &lt;li&gt;parsing content of &lt;code&gt;.cmark&lt;/code&gt; as section format &lt;/li&gt; &lt;li&gt;evaluating &lt;code&gt;.dhall&lt;/code&gt; sections &lt;/li&gt; &lt;/ul&gt; &lt;/li&gt; &lt;li&gt;assemble targets &lt;ul&gt; &lt;li&gt;compute all the siteTargets (cf. above) &lt;/li&gt; &lt;li&gt;evaluate all the targets &lt;/li&gt; &lt;/ul&gt; &lt;/li&gt; &lt;/ul&gt; &lt;p&gt;If you were to extend the &lt;code&gt;.cmark&lt;/code&gt; file with some form of new section type (e.g., you want to support some “license” section), you would have to modify KitchenSink in both phases:&lt;/p&gt; &lt;ul&gt; &lt;li&gt;during the &lt;strong&gt;load&lt;/strong&gt; phase: you need a name &lt;code&gt;ext:my-license-extension&lt;/code&gt; so that the loader recognizes &lt;code&gt;=ext:my-license-extension&lt;/code&gt; like &lt;code&gt;=base:main-content.cmark&lt;/code&gt; &lt;/li&gt; &lt;li&gt;for the &lt;strong&gt;assemble&lt;/strong&gt; phase: you later need &lt;code&gt;Assembler&lt;/code&gt; functions (that are capable of reading article sections) to decide how your license is interpreted and rendered in your Website layout. &lt;/li&gt; &lt;/ul&gt; &lt;p&gt;Following the type-machinery should be enough. One remark though: there is one single “extension” parameter, so if you want to support multiple ones, you should build a sum-type of the extensions you support.&lt;/p&gt; &lt;h2 id="extending-kitchensink-in-other-forms"&gt;Extending KitchenSink in other forms&lt;/h2&gt; &lt;p&gt;You may want to modify KitchenSink in ways we have not discussed yet. For intance, you may want to support new filetypes (e.g., &lt;code&gt;docx&lt;/code&gt; documents) in an existing family of filetypes, or new families of file types altogether (e.g., source code of some form).&lt;/p&gt; &lt;p&gt;Such changes are feasible but not &lt;em&gt;that easily&lt;/em&gt;. Your best chance likely is to &lt;a href="https://dicioccio.fr/about-me.html"&gt;contact me&lt;/a&gt; or by opening an issue on the &lt;a href="https://github.com/kitchensink-tech/kitchensink"&gt;GitHub page&lt;/a&gt;.&lt;/p&gt; &lt;h2 id="summary"&gt;Summary&lt;/h2&gt; &lt;p&gt;You want to modify how a given article is rendered using an existing Article layout:&lt;/p&gt; &lt;ul&gt; &lt;li&gt;a) modify &lt;code&gt;=base:build-info.json&lt;/code&gt; section &lt;/li&gt; &lt;/ul&gt; &lt;p&gt;You want to modify the structure of the generated HTML (or create an Article Layout):&lt;/p&gt; &lt;ul&gt; &lt;li&gt;a) the &lt;code&gt;siteTargets&lt;/code&gt; function &lt;/li&gt; &lt;/ul&gt; &lt;p&gt;You want to generate addition &lt;code&gt;.json&lt;/code&gt; magic file (or similar):&lt;/p&gt; &lt;ul&gt; &lt;li&gt;a) the &lt;code&gt;siteTargets&lt;/code&gt; function &lt;/li&gt; &lt;/ul&gt; &lt;p&gt;You want to modify the structure of the rendered HTML:&lt;/p&gt; &lt;ul&gt; &lt;li&gt;a) the &lt;code&gt;siteTargets&lt;/code&gt; function &lt;/li&gt; &lt;/ul&gt; &lt;p&gt;You want to support a new section:&lt;/p&gt; &lt;ul&gt; &lt;li&gt;a) modify the Layout to be able to parse the new data type &lt;/li&gt; &lt;li&gt;b) modify the &lt;code&gt;evalTarget&lt;/code&gt; function to apply the needed changes (most likely, you want to generate some extra information) &lt;/li&gt; &lt;/ul&gt; &lt;p&gt;You want to support a new filetype:&lt;/p&gt; &lt;ul&gt; &lt;li&gt;a) contact me &lt;/li&gt; &lt;li&gt;b) modify the Site loader &lt;/li&gt; &lt;li&gt;c) modify the Layout function with whatever you need to turn the filetype into a set of targets &lt;/li&gt; &lt;/ul&gt; &lt;p&gt;Other changes:&lt;/p&gt; &lt;ul&gt; &lt;li&gt;a) contact me &lt;/li&gt; &lt;/ul&gt; &lt;/section&gt;&lt;/div&gt;
-        </content>
-        <link href="https://kitchensink-tech.github.io/layouts.html" rel="alternate"/>
-        <summary type="text">
-            There are two notions of layouts in KitchenSink: article layouts and website layouts. This article answers questions like: how do you change the layout of the blog? how do you extend KitchenSink?
-        </summary>
-    </entry>
-    <entry>
-        <id>
-            https://kitchensink-tech.github.io/development.html
-        </id>
-        <title type="text">
-            Development
-        </title>
-        <updated>
-            1970-01-01T00:00:00Z
-        </updated>
-        <author>
-            <name>
-                Lucas DiCioccio
-            </name>
-        </author>
-        <content type="html">
-            &lt;div class="main-article"&gt;&lt;section class="main-section"&gt;&lt;h1 id="project-site-source-code-and-reporting-issues"&gt;project site, source code, and reporting issues&lt;/h1&gt; &lt;p&gt;You’ll find the source code of KitchenSink on GitHub at the following repository: &lt;a href="https://github.com/kitchensink-tech/kitchensink"&gt;https://github.com/kitchensink-tech/kitchensink&lt;/a&gt;&lt;/p&gt; &lt;p&gt;Please also use GitHub on the same project to &lt;a href="https://github.com/kitchensink-tech/kitchensink/issues"&gt;file issues&lt;/a&gt;.&lt;/p&gt; &lt;p&gt;As of date, there are no discussion channels such as a Discord or Slack instance. Please reach-out directly to me via email or on Twitter (cf. social links at the bottom of this page).&lt;/p&gt; &lt;h1 id="repository-organization"&gt;repository organization&lt;/h1&gt; &lt;p&gt;Much like the title tells, the code is a kitchen sink at the moment. It is still unclear what will make good boundaries. However what is clear is that we want two keep the following: Haskell for the blog engine, and PureScript for frontend “helper JS tools”.&lt;/p&gt; &lt;p&gt;Both the engine code, the frontend helpers code, and the KitchenSink documentation (this site) sources are in a same repository out of simplicity: a feature can be added and documented in a same commit.&lt;/p&gt; &lt;h1 id="code-organization-and-basic-concepts"&gt;code organization and basic concepts&lt;/h1&gt; &lt;p&gt;At this point, the code grew mostly organically and suffers from arbitrary choices. As we implement &lt;a href="/wishlist.html"&gt;new features&lt;/a&gt;, the need to rework and modularize some aspects will show up.&lt;/p&gt; &lt;p&gt;For sure what will stay are:&lt;/p&gt; &lt;ul&gt; &lt;li&gt;the section-based format is a central way to add functionalities, we may parametrize the Parser to be extensible &lt;/li&gt; &lt;li&gt;the notion of a Site has something loaded using some IO parametrized by the engine &lt;/li&gt; &lt;li&gt;the notion of Target to hold instruction to build some content with a destination path &lt;/li&gt; &lt;li&gt;the fact that layouts are function from Site to Target, possibly in multiple ‘stages’ (or a fixpoint as it is now) &lt;/li&gt; &lt;/ul&gt; &lt;p&gt;Things I would like to improve significantly:&lt;/p&gt; &lt;ul&gt; &lt;li&gt;possibility to modularize the section-based parser and the layout function &lt;/li&gt; &lt;li&gt;where we load the Site from in the engine (should be feasible to load Sites without resorting to the section-based parser – i.e., proper decoupling) &lt;/li&gt; &lt;li&gt;settle on some JSON format for advanced analytics rather than the current ad-hoc historical values &lt;/li&gt; &lt;/ul&gt; &lt;h1 id="library-curation-philosophy"&gt;library curation philosophy&lt;/h1&gt; &lt;p&gt;The libraries we incorporate are “standard Haskell”. In particular we only want to bring-in libraries that do not force callers to operate for long in complicated Monad stacks. Rather we want to incorporate functionalities and wrap them to our suiting. In short, avoid situations where one has to &lt;em&gt;add code to remove features&lt;/em&gt;.&lt;/p&gt; &lt;h1 id="generating-most-of-purescript-bindings-directly-from-haskell"&gt;generating most of PureScript bindings directly from Haskell&lt;/h1&gt; &lt;p&gt;The &lt;code&gt;purs/&lt;/code&gt; directory contains a package named &lt;code&gt;kitchen-sink-compat&lt;/code&gt;. A number of sources files in this package are automatically generated from Haskell using &lt;a href="https://github.com/eskimor/purescript-bridge"&gt;purescript-bridge&lt;/a&gt; and &lt;a href="https://github.com/bentongxyz/purescript-argonaut-aeson-generic"&gt;a fork&lt;/a&gt; of the &lt;code&gt;argonaut-aeson-generic&lt;/code&gt; PureScript package.&lt;/p&gt; &lt;p&gt;To regenerate the bindings use:&lt;/p&gt; &lt;pre&gt;&lt;code&gt;cabal run -- kitchen-sink-purescript-bridge --outputDir ../purs/kitchen-sink-compat/src/ &lt;/code&gt;&lt;/pre&gt; &lt;/section&gt;&lt;/div&gt;
-        </content>
-        <link href="https://kitchensink-tech.github.io/development.html" rel="alternate"/>
-        <summary type="text">
-            You want to change, extend, or restrict Kitchen-Sink? found a bug? want to extract some feature out of it or on the opposite, embed it in a larger application?
-        </summary>
-    </entry>
-    <entry>
-        <id>
-            https://kitchensink-tech.github.io/other-formats.html
-        </id>
-        <title type="text">
-            Other types of files
-        </title>
-        <updated>
-            1970-01-01T00:00:00Z
-        </updated>
-        <author>
-            <name>
-                Lucas DiCioccio
-            </name>
-        </author>
-        <content type="html">
-            &lt;div class="main-article"&gt;&lt;section class="main-section"&gt;&lt;p&gt;Besides generating content from &lt;code&gt;.cmark&lt;/code&gt; &lt;a href="/sections.html"&gt;section-based&lt;/a&gt; files, KitchenSink also copies some video and images, and knows how to call in some generators for very specific formats.&lt;/p&gt; &lt;h2 id="videos"&gt;videos&lt;/h2&gt; &lt;p&gt;KitchenSink copies &lt;code&gt;.webm&lt;/code&gt; and &lt;code&gt;.mp4&lt;/code&gt; files under &lt;code&gt;/videos&lt;/code&gt;.&lt;/p&gt; &lt;h2 id="sounds"&gt;sounds&lt;/h2&gt; &lt;p&gt;KitchenSink copies &lt;code&gt;.ogg&lt;/code&gt;, &lt;code&gt;flac&lt;/code&gt;, &lt;code&gt;.wav&lt;/code&gt;, &lt;code&gt;.midi&lt;/code&gt;, and &lt;code&gt;.mp3&lt;/code&gt; files under &lt;code&gt;/videos&lt;/code&gt;.&lt;/p&gt; &lt;h2 id="images"&gt;images&lt;/h2&gt; &lt;p&gt;KitchenSink copies &lt;code&gt;.jpg&lt;/code&gt;, &lt;code&gt;.jpeg&lt;/code&gt;, and &lt;code&gt;.png&lt;/code&gt; files under &lt;code&gt;/images&lt;/code&gt;.&lt;/p&gt; &lt;h2 id="documents"&gt;documents&lt;/h2&gt; &lt;p&gt;KitchenSink copies &lt;code&gt;.pdf&lt;/code&gt; files under &lt;code&gt;/docs&lt;/code&gt;.&lt;/p&gt; &lt;h2 id="html"&gt;HTML&lt;/h2&gt; &lt;p&gt;KitchenSink copies &lt;code&gt;.html&lt;/code&gt; files under &lt;code&gt;/&lt;/code&gt; that is, with no prefix.&lt;/p&gt; &lt;p&gt;The main use-case is to allow porting some other website to KitchenSink, starting from some imported &lt;code&gt;.html&lt;/code&gt; Other usages could be to support things like webmaster-verification tools on Google.&lt;/p&gt; &lt;p&gt;&lt;span class="emoji" data-emoji="warning"&gt;⚠️&lt;/span&gt; there is no conflict detection yet so avoid having a &lt;code&gt;.cmark&lt;/code&gt; matching a &lt;code&gt;.html&lt;/code&gt; file or you risk inconsistencies.&lt;/p&gt; &lt;h2 id="javascript"&gt;javascript&lt;/h2&gt; &lt;p&gt;KitchenSink copies &lt;code&gt;.js&lt;/code&gt; files under &lt;code&gt;/js&lt;/code&gt;.&lt;/p&gt; &lt;h2 id="webfonts"&gt;webfonts&lt;/h2&gt; &lt;p&gt;KitchenSink copies &lt;code&gt;.ttf&lt;/code&gt; and &lt;code&gt;.woff2&lt;/code&gt; files under &lt;code&gt;/webfonts&lt;/code&gt;.&lt;/p&gt; &lt;h2 id="so-called-raw-files"&gt;So-called raw files&lt;/h2&gt; &lt;p&gt;KitchenSink copies &lt;code&gt;.txt&lt;/code&gt;, &lt;code&gt;.json&lt;/code&gt;, &lt;code&gt;.csv&lt;/code&gt;, and &lt;code&gt;.dhall&lt;/code&gt; files under &lt;code&gt;/raw&lt;/code&gt; &lt;strong&gt;excepts for robots.txt and kitchen-sink.json&lt;/strong&gt;. I use this feature for attaching datasets or showing a long text result (e.g., a long output of a command that is too slow to generate).&lt;/p&gt; &lt;p&gt;&lt;strong&gt;exception&lt;/strong&gt;. The file &lt;code&gt;robots.txt&lt;/code&gt; stays at the root of the output dir to meet the &lt;a href="https://en.wikipedia.org/wiki/Robots_exclusion_standard"&gt;robots exclusion standard&lt;/a&gt;.&lt;/p&gt; &lt;h2 id="graphviz-dot-files"&gt;GraphViz dot files&lt;/h2&gt; &lt;p&gt;KitchenSink calls &lt;code&gt;dot&lt;/code&gt; to generate under &lt;code&gt;/gen/images/&amp;lt;filename&amp;gt;.png&lt;/code&gt;. There is little support to control the command that KitchenSink handles. If you need more control, generate pictures aside or use a command-section.&lt;/p&gt; &lt;/section&gt;&lt;/div&gt;
-        </content>
-        <link href="https://kitchensink-tech.github.io/other-formats.html" rel="alternate"/>
-        <summary type="text">
-            There is more to a blog than just CommonMark HTML. This article explains briefly how the KitchenSink engine handles other format.
-        </summary>
-    </entry>
-    <entry>
-        <id>
-            https://kitchensink-tech.github.io/features.html
-        </id>
-        <title type="text">
-            Feature list
-        </title>
-        <updated>
-            1970-01-01T00:00:00Z
-        </updated>
-        <author>
-            <name>
-                Lucas DiCioccio
-            </name>
-        </author>
-        <content type="html">
-            &lt;div class="main-article"&gt;&lt;section class="main-section"&gt;&lt;p&gt;Kitchen-Sink consists of two related components:&lt;/p&gt; &lt;ul&gt; &lt;li&gt;i. a set of &lt;em&gt;libraries&lt;/em&gt; (at the time of writing, everything is packed in a single library: it’s a kitchen sink afterall) &lt;/li&gt; &lt;li&gt;ii. a default &lt;em&gt;executable&lt;/em&gt; which uses defaults from the library &lt;/li&gt; &lt;/ul&gt; &lt;p&gt;The library allows you to write a program to author websites from content thrown into a folder. The name Kitchen-Sink comes from the fact that Kitchen Sink is meant to work with a single folder having no particular organization besides filenames.&lt;/p&gt; &lt;p&gt;The executable imports the library to demonstrates and implements a blog-generator generating HTML having a default layout (for this very website for instance). Thus, as a Kitchen-Sink user you could either run the executable directly (if you want a website that looks like this one for instance) or write your own executable from the library.&lt;/p&gt; &lt;p&gt;When we refer to &lt;em&gt;the Kitchen Sink engine&lt;/em&gt; or &lt;em&gt;the blog engine&lt;/em&gt;, we thus refer to features available from the libary. As of this writing, however, I have yet to finish modularizing all these features. However, the following sections provide a listing of features with a good overall structure of what could go in which libraries.&lt;/p&gt; &lt;/section&gt;&lt;section class="main-section"&gt;&lt;h2 id="command-line-single-run-mode"&gt;command-line single-run mode&lt;/h2&gt; &lt;p&gt;The default executable can run as a one-off generator command. The intended use-case if for generating websites as part of automated pipelines. There is nothing really exciting about the command-line single-run mode.&lt;/p&gt; &lt;p&gt;Example usage with the default executable:&lt;/p&gt; &lt;p&gt;&lt;code&gt;kitchen-sink produce --srcDir website-src --outDir website-www&lt;/code&gt;&lt;/p&gt; &lt;pre&gt;&lt;code class="language-console"&gt;Loading (LoadArticle &amp;quot;website-src/features.cmark&amp;quot;) Loading (EvalSection &amp;quot;website-src/features.cmark&amp;quot; BuildInfo Json) Loading (EvalSection &amp;quot;website-src/features.cmark&amp;quot; Preamble Json) Loading (EvalSection &amp;quot;website-src/features.cmark&amp;quot; Topic Json) Loading (EvalSection &amp;quot;website-src/features.cmark&amp;quot; Social Json) Loading (EvalSection &amp;quot;website-src/features.cmark&amp;quot; MainCss Css) Loading (EvalSection &amp;quot;website-src/features.cmark&amp;quot; Summary Cmark) Loading (EvalSection &amp;quot;website-src/features.cmark&amp;quot; MainContent Cmark) Loading (EvalSection &amp;quot;website-src/features.cmark&amp;quot; MainContent Cmark) [...] Assembling &amp;quot;website-www/features.html&amp;quot; Assembling &amp;quot;website-www/topics/modding.html&amp;quot; Assembling &amp;quot;website-www/topics/philosophy.html&amp;quot; Assembling &amp;quot;website-www/topics/sections.html&amp;quot; [...] Generating &amp;quot;website-www/json/paths.json&amp;quot; Generating &amp;quot;website-www/json/filecounts.json&amp;quot; Generating &amp;quot;website-www/json/topicsgraph.json&amp;quot; Generating &amp;quot;website-www/json/features.cmark.json&amp;quot; Generating &amp;quot;website-www/json/philosophy.cmark.json&amp;quot; [...] &lt;/code&gt;&lt;/pre&gt; &lt;p&gt;These logs indicate that files where sourced in the &lt;code&gt;website-src&lt;/code&gt; directory, then computation occured, and finally files where output in the &lt;code&gt;website-www&lt;/code&gt; directory. You can navigate with a browser in this directory. However when authoring articles it is pretty annoying to do manual refreshes. Instead, Kitchen-Sink incorporates a server able to directly serve the same content as it generates.&lt;/p&gt; &lt;/section&gt;&lt;section class="main-section"&gt;&lt;h2 id="server-mode"&gt;server-mode&lt;/h2&gt; &lt;p&gt;One key reason for having written Kitchen-Sink is to explore things that makes my life easy. Among these: live&lt;/p&gt; &lt;h3 id="live-serving"&gt;live-serving&lt;/h3&gt; &lt;p&gt;Rather than generating all the website once, Kitchen-Sink can run an HTTP server that will directly return the results of the output targets &lt;em&gt;on the fly&lt;/em&gt;. That is, each time a web-browser navigates, the latest value for a given route is shown to the browser. This is not especially useful but can come handy.&lt;/p&gt; &lt;p&gt;Example usage with the default executable:&lt;/p&gt; &lt;p&gt;&lt;code&gt;$ kitchen-sink serve --srcDir website-src --outDir website-www --servMode SERVE --httpPort 7654&lt;/code&gt;&lt;/p&gt; &lt;pre&gt;&lt;code class="language-console"&gt;[...] SiteReloaded (Init ()) SiteReloaded RunStart TargetRequested &amp;quot;/features.html&amp;quot; TargetBuilt &amp;quot;/features.html&amp;quot; 10079 GET /features.html Params: [(&amp;quot;server-id&amp;quot;,&amp;quot;ca231c17-35c9-4060-b4f4-c0dd574dd325&amp;quot;)] Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8 Status: 200 OK 0.029790833s TargetRequested &amp;quot;/js/search-box.js&amp;quot; TargetBuilt &amp;quot;/js/search-box.js&amp;quot; 260790 GET /js/search-box.js Accept: */* Status: 200 OK 0.000694164s &lt;/code&gt;&lt;/pre&gt; &lt;p&gt;Kitchen-Sink also supports HTTPS via TLS .pem key and certificate files.&lt;/p&gt; &lt;p&gt;&lt;code&gt;$ kitchen-sink serve --srcDir website-src --outDir website-www --servMode SERVE --httpsPort 443 --tlsCertFile &amp;lt;mycert.pem&amp;gt; --tlsKeyFile &amp;lt;key.pem&amp;gt;&lt;/code&gt;&lt;/p&gt; &lt;p&gt;Note that if you run both HTTP and HTTPS the listening ports should differ. Plain-text (a.k.a., insecure connections) are disabled on the TLS server.&lt;/p&gt; &lt;p&gt;If you specify neither HTTP nor HTTPS the binary will load and exit immediately.&lt;/p&gt; &lt;h3 id="auto-reload"&gt;auto-reload&lt;/h3&gt; &lt;p&gt;The executable server has a special API route with a mechanism to wait for changes of source files on the file-system. We also bundle a &lt;a href="/js/autoreload.js"&gt;small JavaScript&lt;/a&gt; that subscribes to changes and reload the page on a change. This JavaScript gets injected in the layout only in dev-server mode. This setup allows to auto-reload on change.&lt;/p&gt; &lt;video width="640" height="480" controls&gt; &lt;source src="/videos/auto-reload-002-liveedit.webm" type="video/webm"&gt; &lt;source src="/videos/auto-reload-002-liveedit.mp4" type="video/mp4"&gt; &lt;/video&gt; &lt;p&gt;To use the dev-server mode, use &lt;code&gt;--servMode DEV&lt;/code&gt;. That is, the full-command to run with the default executable is:&lt;/p&gt; &lt;p&gt;&lt;code&gt;kitchen-sink serve --srcDir website-src --outDir website-www --servMode DEV --port 7654&lt;/code&gt;&lt;/p&gt; &lt;h3 id="one-time-commands"&gt;one-time commands&lt;/h3&gt; &lt;p&gt;In addition to the above auto-reload script. The default executable’s layout insert some buttons to get one-click.&lt;/p&gt; &lt;ul&gt; &lt;li&gt;the &lt;code&gt;produce&lt;/code&gt; button will regenerate the whole HTML output &lt;/li&gt; &lt;li&gt;the &lt;code&gt;publish&lt;/code&gt; button will call the &lt;code&gt;publishScript&lt;/code&gt; command in the &lt;a href="/kitchen-sink-dot-json.html"&gt;kitchen-sink.json file&lt;/a&gt; . As a data-point, I use &lt;a href="/gen/out/features.cmark__cat-publish-script"&gt;this publish-script&lt;/a&gt; for this documentation site. &lt;/li&gt; &lt;/ul&gt; &lt;video width="640" height="480" controls&gt; &lt;source src="/videos/one-time-commands-001-produce.mp4" type="video/mp4"&gt; &lt;source src="/videos/one-time-commands-001-produce.webm" type="video/webm"&gt; &lt;/video&gt; &lt;h3 id="api-proxy-mode"&gt;API-proxy mode&lt;/h3&gt; &lt;p&gt;KitchenSink, when acting as a server, will proxy calls on the &lt;code&gt;/api&lt;/code&gt; route to a web backend of your choice (configured in &lt;a href="/kitchen-sink-dot-json.html"&gt;kitchen-sink.json&lt;/a&gt;). This setup allows you to run local development of single-page-apps against an API-server running aside. A goal of this feature is to allow devs to build web-app without CORS or HTTP-routing complications (concerns that should matter in production, however). The only requirement (as of now) is that the proxified API uses the &lt;code&gt;/api&lt;/code&gt; route prefix.&lt;/p&gt; &lt;p&gt;When acting as a “multi-site” server, KitchenSink will furthermore allow you to tune the default (30seconds) proxying timeout with the &lt;code&gt;--proxy-timeout-microsecs &amp;lt;delay-in-microseconds&amp;gt;&lt;/code&gt; command line argument. The default timeout is 30 seconds.&lt;/p&gt; &lt;h3 id="its-just-a-webserver-library"&gt;it’s just a webserver library&lt;/h3&gt; &lt;p&gt;I’ve not really explored this avenue, but it should be possible to incorporate the webserver logic in most Haskell web-applications (e.g., your web-application could run an API and Kitchen-Sink could run some documentation pages aside).&lt;/p&gt; &lt;h3 id="server-metrics"&gt;server metrics&lt;/h3&gt; &lt;p&gt;Why not? to build the webserver-library I’ve used some set of &lt;a href="https://github.com/lucasdicioccio/prodapi"&gt;curated and bundled libraries named ProdAPI&lt;/a&gt;. Which means the server inherits a number of features; among which a number of &lt;a href="https://prometheus.io/"&gt;Prometheus counters&lt;/a&gt;. An example set of metrics is available on &lt;a href="/gen/out/features.cmark__gen-local-server-metrics.txt"&gt;this extract&lt;/a&gt;. Thus, rather than bragging how much Kitchen-Sink is fast, you get to see for yourself directly (e.g., with the &lt;code&gt;blog_fullbuild_time&lt;/code&gt; counters in the Prometheus summary). Other usages would be to track how fast you add content to articles by collecting and storing the counters. For instance, the following picture is a screenshot of a Prometheus timeseries showing the size of the article while editing this paragraph (screenshot is made using &lt;a href="https://dicioccio.fr/prometheus-monitor.html"&gt;a Firefox extension I built&lt;/a&gt;)&lt;/p&gt; &lt;p&gt;&lt;img src="/images/features-001-targetsizes-timeseries.png" alt="a timeseries graph showing the blog_targets_sizes prometheus counter" /&gt;&lt;/p&gt; &lt;/section&gt;&lt;section class="main-section"&gt;&lt;h2 id="article-authoring"&gt;article authoring&lt;/h2&gt; &lt;p&gt;Writing articles is the most important thing of a static-site generator. The &lt;a href="/philosophy.html"&gt;Kitchen-Sink Philosophy&lt;/a&gt; here is to throw everything in one file. The key, and probably somewhat unique aspect of Kitchen-Sink is to propose writing articles, tune their CSS, provide topics, add generators and so on directly in the same source file.&lt;/p&gt; &lt;h3 id="the-section-based-format"&gt;the section-based format&lt;/h3&gt; &lt;p&gt;The so-called section-based format has a &lt;a href="/sections.html"&gt;dedicated article&lt;/a&gt; to document specific mechanism. In this article we merely show-off &lt;a href="/gen/out/features.cmark__cat-features-cmark"&gt;the source for this article&lt;/a&gt; to get an impression of what writing &lt;em&gt;meaty content&lt;/em&gt; entails.&lt;/p&gt; &lt;h3 id="tunable-css-per-page"&gt;tunable CSS per page&lt;/h3&gt; &lt;p&gt;Among sections worth a “feature” label, a special section drives the inlined-CSS of individual articles. In short, each article can have its own CSS file. I found that especially useful when I need to add some rules only for a given article (e.g., alternating figure alignments) or when I want to host a single-page JavaScript-app on an article only. Thus, you should use &lt;code&gt;@import&lt;/code&gt; directives for CSS modularization and re-use across pages. You do not lose much in expressivity, a bit in performance, but you gain a lot in flexibility.&lt;/p&gt; &lt;h3 id="commonmark-as-main-input-articles"&gt;CommonMark as main input articles&lt;/h3&gt; &lt;p&gt;Writing articles is mostly done in &lt;a href="https://commonmark.org/"&gt;CommonMark&lt;/a&gt;. That is, the &lt;em&gt;meaty content&lt;/em&gt; and some advanced analyses are based on CommonMark.&lt;/p&gt; &lt;p&gt;Besides the basics for headings, links, raw-HTML, &lt;em&gt;emphasis&lt;/em&gt;, &lt;strong&gt;boldness&lt;/strong&gt;, and &lt;code&gt;code&lt;/code&gt;. A number of extensions and additional extensions are enabled.&lt;/p&gt; &lt;h4 id="emojis-eyes"&gt;emojis &lt;span class="emoji" data-emoji="eyes"&gt;👀&lt;/span&gt;&lt;/h4&gt; &lt;p&gt;Adding emojis is a way to incorporate some emotions in written-web content. The list of &lt;code&gt;:emoji-codes:&lt;/code&gt; is available &lt;a href="https://gist.github.com/rxaviers/7360908"&gt;&lt;span class="emoji" data-emoji="arrow_right"&gt;➡️&lt;/span&gt; here &lt;span class="emoji" data-emoji="arrow_left"&gt;⬅️&lt;/span&gt;&lt;/a&gt; &lt;span class="emoji" data-emoji="fire"&gt;🔥&lt;/span&gt;.&lt;/p&gt; &lt;h4 id="delimited-blocks-divs-with-attributes"&gt;delimited blocks divs with attributes&lt;/h4&gt; &lt;p&gt;Which allow to add some CSS classes, and HTML identifiers&lt;/p&gt; &lt;p&gt;For instance:&lt;/p&gt; &lt;pre&gt;&lt;code&gt;::: {.todo #smalldiv} add something ::: &lt;/code&gt;&lt;/pre&gt; &lt;p&gt;generates the following code&lt;/p&gt; &lt;div class="code code--highlighted"&gt;&lt;div class="sourceCode"&gt;&lt;pre class="sourceCode"&gt;&lt;code class="sourceCode"&gt;&lt;span id="1"&gt;&lt;a href="#1" aria-hidden="true" tabindex="-1"&gt;&lt;/a&gt;&lt;span class="dt"&gt;&amp;lt;&lt;/span&gt;&lt;span class="kw"&gt;div&lt;/span&gt;&lt;span class="ot"&gt; id&lt;/span&gt;&lt;span class="op"&gt;=&lt;/span&gt;&lt;span class="st"&gt;&amp;quot;smalldiv&amp;quot;&lt;/span&gt;&lt;span class="ot"&gt; class&lt;/span&gt;&lt;span class="op"&gt;=&lt;/span&gt;&lt;span class="st"&gt;&amp;quot;todo&amp;quot;&lt;/span&gt;&lt;span class="dt"&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt; &lt;span id="2"&gt;&lt;a href="#2" aria-hidden="true" tabindex="-1"&gt;&lt;/a&gt;&lt;span class="dt"&gt;&amp;lt;&lt;/span&gt;&lt;span class="kw"&gt;p&lt;/span&gt;&lt;span class="dt"&gt;&amp;gt;&lt;/span&gt;add something&lt;span class="dt"&gt;&amp;lt;/&lt;/span&gt;&lt;span class="kw"&gt;p&lt;/span&gt;&lt;span class="dt"&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt; &lt;span id="3"&gt;&lt;a href="#3" aria-hidden="true" tabindex="-1"&gt;&lt;/a&gt;&lt;span class="dt"&gt;&amp;lt;/&lt;/span&gt;&lt;span class="kw"&gt;div&lt;/span&gt;&lt;span class="dt"&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;&lt;p&gt;which can then be styled in CSS.&lt;/p&gt; &lt;h4 id="syntax-highlighting-with-skylighting"&gt;syntax highlighting with &lt;code&gt;skylighting&lt;/code&gt;&lt;/h4&gt; &lt;p&gt;Code-blocks are analyzed by &lt;a href="https://github.com/jgm/skylighting"&gt;skylighting&lt;/a&gt;, which tokenize code and wraps resulting code with HTML tags having some well-defined classes for styling in CSS.&lt;/p&gt; &lt;div class="code code--highlighted"&gt;&lt;div class="sourceCode"&gt;&lt;pre class="sourceCode"&gt;&lt;code class="sourceCode"&gt;&lt;span id="1"&gt;&lt;a href="#1" aria-hidden="true" tabindex="-1"&gt;&lt;/a&gt;&lt;span class="dt"&gt;int&lt;/span&gt; main&lt;span class="op"&gt;(&lt;/span&gt;&lt;span class="dt"&gt;int&lt;/span&gt; argc&lt;span class="op"&gt;,&lt;/span&gt; &lt;span class="dt"&gt;char&lt;/span&gt;&lt;span class="op"&gt;**&lt;/span&gt; argv&lt;span class="op"&gt;)&lt;/span&gt; &lt;span class="op"&gt;{&lt;/span&gt;&lt;/span&gt; &lt;span id="2"&gt;&lt;a href="#2" aria-hidden="true" tabindex="-1"&gt;&lt;/a&gt; &lt;span class="cf"&gt;return&lt;/span&gt; &lt;span class="dv"&gt;0&lt;/span&gt;&lt;span class="op"&gt;;&lt;/span&gt;&lt;/span&gt; &lt;span id="3"&gt;&lt;a href="#3" aria-hidden="true" tabindex="-1"&gt;&lt;/a&gt;&lt;span class="op"&gt;}&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;&lt;p&gt;Overall I found that skylighting does the job and since the library requires no extra JavaScript on the resulting website or external-dependencies at code-generation time: it’s good.&lt;/p&gt; &lt;h4 id="hashtags"&gt;HashTags&lt;/h4&gt; &lt;p&gt;This extension is custom-made (until we upstream it). KitchenSinks discovers &lt;a href="/hashtags/hash-tags.html"&gt;&lt;span class="hashtag" data-hashtag="hash-tags"&gt;#hash-tags&lt;/span&gt;&lt;/a&gt; in artcicles. Such a feature enables you to turn your blog into some &lt;a href="/hashtags/note-taking.html"&gt;&lt;span class="hashtag" data-hashtag="note-taking"&gt;#note-taking&lt;/span&gt;&lt;/a&gt; apps. HashTags acts like Topics in the sense that they allow you to list all items on a special, per-HashTag page.&lt;/p&gt; &lt;h3 id="copies-other-images-css-medias"&gt;copies other images, css, medias&lt;/h3&gt; &lt;p&gt;An article often comes with extra medias. Images (with &lt;code&gt;jpeg&lt;/code&gt;, &lt;code&gt;png&lt;/code&gt; extensions), JavaScript (&lt;code&gt;.js&lt;/code&gt;) and CSS (&lt;code&gt;.css&lt;/code&gt;) files are copied to their own target at known locations. The same thing occurs for a variety of filetypes (&lt;code&gt;.mp3&lt;/code&gt;, &lt;code&gt;.mp4&lt;/code&gt; and so on). That is, KitchenSink wants everything in a directory but applies rule so that you get something a bit cleaner in return, isn’t it awesome?&lt;/p&gt; &lt;p&gt;You can see for yourself, compare the &lt;a href="/gen/out/features.cmark__tree-site-input-cmark.json"&gt;listing of this website source directory&lt;/a&gt; with the &lt;a href="/gen/out/features.cmark__tree-site-output-cmark.json"&gt;listing of the website output directory&lt;/a&gt; (courtesy of &lt;code&gt;tree -J&lt;/code&gt;).&lt;/p&gt; &lt;h3 id="generate-images-from-dot"&gt;generate images from &lt;code&gt;.dot&lt;/code&gt;&lt;/h3&gt; &lt;p&gt;There is a special room in my heart for &lt;a href="https://graphviz.org/"&gt;GraphViz&lt;/a&gt; &lt;span class="emoji" data-emoji="heart"&gt;❤️&lt;/span&gt;. I use it a lot to render diagrams and illustrate simple ideas. Thus I found natural to add some special support for files with the &lt;code&gt;.dot&lt;/code&gt; extensions.&lt;/p&gt; &lt;p&gt;&lt;img src="/gen/images/features-002-dot-demo.dot.png" alt="all in the kitchen-sink" /&gt;&lt;/p&gt; &lt;p&gt;Coupled with &lt;a href="#auto-reload"&gt;auto-reload&lt;/a&gt;, GraphViz-made diagrams work well enough to edit technical articles without ever leaving my editor as illustrated in the following video:&lt;/p&gt; &lt;video width="640" height="480" controls&gt; &lt;source src="/videos/auto-reload-001-dot.mp4" type="video/mp4"&gt; &lt;source src="/videos/auto-reload-001-dot.webm" type="video/webm"&gt; &lt;/video&gt; &lt;/section&gt;&lt;section class="main-section"&gt;&lt;h2 id="content-generation"&gt;content-generation&lt;/h2&gt; &lt;p&gt;The core-business of a static-site generator is to generate HTML output from various input. Thus, we could pedentically say that all content is “generated”. Here we discuss cases where Kitchen-Sink goes the extra-mile to provide extra features.&lt;/p&gt; &lt;h3 id="embedded-data"&gt;embedded data&lt;/h3&gt; &lt;p&gt;Kitchen-Sink generate a host of data while assembling targets from input files. Intermediary-representations. In particular, there is a &lt;code&gt;json&lt;/code&gt; file generated with each HTML article and is linked in the HTML &lt;code&gt;meta&lt;/code&gt; tag with name &lt;code&gt;ks:article_json&lt;/code&gt;. So that individual scripts can then locate these information. As we get more mileage, we’ll likely add more of such paths and formalize a bit their expected content. However, keep in mind that Kitchen-Sink generates more than just the static aspects of the HTML: it provides a bunch of extra information which can be useful for &lt;a href="#content-analysis"&gt;creative and advanced analyses&lt;/a&gt;.&lt;/p&gt; &lt;h3 id="command-based-generators"&gt;command-based generators&lt;/h3&gt; &lt;p&gt;In this article I’ve already pointed to a number of links (e.g., the source of this article, some directory listings). In short, you can add one-off data collections that produce their own targets.&lt;/p&gt; &lt;p&gt;A typical usage is to turn some information about the system generating the blog (e.g. &lt;code&gt;uname -a&lt;/code&gt;). However you could get creative such as&lt;/p&gt; &lt;ul&gt; &lt;li&gt;fetch the latest news-article &lt;/li&gt; &lt;li&gt;run some database query to be displayed in javascript later &lt;/li&gt; &lt;/ul&gt; &lt;p&gt;Less typical usage is for “personal” features like taking a selfie on demand: yes, this picture happens to be my face when I generate my &lt;a href="https://dicioccio.fr/"&gt;personal blog&lt;/a&gt; as I’ve added this section in the “about-me” page – hat tip to &lt;code&gt;fswebcam&lt;/code&gt;.&lt;/p&gt; &lt;pre&gt;&lt;code&gt;=generator:cmd.json {&amp;quot;cmd&amp;quot;:&amp;quot;fswebcam&amp;quot; ,&amp;quot;args&amp;quot;:[&amp;quot;-r&amp;quot;, &amp;quot;320x240&amp;quot;, &amp;quot;--jpeg&amp;quot;, &amp;quot;85&amp;quot;, &amp;quot;-D&amp;quot;, &amp;quot;1&amp;quot;, &amp;quot;/dev/stdout&amp;quot;] ,&amp;quot;target&amp;quot;:&amp;quot;latest-selfie.jpg&amp;quot; } &lt;/code&gt;&lt;/pre&gt; &lt;p&gt;&lt;img src="https://lucasdicioccio.github.io/gen/out/about-me.cmark__latest-selfie.jpg" alt="selfie" /&gt;&lt;/p&gt; &lt;p&gt;Another fun usage is to roast your articles, provided a script I made called &lt;code&gt;ollama.sh&lt;/code&gt;, the following uses an LLM to roast an article (example at &lt;a href="/gen/out/philosophy.cmark__roast-me"&gt;a generated-file path&lt;/a&gt;). Here I’ve used the Dhall section (see below) so that the source-path is accessible to the generator command.&lt;/p&gt; &lt;pre&gt;&lt;code&gt;=generator:cmd.dhall let cmdcontent = { cmd = &amp;quot;ollama.sh&amp;quot; , args = [ &amp;quot;task-file&amp;quot;, &amp;quot;you are given a source file of a blog post, the content resides below a =base:main-content.cmark marker. comment on the article by giving honest feedback in a sarcastic manner&amp;quot; , kitchensink.file ] , target = &amp;quot;roast-me&amp;quot; } in { contents = cmdcontent , format = &amp;quot;json&amp;quot; } &lt;/code&gt;&lt;/pre&gt; &lt;h3 id="microscriptable-in-dhall"&gt;microscriptable in Dhall&lt;/h3&gt; &lt;p&gt;I have written a &lt;a href="https://dicioccio.fr/dhall-section-demo.html"&gt;full article&lt;/a&gt; on my personal blog a while ago to motivate the whole usage of &lt;a href="https://dhall-lang.org/"&gt;Dhall&lt;/a&gt;. Keep in mind that I’m still happy about the choice. Dhall “powers” my photo galleries and my &lt;a href="https://lucasdicioccio.github.io/notes.html"&gt;stream of notes&lt;/a&gt; on my personal blog.&lt;/p&gt; &lt;/section&gt;&lt;section class="main-section"&gt;&lt;h2 id="article-organization"&gt;article organization&lt;/h2&gt; &lt;p&gt;An article needs some &lt;em&gt;decorum&lt;/em&gt; to help readers of your site as well as other applications relaying your articles. For instance, who is the author? what topics are covered? can you summarize it for me? Kitchen-Sink has a number of features to answer such questions. Most if not all of these features are controlled by specific &lt;a href="/sections.html"&gt;sections&lt;/a&gt; in the section-based-format. Here we merely give an overview of what is feasible.&lt;/p&gt; &lt;h3 id="categories-and-series-using-topics"&gt;categories and series using topics&lt;/h3&gt; &lt;p&gt;Article can be labelled with a set of topics. Kitchen-Sink then collects all articles for a given topic under special categories and under the &lt;code&gt;/topics&lt;/code&gt; route. This is not especially innovative but I believe it’s a must have even if I suppose most readers do not really use these topics listing a lot, they are used to connect articles in the &lt;a href="#sitemap"&gt;site map&lt;/a&gt; graph.&lt;/p&gt; &lt;p&gt;Furthermore &lt;em&gt;topics double as series&lt;/em&gt; that is, a “previous/next” link show up on the article header. To follow the previous-next article within a topic.&lt;/p&gt; &lt;h3 id="article-summaries"&gt;article summaries&lt;/h3&gt; &lt;p&gt;Article have summaries. The use case for summaries is to entice readers into committing more time to read an article in full.&lt;/p&gt; &lt;p&gt;Technically, summaries are inserted in article listings. The main listing is the home-page of a blog. &lt;a href="#categories-using-topics"&gt;Categories listings&lt;/a&gt; also repeat the listings. The summary also is used in some &lt;code&gt;&amp;lt;meta&amp;gt;&lt;/code&gt; headers, in particular to provide neat summaries when people share your articles (cf. &lt;a href="#open-graph-and-twitter-card-metas"&gt;open-graph&lt;/a&gt;).&lt;/p&gt; &lt;h3 id="social-links"&gt;social links&lt;/h3&gt; &lt;p&gt;In this age of pervasive Internet, you may have accounts in a number of online social-networks. Kitchen-Sink supports some of these: list your handles and enable features (as of today: it’s only a link to your canonical profile, in the future we could imagine more interactions).&lt;/p&gt; &lt;h3 id="open-graph-and-twitter-card-metas"&gt;open-graph and twitter-card metas&lt;/h3&gt; &lt;p&gt;You’ve probably already seen how some chat-applications (e.g., Discord, Slack) and social-services (e.g., LinkedIn, Twitter) provide a preview of webpages that are linked. These previews can embed images. You need to follow some specifications to control these, and that is what Kitchen-Sink does. Indeed Kitchen-Sink generates &lt;code&gt;&amp;lt;meta&amp;gt;&lt;/code&gt; HTML headers for &lt;a href="https://ogp.me/"&gt;OpenGraph&lt;/a&gt; and &lt;a href="https://developer.twitter.com/en/docs/twitter-for-websites/cards/overview/abouts-cards"&gt;Twitter cards&lt;/a&gt;.&lt;/p&gt; &lt;h3 id="consolidated-glossary"&gt;consolidated glossary&lt;/h3&gt; &lt;p&gt;KitchenSink allows you to add glossary items to individual articles as well as &lt;a href="/glossary.html"&gt;a consolidated glossary&lt;/a&gt; where multiple definitions may coexist.&lt;/p&gt; &lt;/section&gt;&lt;section class="main-section"&gt;&lt;h2 id="content-analysis"&gt;content-analysis&lt;/h2&gt; &lt;p&gt;Whether you write individual articles or a long series of multiple articles, it is useful to have some way to summarize what you have written. For instance, you want to know whether an article is connected to other articles, you want to understand if sections are well-balanced or not.&lt;/p&gt; &lt;p&gt;All of these reasons were decisive factors when deciding to write and while &lt;a href="/design-points.html"&gt;designing&lt;/a&gt; Kitchen-Sink. I’ve merely scratched the surface of the analyses I want to make on my own writing and I hope you’ll find some of these helpful too.&lt;/p&gt; &lt;h3 id="atom-feeds"&gt;Atom feeds&lt;/h3&gt; &lt;p&gt;KitchenSink generates a &lt;a href="https://validator.w3.org/feed/docs/atom.html"&gt;Atom&lt;/a&gt; feed for the whole site at the &lt;a href="/atom.xml"&gt;/atom.xml&lt;/a&gt; path as well as one Atom feed for each of the topics listing. In short: every topic is its own Atom feed. For now only summaries in raw text format are provided.&lt;/p&gt; &lt;h3 id="sitemap"&gt;sitemap&lt;/h3&gt; &lt;p&gt;KitchenSink generates a &lt;a href="/sitemap.txt"&gt;sitemap.txt&lt;/a&gt; linking to all articles. Remember to “ping” Google afterwards by visiting &lt;code&gt;https://www.google.com/ping?sitemap=&amp;lt;your-deploy-url&amp;gt;/sitemap.txt&lt;/code&gt; (I’m not an SEO expert so I cannot really vouch for other crawlers).&lt;/p&gt; &lt;h3 id="site-listing-and-search-box"&gt;site listing and search-box&lt;/h3&gt; &lt;p&gt;Static sites lack a good user-driven search as there are no servers to answer search queries. Topics listing alleviate some of these need. Topics merely are pre-computed indexes (and Atom feeds). Thus, KitchenSink also want to pre-compute search indexes. At the moment, the search-box is primitive and only allows to search into filenames (and I use it all the time when authoring articles to find &lt;a href="/json/paths.json"&gt;links to images and generated outputs&lt;/a&gt;). However we could definitely go a step further by also searching, or displaying summaries in the search box. As people say: watch this space!&lt;/p&gt; &lt;h3 id="wordcounts-and-article-staircases"&gt;wordcounts and article staircases&lt;/h3&gt; &lt;p&gt;One key aspect of writing content for the web is to control the length of an article. While writing for a printed format (my experience is with academic publishing) the number of pages and the number of column-per-page for articles is a good indication of the size of the content. Infinitely-long pages on the web blur this signal. Thus, to rebuild some understanding of how-long an article is, we need to run word counts.&lt;/p&gt; &lt;p&gt;As a result, Kitchen-Sink compute a word count for each article (in addition to images, links counts). Even further, Kitchen-Sink computes a word-count per title-section. Which allows us to display what I call article staircases with visualization libraries (here we use &lt;a href="https://echarts.apache.org/en/index.html"&gt;Apache ECharts&lt;/a&gt;):&lt;/p&gt; &lt;div id="histogram"&gt; &lt;/div&gt; &lt;script src="/js/echarts.min.js"&gt;&lt;/script&gt; &lt;script src="/js/echart-histogram.js"&gt;&lt;/script&gt; &lt;p&gt;The above histogram shows, for each section in the article, the number of words and the cumulated number of words in the article. This histogram allows me, when writing an article, to spot which sections are abnormally-long or abnormally short. I interpret this graph to find opportunities to split or merge sections together, hopefully improving my writing for users.&lt;/p&gt; &lt;p&gt;Kitchen-Sink also computes &lt;a href="/json/filecounts.json"&gt;whole-site summaries&lt;/a&gt; although I have no great use-case yet for these.&lt;/p&gt; &lt;h3 id="sitemap-graph"&gt;sitemap graph&lt;/h3&gt; &lt;p&gt;Kitchen-Sink processes all of the above information (topics, links between pages, image lists, etc.) to populate a &lt;a href="/json/topicsgraph.json"&gt;JSON representation of a graph&lt;/a&gt; summarizing the structure of the whole site. This special target is built with the website and you can be creative with it. So far, Kitchen-Sink provides a &lt;a href="/js/topicgraph.js"&gt;PureScript compiled to JavaScript&lt;/a&gt; minimal app to turn the graph into an interactive-picture using &lt;a href="https://echarts.apache.org/en/index.html"&gt;Apache Echarts&lt;/a&gt;.&lt;/p&gt; &lt;div id="echartzone"&gt; &lt;/div&gt; &lt;script src="js/topicgraph.js"&gt;&lt;/script&gt; &lt;p&gt;A special config in &lt;a href="/kitchen-sink-dot-json.html"&gt;kitchen-sink.json&lt;/a&gt; allows to give extra importance to a &lt;em&gt;subset of&lt;/em&gt; externally linked sites. For instance a connection between this page and &lt;a href="https://en.wikipedia.org/wiki/Special:Random"&gt;a random WikiPedia article&lt;/a&gt; exists because we defined an entry for WikiPedia. Think of this feature like a revisit of the good-old webrings.&lt;/p&gt; &lt;script src="js/copy-snippets.js"&gt;&lt;/script&gt; &lt;/section&gt;&lt;/div&gt;
-        </content>
-        <link href="https://kitchensink-tech.github.io/features.html" rel="alternate"/>
-        <summary type="text">
-            This article lists the main features of Kitchen Sink. We do not really compare it to the vast amount of other static-site generators.
-        </summary>
-    </entry>
-</feed>
+<?xml version="1.0" encoding="UTF-8"?><feed xmlns="http://www.w3.org/2005/Atom"><title type="text">The Kitchen Sink Blog Generator</title><id>https://kitchensink-tech.github.io/atom.xml</id><updated>1970-01-01T00:00:00Z</updated><entry><id>https://kitchensink-tech.github.io/layouts.html</id><title type="text">Layouts and extensions</title><updated>1970-01-01T00:00:00Z</updated><author><name>Lucas DiCioccio</name></author><content type="html">&lt;div class="main-article"&gt;&lt;section class="main-section"&gt;&lt;p&gt;There are two notions of layouts in KitchenSink: &lt;em&gt;article layouts&lt;/em&gt; and &lt;em&gt;website
+layouts&lt;/em&gt;. This article first discusses how they differ, then we deep-dive in
+Website Layouts.&lt;/p&gt;
+&lt;h2 id="article-vs-website-layouts"&gt;Article vs. Website layouts&lt;/h2&gt;
+&lt;p&gt;Article Layouts are per-article configurations which allow to tune what a
+rendered-article looks like. This configuration is set in the
+&lt;code&gt;base:build-info.json&lt;/code&gt; &lt;a href="/sections.html"&gt;section&lt;/a&gt;. For instance, while writing
+this text, this page is an &lt;strong&gt;Upcoming Article&lt;/strong&gt;, when I’ll find that the
+content is ready, I’ll change this configuration to a &lt;strong&gt;Published Article&lt;/strong&gt; .
+An example configuration is as follows:.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;=base:build-info.json
+{&amp;quot;layout&amp;quot;:&amp;quot;article&amp;quot;
+,&amp;quot;publicationStatus&amp;quot;:&amp;quot;Upcoming&amp;quot;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The &lt;code&gt;layout&lt;/code&gt; directive indicates how KitchenSink should intepret (in a broad
+sense) the rest of the &lt;code&gt;.cmark&lt;/code&gt; article. The layout not only influences the
+HTML output of the article content: the layout also can influence the presence
+of the navigation bar at the top, or just about anything.  If the directive
+were &lt;code&gt;application&lt;/code&gt; instead, we would have no default CSS and no navigation bar
+as we expect the article content to take-over the whole page.  Currently, these
+layouts are mostly documented in the documentation about the build-info
+&lt;a href="/sections.html"&gt;section&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;In addition, KitchenSink utilises the &lt;code&gt;publicationStatus&lt;/code&gt; to further tweak some
+behaviours here and there. For instance, an &lt;code&gt;Upcoming&lt;/code&gt; article will have a warning
+banner. Upcoming articles will show up grayed-out in article listings. Upcoming
+articles will not appear in the Atom feed. We’ve yet to document all such
+behaviors. However, if you wonder where KitchenSink takes all these rules, we
+can give you the answer right away: from the Website Layout &lt;span class="emoji" data-emoji="bulb"&gt;💡&lt;/span&gt;!&lt;/p&gt;
+&lt;p&gt;Website Layouts carry most of the “business rules” in KitchenSink. Creating a
+Website Layout is a significant modification of KitchenSink. Indeed, Website
+Layouts control how the collection of files in the KitchenSink directory are
+interpreted into a website in a broad sense. The Website Layout dictates the
+directory structure, the HTML contents, CSS files, videos, what have you.&lt;/p&gt;
+&lt;p&gt;Writing your own Layout allows you to:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;support more or fewer Section types
+&lt;/li&gt;
+&lt;li&gt;redefine the set of Targets and their contents
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Layouts in KitchenSink are implemented in the &lt;a href="https://haskell.org/"&gt;Haskell&lt;/a&gt;
+programming language and require some firm understanding of Haskell if you want
+to modify a layout, let-alone build a layout from scratch.&lt;/p&gt;
+&lt;h2 id="article-layouts"&gt;Article layouts&lt;/h2&gt;
+&lt;p&gt;Website layouts define the behaviour of Article layouts. Kitchen-Sink currently
+supports a single website-layout (the one for this website).  For now, I’ll
+refer you to &lt;a href="/sections.html#build-info-mandatory"&gt;the build-info section
+documentation&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id="writing-website-layouts"&gt;Writing website layouts&lt;/h2&gt;
+&lt;p&gt;The Website Layout is so important that the KichenSink code merely speak about
+Layout.  This section describes KitchenSink’s Layout type in depth.&lt;/p&gt;
+&lt;p&gt;Previous paragraphs introduced Website Layouts as the way to customize the
+business rules to turn &lt;code&gt;.cmark&lt;/code&gt; section-files into &lt;code&gt;.html&lt;/code&gt; and other sort of
+files. Hence, so far we’ve answered &lt;strong&gt;what&lt;/strong&gt; is the purpose of Website Layouts.
+We now discuss &lt;strong&gt;how&lt;/strong&gt; Website Layouts operate.  As often in Haskell, the best
+way to describe &lt;strong&gt;how&lt;/strong&gt; something works is to show and scrutinize type
+signatures. Hence, let’s dive-in the &lt;code&gt;Layout&lt;/code&gt; type and see for ourselves.  As
+of today, the &lt;code&gt;Layout&lt;/code&gt; type is defined as follows:&lt;/p&gt;
+&lt;div class="code code--highlighted"&gt;&lt;div class="sourceCode"&gt;&lt;pre class="sourceCode"&gt;&lt;code class="sourceCode"&gt;&lt;span id="1"&gt;&lt;a href="#1" aria-hidden="true" tabindex="-1"&gt;&lt;/a&gt;&lt;span class="kw"&gt;data&lt;/span&gt; &lt;span class="dt"&gt;Layout&lt;/span&gt; ext meta summary&lt;/span&gt;
+&lt;span id="2"&gt;&lt;a href="#2" aria-hidden="true" tabindex="-1"&gt;&lt;/a&gt;  &lt;span class="ot"&gt;=&lt;/span&gt; &lt;span class="dt"&gt;Layout&lt;/span&gt;&lt;/span&gt;
+&lt;span id="3"&gt;&lt;a href="#3" aria-hidden="true" tabindex="-1"&gt;&lt;/a&gt;  {&lt;span class="ot"&gt; siteTargets ::&lt;/span&gt; &lt;span class="dt"&gt;OutputPrefix&lt;/span&gt; &lt;span class="ot"&gt;-&amp;gt;&lt;/span&gt; meta &lt;span class="ot"&gt;-&amp;gt;&lt;/span&gt; &lt;span class="dt"&gt;Site&lt;/span&gt; ext &lt;span class="ot"&gt;-&amp;gt;&lt;/span&gt; [&lt;span class="dt"&gt;Target&lt;/span&gt; ext summary]&lt;/span&gt;
+&lt;span id="4"&gt;&lt;a href="#4" aria-hidden="true" tabindex="-1"&gt;&lt;/a&gt;  ,&lt;span class="ot"&gt; extraSectiontypes ::&lt;/span&gt; [&lt;span class="dt"&gt;ExtraSectionType&lt;/span&gt; ext]&lt;/span&gt;
+&lt;span id="5"&gt;&lt;a href="#5" aria-hidden="true" tabindex="-1"&gt;&lt;/a&gt;  }&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;&lt;p&gt;It helps to squint a bit and ignore type-level parameters. Simplifying the
+above, we could write Layout as:&lt;/p&gt;
+&lt;div class="code code--highlighted"&gt;&lt;div class="sourceCode"&gt;&lt;pre class="sourceCode"&gt;&lt;code class="sourceCode"&gt;&lt;span id="1"&gt;&lt;a href="#1" aria-hidden="true" tabindex="-1"&gt;&lt;/a&gt;&lt;span class="kw"&gt;data&lt;/span&gt; &lt;span class="dt"&gt;Layout&lt;/span&gt;&lt;/span&gt;
+&lt;span id="2"&gt;&lt;a href="#2" aria-hidden="true" tabindex="-1"&gt;&lt;/a&gt;  &lt;span class="ot"&gt;=&lt;/span&gt; &lt;span class="dt"&gt;Layout&lt;/span&gt;&lt;/span&gt;
+&lt;span id="3"&gt;&lt;a href="#3" aria-hidden="true" tabindex="-1"&gt;&lt;/a&gt;  {&lt;span class="ot"&gt; siteTargets ::&lt;/span&gt; &lt;span class="dt"&gt;Site&lt;/span&gt; &lt;span class="ot"&gt;-&amp;gt;&lt;/span&gt; [&lt;span class="dt"&gt;Target&lt;/span&gt;]&lt;/span&gt;
+&lt;span id="4"&gt;&lt;a href="#4" aria-hidden="true" tabindex="-1"&gt;&lt;/a&gt;  ,&lt;span class="ot"&gt; extraSectiontypes ::&lt;/span&gt; [&lt;span class="dt"&gt;ExtraSectionType&lt;/span&gt;]&lt;/span&gt;
+&lt;span id="5"&gt;&lt;a href="#5" aria-hidden="true" tabindex="-1"&gt;&lt;/a&gt;  }&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;&lt;p&gt;In short, a &lt;code&gt;Layout&lt;/code&gt; has two main purposes:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;provide a &lt;code&gt;siteTargets&lt;/code&gt; that turns a &lt;code&gt;Site&lt;/code&gt; into a list of &lt;code&gt;Target&lt;/code&gt;
+&lt;/li&gt;
+&lt;li&gt;provide a &lt;code&gt;extraSectiontypes&lt;/code&gt; which is a list of Sections KitchenSink should learn how to parse
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The type parameters &lt;code&gt;ext&lt;/code&gt;, &lt;code&gt;summary&lt;/code&gt;, &lt;code&gt;meta&lt;/code&gt; and so on and so forth are
+required to let the Haskell compiler ensure that everything is consistent
+(e.g., you can only build Targets in &lt;code&gt;siteTargets&lt;/code&gt; for an extension if the
+extension is declared in &lt;code&gt;extraSectiontypes&lt;/code&gt;).&lt;/p&gt;
+&lt;h3 id="understanding-sitetargets"&gt;understanding &lt;code&gt;siteTargets&lt;/code&gt;&lt;/h3&gt;
+&lt;p&gt;A Layout gets to decide how to translate the in-memory represention of a whole
+Site into files, including their content-generation logic.&lt;/p&gt;
+&lt;p&gt;Thus what is important is to get some example of &lt;code&gt;siteTargets&lt;/code&gt; function.
+And understand, at least at a shallow-level, what is a Target.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;data Target ext a = Target
+  { destination :: DestinationLocation
+  , productionRule :: ProductionRule ext
+  , summary :: a
+  } deriving (Functor)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The &lt;code&gt;destination&lt;/code&gt; is roughly the HTTP path of where the content is placed.  The
+&lt;code&gt;productionRule&lt;/code&gt; is roughly the IO-inducing code to generate the content (e.g.,
+rendering some HTML, copying some file, or executing a command).  Finally, the
+&lt;code&gt;summary&lt;/code&gt; serves the purpose of having previews (e.g., in the search box).&lt;/p&gt;
+&lt;p&gt;In short, a Target contains enough information &lt;strong&gt;to locate, describe, and build&lt;/strong&gt;
+some document piece of your website.&lt;/p&gt;
+&lt;p&gt;Let’s now open KitchenSink’s default &lt;code&gt;siteTargets&lt;/code&gt; function at a first-level of details:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;siteTargets :: OutputPrefix -&amp;gt; MetaData -&amp;gt; Site -&amp;gt; [Target]
+siteTargets prefix extra site = allTargets
+  where
+    allTargets = mconcat
+      [ embeddedGeneratorTargets
+      , embeddedDataTargets
+      , fmap fst articleTargets
+      , imageTargets prefix site
+      , dotimageTargets prefix site
+      , videoTargets prefix site
+      , rawTargets prefix site
+      , documentTargets prefix site
+      , cssTargets prefix site
+      , jsTargets prefix site
+      , htmlTargets prefix site
+      , topicIndexesTargets (lookupSpecialArticle SpecialArticles.Topics site)
+      , topicAtomTargets (lookupSpecialArticle SpecialArticles.Topics site)
+      , glossaryTargets (lookupSpecialArticleSource SpecialArticles.Glossary site)
+      , jsonDataTargets
+      , seoTargets
+      ]
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Unsurprisingly, the default &lt;code&gt;siteTargets&lt;/code&gt; parrots what the documentation pages
+about &lt;a href="/sections.html"&gt;sections&lt;/a&gt; and &lt;a href="/other-formats.html"&gt;other types of
+files&lt;/a&gt; decribe.  Each family of document, each specific
+section in article files, each magic-file (like glossaries)  gets a specific
+target. Each of these functions then have different techniques (e.g., HTML
+targets will render some HTML using an HTML-layout library, JSON targets will
+use Aeson-encoding of some structure etc.)&lt;/p&gt;
+&lt;p&gt;As you can guess, writing a whole new &lt;code&gt;siteTargets&lt;/code&gt; is a lot of work. That’s
+why we recommend to start contacting me before jumping into such an endeavor.
+Longer-term I’d like to have support for templated-targets, much like Dhall,
+but with a mini language better-suited for markup (like Mustache or ERB for
+instance).&lt;/p&gt;
+&lt;h3 id="some-words-on-extrasectiontypes"&gt;some words on &lt;code&gt;extraSectiontypes&lt;/code&gt;&lt;/h3&gt;
+&lt;p&gt;The way KitchenSink divides work operates in two phases:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;load the &lt;code&gt;Site&lt;/code&gt; object
+&lt;ul&gt;
+&lt;li&gt;read articles from disk (we discuss only &lt;code&gt;.cmark&lt;/code&gt;, but other files like &lt;code&gt;.png&lt;/code&gt; are listed too)
+&lt;/li&gt;
+&lt;li&gt;parsing content of &lt;code&gt;.cmark&lt;/code&gt; as section format
+&lt;/li&gt;
+&lt;li&gt;evaluating &lt;code&gt;.dhall&lt;/code&gt; sections
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;assemble targets
+&lt;ul&gt;
+&lt;li&gt;compute all the siteTargets (cf. above)
+&lt;/li&gt;
+&lt;li&gt;evaluate all the targets
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;If you were to extend the &lt;code&gt;.cmark&lt;/code&gt; file with some form of new section type
+(e.g., you want to support some “license” section), you would have to modify
+KitchenSink in both phases:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;during the &lt;strong&gt;load&lt;/strong&gt; phase: you need a name &lt;code&gt;ext:my-license-extension&lt;/code&gt; so that the loader recognizes &lt;code&gt;=ext:my-license-extension&lt;/code&gt; like &lt;code&gt;=base:main-content.cmark&lt;/code&gt;
+&lt;/li&gt;
+&lt;li&gt;for the &lt;strong&gt;assemble&lt;/strong&gt; phase: you later need &lt;code&gt;Assembler&lt;/code&gt; functions (that are capable of reading article sections) to decide how your license is interpreted and rendered in your Website layout.
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Following the type-machinery should be enough. One remark though: there is one
+single “extension” parameter, so if you want to support multiple ones, you
+should build a sum-type of the extensions you support.&lt;/p&gt;
+&lt;h2 id="extending-kitchensink-in-other-forms"&gt;Extending KitchenSink in other forms&lt;/h2&gt;
+&lt;p&gt;You may want to modify KitchenSink in ways we have not discussed yet. For
+intance, you may want to support new filetypes (e.g., &lt;code&gt;docx&lt;/code&gt; documents) in an
+existing family of filetypes, or new families of file types altogether (e.g.,
+source code of some form).&lt;/p&gt;
+&lt;p&gt;Such changes are feasible but not &lt;em&gt;that easily&lt;/em&gt;. Your best chance likely is to
+&lt;a href="https://dicioccio.fr/about-me.html"&gt;contact me&lt;/a&gt; or by opening an issue on the
+&lt;a href="https://github.com/kitchensink-tech/kitchensink"&gt;GitHub page&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id="summary"&gt;Summary&lt;/h2&gt;
+&lt;p&gt;You want to modify how a given article is rendered using an existing Article layout:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;a) modify &lt;code&gt;=base:build-info.json&lt;/code&gt; section
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;You want to modify the structure of the generated HTML (or create an Article Layout):&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;a) the &lt;code&gt;siteTargets&lt;/code&gt; function
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;You want to generate addition &lt;code&gt;.json&lt;/code&gt; magic file (or similar):&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;a) the &lt;code&gt;siteTargets&lt;/code&gt; function
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;You want to modify the structure of the rendered HTML:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;a) the &lt;code&gt;siteTargets&lt;/code&gt; function
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;You want to support a new section:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;a) modify the Layout to be able to parse the new data type
+&lt;/li&gt;
+&lt;li&gt;b) modify the &lt;code&gt;evalTarget&lt;/code&gt; function to apply the needed changes (most likely, you want to generate some extra information)
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;You want to support a new filetype:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;a) contact me
+&lt;/li&gt;
+&lt;li&gt;b) modify the Site loader
+&lt;/li&gt;
+&lt;li&gt;c) modify the Layout function with whatever you need to turn the filetype into a set of targets
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Other changes:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;a) contact me
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/section&gt;&lt;/div&gt;</content><link href="https://kitchensink-tech.github.io/layouts.html" rel="alternate"/><summary type="text">There are two notions of layouts in KitchenSink: article layouts and website layouts. This article answers questions like: how do you change the layout of the blog? how do you extend KitchenSink?</summary></entry><entry><id>https://kitchensink-tech.github.io/development.html</id><title type="text">Development</title><updated>1970-01-01T00:00:00Z</updated><author><name>Lucas DiCioccio</name></author><content type="html">&lt;div class="main-article"&gt;&lt;section class="main-section"&gt;&lt;h1 id="project-site-source-code-and-reporting-issues"&gt;project site, source code, and reporting issues&lt;/h1&gt;
+&lt;p&gt;You’ll find the source code of KitchenSink on GitHub at the following repository:
+&lt;a href="https://github.com/kitchensink-tech/kitchensink"&gt;https://github.com/kitchensink-tech/kitchensink&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Please also use GitHub on the same project to &lt;a href="https://github.com/kitchensink-tech/kitchensink/issues"&gt;file issues&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;As of date, there are no discussion channels such as a Discord or Slack
+instance. Please reach-out directly to me via email or on Twitter (cf. social
+links at the bottom of this page).&lt;/p&gt;
+&lt;h1 id="repository-organization"&gt;repository organization&lt;/h1&gt;
+&lt;p&gt;Much like the title tells, the code is a kitchen sink at the moment. It is
+still unclear what will make good boundaries. However what is clear is that we
+want two keep the following: Haskell for the blog engine, and PureScript for
+frontend “helper JS tools”.&lt;/p&gt;
+&lt;p&gt;Both the engine code, the frontend helpers code, and the KitchenSink
+documentation (this site) sources are in a same repository out of simplicity: a
+feature can be added and documented in a same commit.&lt;/p&gt;
+&lt;h1 id="code-organization-and-basic-concepts"&gt;code organization and basic concepts&lt;/h1&gt;
+&lt;p&gt;At this point, the code grew mostly organically and suffers from arbitrary
+choices.  As we implement &lt;a href="/wishlist.html"&gt;new features&lt;/a&gt;, the need to rework
+and modularize some aspects will show up.&lt;/p&gt;
+&lt;p&gt;For sure what will stay are:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;the section-based format is a central way to add functionalities, we may
+parametrize the Parser to be extensible
+&lt;/li&gt;
+&lt;li&gt;the notion of a Site has something loaded using some IO parametrized by the engine
+&lt;/li&gt;
+&lt;li&gt;the notion of Target to hold instruction to build some content with a destination path
+&lt;/li&gt;
+&lt;li&gt;the fact that layouts are function from Site to Target, possibly in multiple ‘stages’ (or a fixpoint as it is now)
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Things I would like to improve significantly:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;possibility to modularize the section-based parser and the layout function
+&lt;/li&gt;
+&lt;li&gt;where we load the Site from in the engine (should be feasible to load Sites without resorting to the section-based parser – i.e., proper decoupling)
+&lt;/li&gt;
+&lt;li&gt;settle on some JSON format for advanced analytics rather than the current ad-hoc historical values
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id="library-curation-philosophy"&gt;library curation philosophy&lt;/h1&gt;
+&lt;p&gt;The libraries we incorporate are “standard Haskell”. In particular we only want
+to bring-in libraries that do not force callers to operate for long in
+complicated Monad stacks. Rather we want to incorporate functionalities and
+wrap them to our suiting.  In short, avoid situations where one has to &lt;em&gt;add
+code to remove features&lt;/em&gt;.&lt;/p&gt;
+&lt;h1 id="generating-most-of-purescript-bindings-directly-from-haskell"&gt;generating most of PureScript bindings directly from Haskell&lt;/h1&gt;
+&lt;p&gt;The &lt;code&gt;purs/&lt;/code&gt; directory contains a package named &lt;code&gt;kitchen-sink-compat&lt;/code&gt;.  A number
+of sources files in this package are automatically generated from Haskell using
+&lt;a href="https://github.com/eskimor/purescript-bridge"&gt;purescript-bridge&lt;/a&gt; and &lt;a href="https://github.com/bentongxyz/purescript-argonaut-aeson-generic"&gt;a
+fork&lt;/a&gt; of the
+&lt;code&gt;argonaut-aeson-generic&lt;/code&gt; PureScript package.&lt;/p&gt;
+&lt;p&gt;To regenerate the bindings use:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;cabal run -- kitchen-sink-purescript-bridge --outputDir ../purs/kitchen-sink-compat/src/
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/section&gt;&lt;/div&gt;</content><link href="https://kitchensink-tech.github.io/development.html" rel="alternate"/><summary type="text">You want to change, extend, or restrict Kitchen-Sink? found a bug? want to extract some feature out of it or on the opposite, embed it in a larger application?</summary></entry><entry><id>https://kitchensink-tech.github.io/other-formats.html</id><title type="text">Other types of files</title><updated>1970-01-01T00:00:00Z</updated><author><name>Lucas DiCioccio</name></author><content type="html">&lt;div class="main-article"&gt;&lt;section class="main-section"&gt;&lt;p&gt;Besides generating content from &lt;code&gt;.cmark&lt;/code&gt; &lt;a href="/sections.html"&gt;section-based&lt;/a&gt; files,
+KitchenSink also copies some video and images, and knows how to call in some
+generators for very specific formats.&lt;/p&gt;
+&lt;h2 id="videos"&gt;videos&lt;/h2&gt;
+&lt;p&gt;KitchenSink copies &lt;code&gt;.webm&lt;/code&gt; and &lt;code&gt;.mp4&lt;/code&gt; files under &lt;code&gt;/videos&lt;/code&gt;.&lt;/p&gt;
+&lt;h2 id="sounds"&gt;sounds&lt;/h2&gt;
+&lt;p&gt;KitchenSink copies &lt;code&gt;.ogg&lt;/code&gt;, &lt;code&gt;flac&lt;/code&gt;, &lt;code&gt;.wav&lt;/code&gt;, &lt;code&gt;.midi&lt;/code&gt;, and &lt;code&gt;.mp3&lt;/code&gt; files under &lt;code&gt;/videos&lt;/code&gt;.&lt;/p&gt;
+&lt;h2 id="images"&gt;images&lt;/h2&gt;
+&lt;p&gt;KitchenSink copies &lt;code&gt;.jpg&lt;/code&gt;, &lt;code&gt;.jpeg&lt;/code&gt;, and &lt;code&gt;.png&lt;/code&gt; files under &lt;code&gt;/images&lt;/code&gt;.&lt;/p&gt;
+&lt;h2 id="documents"&gt;documents&lt;/h2&gt;
+&lt;p&gt;KitchenSink copies &lt;code&gt;.pdf&lt;/code&gt; files under &lt;code&gt;/docs&lt;/code&gt;.&lt;/p&gt;
+&lt;h2 id="html"&gt;HTML&lt;/h2&gt;
+&lt;p&gt;KitchenSink copies &lt;code&gt;.html&lt;/code&gt; files under &lt;code&gt;/&lt;/code&gt; that is, with no prefix.&lt;/p&gt;
+&lt;p&gt;The main use-case is to allow porting some other website to KitchenSink, starting from some imported &lt;code&gt;.html&lt;/code&gt;
+Other usages could be to support things like webmaster-verification tools on Google.&lt;/p&gt;
+&lt;p&gt;&lt;span class="emoji" data-emoji="warning"&gt;⚠️&lt;/span&gt; there is no conflict detection yet so avoid having a &lt;code&gt;.cmark&lt;/code&gt; matching a &lt;code&gt;.html&lt;/code&gt; file or you risk inconsistencies.&lt;/p&gt;
+&lt;h2 id="javascript"&gt;javascript&lt;/h2&gt;
+&lt;p&gt;KitchenSink copies &lt;code&gt;.js&lt;/code&gt; files under &lt;code&gt;/js&lt;/code&gt;.&lt;/p&gt;
+&lt;h2 id="webfonts"&gt;webfonts&lt;/h2&gt;
+&lt;p&gt;KitchenSink copies &lt;code&gt;.ttf&lt;/code&gt; and &lt;code&gt;.woff2&lt;/code&gt; files under &lt;code&gt;/webfonts&lt;/code&gt;.&lt;/p&gt;
+&lt;h2 id="so-called-raw-files"&gt;So-called raw files&lt;/h2&gt;
+&lt;p&gt;KitchenSink copies &lt;code&gt;.txt&lt;/code&gt;, &lt;code&gt;.json&lt;/code&gt;, &lt;code&gt;.csv&lt;/code&gt;, and &lt;code&gt;.dhall&lt;/code&gt; files under &lt;code&gt;/raw&lt;/code&gt; &lt;strong&gt;excepts for robots.txt and kitchen-sink.json&lt;/strong&gt;. I use this feature for attaching datasets or showing a long
+text result (e.g., a long output of a command that is too slow to generate).&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;exception&lt;/strong&gt;. The file &lt;code&gt;robots.txt&lt;/code&gt; stays at the root of the output dir to meet the &lt;a href="https://en.wikipedia.org/wiki/Robots_exclusion_standard"&gt;robots exclusion standard&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id="graphviz-dot-files"&gt;GraphViz dot files&lt;/h2&gt;
+&lt;p&gt;KitchenSink calls &lt;code&gt;dot&lt;/code&gt; to generate under &lt;code&gt;/gen/images/&amp;lt;filename&amp;gt;.png&lt;/code&gt;. There
+is little support to control the command that KitchenSink handles. If you need
+more control, generate pictures aside or use a command-section.&lt;/p&gt;
+&lt;/section&gt;&lt;/div&gt;</content><link href="https://kitchensink-tech.github.io/other-formats.html" rel="alternate"/><summary type="text">There is more to a blog than just CommonMark HTML. This article explains briefly how the KitchenSink engine handles other format.</summary></entry><entry><id>https://kitchensink-tech.github.io/features.html</id><title type="text">Feature list</title><updated>1970-01-01T00:00:00Z</updated><author><name>Lucas DiCioccio</name></author><content type="html">&lt;div class="main-article"&gt;&lt;section class="main-section"&gt;&lt;p&gt;Kitchen-Sink consists of two related components:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;i. a set of &lt;em&gt;libraries&lt;/em&gt; (at the time of writing, everything is packed in a single library: it’s a kitchen sink afterall)
+&lt;/li&gt;
+&lt;li&gt;ii. a default &lt;em&gt;executable&lt;/em&gt; which uses defaults from the library
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The library allows you to write a program to author websites from content
+thrown into a folder. The name Kitchen-Sink comes from the fact that Kitchen
+Sink is meant to work with a single folder having no particular organization
+besides filenames.&lt;/p&gt;
+&lt;p&gt;The executable imports the library to demonstrates and implements a
+blog-generator generating HTML having a default layout (for this very website
+for instance).  Thus, as a Kitchen-Sink user you could either run the
+executable directly (if you want a website that looks like this one for
+instance) or write your own executable from the library.&lt;/p&gt;
+&lt;p&gt;When we refer to &lt;em&gt;the Kitchen Sink engine&lt;/em&gt; or &lt;em&gt;the blog engine&lt;/em&gt;, we thus refer
+to features available from the libary. As of this writing, however, I have yet
+to finish modularizing all these features. However, the following sections
+provide a listing of features with a good overall structure of what could go in
+which libraries.&lt;/p&gt;
+&lt;/section&gt;&lt;section class="main-section"&gt;&lt;h2 id="command-line-single-run-mode"&gt;command-line single-run mode&lt;/h2&gt;
+&lt;p&gt;The default executable can run as a one-off generator command.  The intended
+use-case if for generating websites as part of automated pipelines. There is
+nothing really exciting about the command-line single-run mode.&lt;/p&gt;
+&lt;p&gt;Example usage with the default executable:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;kitchen-sink produce --srcDir website-src --outDir website-www&lt;/code&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code class="language-console"&gt;Loading (LoadArticle &amp;quot;website-src/features.cmark&amp;quot;)
+Loading (EvalSection &amp;quot;website-src/features.cmark&amp;quot; BuildInfo Json)
+Loading (EvalSection &amp;quot;website-src/features.cmark&amp;quot; Preamble Json)
+Loading (EvalSection &amp;quot;website-src/features.cmark&amp;quot; Topic Json)
+Loading (EvalSection &amp;quot;website-src/features.cmark&amp;quot; Social Json)
+Loading (EvalSection &amp;quot;website-src/features.cmark&amp;quot; MainCss Css)
+Loading (EvalSection &amp;quot;website-src/features.cmark&amp;quot; Summary Cmark)
+Loading (EvalSection &amp;quot;website-src/features.cmark&amp;quot; MainContent Cmark)
+Loading (EvalSection &amp;quot;website-src/features.cmark&amp;quot; MainContent Cmark)
+[...]
+Assembling &amp;quot;website-www/features.html&amp;quot;
+Assembling &amp;quot;website-www/topics/modding.html&amp;quot;
+Assembling &amp;quot;website-www/topics/philosophy.html&amp;quot;
+Assembling &amp;quot;website-www/topics/sections.html&amp;quot;
+[...]
+Generating &amp;quot;website-www/json/paths.json&amp;quot;
+Generating &amp;quot;website-www/json/filecounts.json&amp;quot;
+Generating &amp;quot;website-www/json/topicsgraph.json&amp;quot;
+Generating &amp;quot;website-www/json/features.cmark.json&amp;quot;
+Generating &amp;quot;website-www/json/philosophy.cmark.json&amp;quot;
+[...]
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;These logs indicate that files where sourced in the &lt;code&gt;website-src&lt;/code&gt; directory,
+then computation occured, and finally files where output in the &lt;code&gt;website-www&lt;/code&gt;
+directory. You can navigate with a browser in this directory. However when
+authoring articles it is pretty annoying to do manual refreshes. Instead,
+Kitchen-Sink incorporates a server able to directly serve the same content as
+it generates.&lt;/p&gt;
+&lt;/section&gt;&lt;section class="main-section"&gt;&lt;h2 id="server-mode"&gt;server-mode&lt;/h2&gt;
+&lt;p&gt;One key reason for having written Kitchen-Sink is to explore things that makes
+my life easy. Among these: live&lt;/p&gt;
+&lt;h3 id="live-serving"&gt;live-serving&lt;/h3&gt;
+&lt;p&gt;Rather than generating all the website once, Kitchen-Sink can run an HTTP
+server that will directly return the results of the output targets &lt;em&gt;on the
+fly&lt;/em&gt;.  That is, each time a web-browser navigates, the latest value for a given
+route is shown to the browser. This is not especially useful but can come handy.&lt;/p&gt;
+&lt;p&gt;Example usage with the default executable:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;$ kitchen-sink serve --srcDir website-src --outDir website-www --servMode SERVE --httpPort 7654&lt;/code&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code class="language-console"&gt;[...]
+SiteReloaded (Init ())
+SiteReloaded RunStart
+TargetRequested &amp;quot;/features.html&amp;quot;
+TargetBuilt &amp;quot;/features.html&amp;quot; 10079
+GET /features.html
+  Params: [(&amp;quot;server-id&amp;quot;,&amp;quot;ca231c17-35c9-4060-b4f4-c0dd574dd325&amp;quot;)]
+  Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8
+  Status: 200 OK 0.029790833s
+TargetRequested &amp;quot;/js/search-box.js&amp;quot;
+TargetBuilt &amp;quot;/js/search-box.js&amp;quot; 260790
+GET /js/search-box.js
+  Accept: */*
+  Status: 200 OK 0.000694164s
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Kitchen-Sink also supports HTTPS via TLS .pem key and certificate files.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;$ kitchen-sink serve --srcDir website-src --outDir website-www --servMode SERVE --httpsPort 443 --tlsCertFile &amp;lt;mycert.pem&amp;gt; --tlsKeyFile &amp;lt;key.pem&amp;gt;&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Note that if you run both HTTP and HTTPS the listening ports should differ.
+Plain-text (a.k.a., insecure connections) are disabled on the TLS server.&lt;/p&gt;
+&lt;p&gt;If you specify neither HTTP nor HTTPS the binary will load and exit immediately.&lt;/p&gt;
+&lt;h3 id="auto-reload"&gt;auto-reload&lt;/h3&gt;
+&lt;p&gt;The executable server has a special API route with a mechanism to wait for changes
+of source files on the file-system.  We also bundle a &lt;a href="/js/autoreload.js"&gt;small JavaScript&lt;/a&gt; that
+subscribes to changes and reload the page on a change. This JavaScript gets
+injected in the layout only in dev-server mode. This setup allows to auto-reload on change.&lt;/p&gt;
+&lt;video width="640" height="480" controls&gt;
+  &lt;source src="/videos/auto-reload-002-liveedit.webm" type="video/webm"&gt;
+  &lt;source src="/videos/auto-reload-002-liveedit.mp4" type="video/mp4"&gt;
+&lt;/video&gt;
+&lt;p&gt;To use the dev-server mode, use &lt;code&gt;--servMode DEV&lt;/code&gt;. That is, the full-command to run with the default executable is:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;kitchen-sink serve --srcDir website-src --outDir website-www --servMode DEV --port 7654&lt;/code&gt;&lt;/p&gt;
+&lt;h3 id="one-time-commands"&gt;one-time commands&lt;/h3&gt;
+&lt;p&gt;In addition to the above auto-reload script. The default executable’s layout insert some buttons to get one-click.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;the &lt;code&gt;produce&lt;/code&gt; button will regenerate the whole HTML output
+&lt;/li&gt;
+&lt;li&gt;the &lt;code&gt;publish&lt;/code&gt; button will call the &lt;code&gt;publishScript&lt;/code&gt; command in the &lt;a href="/kitchen-sink-dot-json.html"&gt;kitchen-sink.json file&lt;/a&gt; . As a data-point, I use &lt;a href="/gen/out/features.cmark__cat-publish-script"&gt;this publish-script&lt;/a&gt; for this documentation site.
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;video width="640" height="480" controls&gt;
+  &lt;source src="/videos/one-time-commands-001-produce.mp4" type="video/mp4"&gt;
+  &lt;source src="/videos/one-time-commands-001-produce.webm" type="video/webm"&gt;
+&lt;/video&gt;
+&lt;h3 id="api-proxy-mode"&gt;API-proxy mode&lt;/h3&gt;
+&lt;p&gt;KitchenSink, when acting as a server, will proxy calls on the &lt;code&gt;/api&lt;/code&gt; route to a
+web backend of your choice (configured in
+&lt;a href="/kitchen-sink-dot-json.html"&gt;kitchen-sink.json&lt;/a&gt;). This setup allows you to run
+local development of single-page-apps against an API-server running aside. A
+goal of this feature is to allow devs to build web-app without CORS or
+HTTP-routing complications (concerns that should matter in production,
+however). The only requirement (as of now) is that the proxified API uses the
+&lt;code&gt;/api&lt;/code&gt; route prefix.&lt;/p&gt;
+&lt;p&gt;When acting as a “multi-site” server, KitchenSink will furthermore allow you to
+tune the default (30seconds) proxying timeout with the
+&lt;code&gt;--proxy-timeout-microsecs &amp;lt;delay-in-microseconds&amp;gt;&lt;/code&gt; command line argument. The
+default timeout is 30 seconds.&lt;/p&gt;
+&lt;h3 id="its-just-a-webserver-library"&gt;it’s just a webserver library&lt;/h3&gt;
+&lt;p&gt;I’ve not really explored this avenue, but it should be possible to incorporate
+the webserver logic in most Haskell web-applications (e.g., your
+web-application could run an API and Kitchen-Sink could run some documentation
+pages aside).&lt;/p&gt;
+&lt;h3 id="server-metrics"&gt;server metrics&lt;/h3&gt;
+&lt;p&gt;Why not? to build the webserver-library I’ve used some set of &lt;a href="https://github.com/lucasdicioccio/prodapi"&gt;curated and
+bundled libraries named ProdAPI&lt;/a&gt;.
+Which means the server inherits a number of features; among which a number of
+&lt;a href="https://prometheus.io/"&gt;Prometheus counters&lt;/a&gt;. An example set of metrics is
+available on &lt;a href="/gen/out/features.cmark__gen-local-server-metrics.txt"&gt;this
+extract&lt;/a&gt;. Thus, rather
+than bragging how much Kitchen-Sink is fast, you get to see for yourself
+directly (e.g., with the &lt;code&gt;blog_fullbuild_time&lt;/code&gt; counters in the Prometheus
+summary). Other usages would be to track how fast you add content to articles
+by collecting and storing the counters. For instance, the following picture is a screenshot of a Prometheus timeseries showing the size of the article
+while editing this paragraph (screenshot is made using &lt;a href="https://dicioccio.fr/prometheus-monitor.html"&gt;a Firefox extension I
+built&lt;/a&gt;)&lt;/p&gt;
+&lt;p&gt;&lt;img src="/images/features-001-targetsizes-timeseries.png" alt="a timeseries graph showing the blog_targets_sizes prometheus counter" /&gt;&lt;/p&gt;
+&lt;/section&gt;&lt;section class="main-section"&gt;&lt;h2 id="article-authoring"&gt;article authoring&lt;/h2&gt;
+&lt;p&gt;Writing articles is the most important thing of a static-site generator.  The
+&lt;a href="/philosophy.html"&gt;Kitchen-Sink Philosophy&lt;/a&gt; here is to throw everything in one
+file. The key, and probably somewhat unique aspect of Kitchen-Sink is to
+propose writing articles, tune their CSS, provide topics, add generators and so
+on directly in the same source file.&lt;/p&gt;
+&lt;h3 id="the-section-based-format"&gt;the section-based format&lt;/h3&gt;
+&lt;p&gt;The so-called section-based format has a &lt;a href="/sections.html"&gt;dedicated article&lt;/a&gt; to
+document specific mechanism.  In this article we merely show-off &lt;a href="/gen/out/features.cmark__cat-features-cmark"&gt;the source
+for this article&lt;/a&gt; to get an
+impression of what writing &lt;em&gt;meaty content&lt;/em&gt; entails.&lt;/p&gt;
+&lt;h3 id="tunable-css-per-page"&gt;tunable CSS per page&lt;/h3&gt;
+&lt;p&gt;Among sections worth a “feature” label, a special section drives the
+inlined-CSS of individual articles. In short, each article can have its own CSS
+file.  I found that especially useful when I need to add some rules only for a
+given article (e.g., alternating figure alignments) or when I want to host a
+single-page JavaScript-app on an article only.  Thus, you should use &lt;code&gt;@import&lt;/code&gt;
+directives for CSS modularization and re-use across pages.  You do not lose
+much in expressivity, a bit in performance, but you gain a lot in flexibility.&lt;/p&gt;
+&lt;h3 id="commonmark-as-main-input-articles"&gt;CommonMark as main input articles&lt;/h3&gt;
+&lt;p&gt;Writing articles is mostly done in &lt;a href="https://commonmark.org/"&gt;CommonMark&lt;/a&gt;. That
+is, the &lt;em&gt;meaty content&lt;/em&gt; and some advanced analyses are based on CommonMark.&lt;/p&gt;
+&lt;p&gt;Besides the basics for headings, links, raw-HTML, &lt;em&gt;emphasis&lt;/em&gt;, &lt;strong&gt;boldness&lt;/strong&gt;, and &lt;code&gt;code&lt;/code&gt;.
+A number of extensions and additional extensions are enabled.&lt;/p&gt;
+&lt;h4 id="emojis-eyes"&gt;emojis &lt;span class="emoji" data-emoji="eyes"&gt;👀&lt;/span&gt;&lt;/h4&gt;
+&lt;p&gt;Adding emojis is a way to incorporate some emotions in written-web content.
+The list of &lt;code&gt;:emoji-codes:&lt;/code&gt; is available &lt;a href="https://gist.github.com/rxaviers/7360908"&gt;&lt;span class="emoji" data-emoji="arrow_right"&gt;➡️&lt;/span&gt; here &lt;span class="emoji" data-emoji="arrow_left"&gt;⬅️&lt;/span&gt;&lt;/a&gt; &lt;span class="emoji" data-emoji="fire"&gt;🔥&lt;/span&gt;.&lt;/p&gt;
+&lt;h4 id="delimited-blocks-divs-with-attributes"&gt;delimited blocks divs with attributes&lt;/h4&gt;
+&lt;p&gt;Which allow to add some CSS classes, and HTML identifiers&lt;/p&gt;
+&lt;p&gt;For instance:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;::: {.todo #smalldiv}
+  add something
+:::
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;generates the following code&lt;/p&gt;
+&lt;div class="code code--highlighted"&gt;&lt;div class="sourceCode"&gt;&lt;pre class="sourceCode"&gt;&lt;code class="sourceCode"&gt;&lt;span id="1"&gt;&lt;a href="#1" aria-hidden="true" tabindex="-1"&gt;&lt;/a&gt;&lt;span class="dt"&gt;&amp;lt;&lt;/span&gt;&lt;span class="kw"&gt;div&lt;/span&gt;&lt;span class="ot"&gt; id&lt;/span&gt;&lt;span class="op"&gt;=&lt;/span&gt;&lt;span class="st"&gt;&amp;quot;smalldiv&amp;quot;&lt;/span&gt;&lt;span class="ot"&gt; class&lt;/span&gt;&lt;span class="op"&gt;=&lt;/span&gt;&lt;span class="st"&gt;&amp;quot;todo&amp;quot;&lt;/span&gt;&lt;span class="dt"&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;
+&lt;span id="2"&gt;&lt;a href="#2" aria-hidden="true" tabindex="-1"&gt;&lt;/a&gt;&lt;span class="dt"&gt;&amp;lt;&lt;/span&gt;&lt;span class="kw"&gt;p&lt;/span&gt;&lt;span class="dt"&gt;&amp;gt;&lt;/span&gt;add something&lt;span class="dt"&gt;&amp;lt;/&lt;/span&gt;&lt;span class="kw"&gt;p&lt;/span&gt;&lt;span class="dt"&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;
+&lt;span id="3"&gt;&lt;a href="#3" aria-hidden="true" tabindex="-1"&gt;&lt;/a&gt;&lt;span class="dt"&gt;&amp;lt;/&lt;/span&gt;&lt;span class="kw"&gt;div&lt;/span&gt;&lt;span class="dt"&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;&lt;p&gt;which can then be styled in CSS.&lt;/p&gt;
+&lt;h4 id="syntax-highlighting-with-skylighting"&gt;syntax highlighting with &lt;code&gt;skylighting&lt;/code&gt;&lt;/h4&gt;
+&lt;p&gt;Code-blocks are analyzed by &lt;a href="https://github.com/jgm/skylighting"&gt;skylighting&lt;/a&gt;,
+which tokenize code and wraps resulting code with HTML tags having some
+well-defined classes for styling in CSS.&lt;/p&gt;
+&lt;div class="code code--highlighted"&gt;&lt;div class="sourceCode"&gt;&lt;pre class="sourceCode"&gt;&lt;code class="sourceCode"&gt;&lt;span id="1"&gt;&lt;a href="#1" aria-hidden="true" tabindex="-1"&gt;&lt;/a&gt;&lt;span class="dt"&gt;int&lt;/span&gt; main&lt;span class="op"&gt;(&lt;/span&gt;&lt;span class="dt"&gt;int&lt;/span&gt; argc&lt;span class="op"&gt;,&lt;/span&gt; &lt;span class="dt"&gt;char&lt;/span&gt;&lt;span class="op"&gt;**&lt;/span&gt; argv&lt;span class="op"&gt;)&lt;/span&gt; &lt;span class="op"&gt;{&lt;/span&gt;&lt;/span&gt;
+&lt;span id="2"&gt;&lt;a href="#2" aria-hidden="true" tabindex="-1"&gt;&lt;/a&gt;  &lt;span class="cf"&gt;return&lt;/span&gt; &lt;span class="dv"&gt;0&lt;/span&gt;&lt;span class="op"&gt;;&lt;/span&gt;&lt;/span&gt;
+&lt;span id="3"&gt;&lt;a href="#3" aria-hidden="true" tabindex="-1"&gt;&lt;/a&gt;&lt;span class="op"&gt;}&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;&lt;p&gt;Overall I found that skylighting does the job and since the library requires no
+extra JavaScript on the resulting website or external-dependencies at
+code-generation time: it’s good.&lt;/p&gt;
+&lt;h4 id="hashtags"&gt;HashTags&lt;/h4&gt;
+&lt;p&gt;This extension is custom-made (until we upstream it). KitchenSinks discovers
+&lt;a href="/hashtags/hash-tags.html"&gt;&lt;span class="hashtag" data-hashtag="hash-tags"&gt;#hash-tags&lt;/span&gt;&lt;/a&gt; in artcicles. Such a feature enables you to turn your blog into some
+&lt;a href="/hashtags/note-taking.html"&gt;&lt;span class="hashtag" data-hashtag="note-taking"&gt;#note-taking&lt;/span&gt;&lt;/a&gt; apps. HashTags acts like Topics in the sense that they allow you
+to list all items on a special, per-HashTag page.&lt;/p&gt;
+&lt;h3 id="copies-other-images-css-medias"&gt;copies other images, css, medias&lt;/h3&gt;
+&lt;p&gt;An article often comes with extra medias. Images (with &lt;code&gt;jpeg&lt;/code&gt;, &lt;code&gt;png&lt;/code&gt;
+extensions), JavaScript (&lt;code&gt;.js&lt;/code&gt;) and CSS (&lt;code&gt;.css&lt;/code&gt;) files are copied to
+their own target at known locations. The same thing occurs for a variety of
+filetypes (&lt;code&gt;.mp3&lt;/code&gt;, &lt;code&gt;.mp4&lt;/code&gt; and so on).
+That is, KitchenSink wants everything in a directory but applies rule so that
+you get something a bit cleaner in return, isn’t it awesome?&lt;/p&gt;
+&lt;p&gt;You can see for yourself, compare the &lt;a href="/gen/out/features.cmark__tree-site-input-cmark.json"&gt;listing of this website source directory&lt;/a&gt; with the &lt;a href="/gen/out/features.cmark__tree-site-output-cmark.json"&gt;listing of the website output directory&lt;/a&gt; (courtesy of &lt;code&gt;tree -J&lt;/code&gt;).&lt;/p&gt;
+&lt;h3 id="generate-images-from-dot"&gt;generate images from &lt;code&gt;.dot&lt;/code&gt;&lt;/h3&gt;
+&lt;p&gt;There is a special room in my heart for &lt;a href="https://graphviz.org/"&gt;GraphViz&lt;/a&gt; &lt;span class="emoji" data-emoji="heart"&gt;❤️&lt;/span&gt;. I use it a lot to render diagrams and illustrate simple ideas. Thus I found natural to add some special support for files with the &lt;code&gt;.dot&lt;/code&gt; extensions.&lt;/p&gt;
+&lt;p&gt;&lt;img src="/gen/images/features-002-dot-demo.dot.png" alt="all in the kitchen-sink" /&gt;&lt;/p&gt;
+&lt;p&gt;Coupled with &lt;a href="#auto-reload"&gt;auto-reload&lt;/a&gt;, GraphViz-made diagrams work well
+enough to edit technical articles without ever leaving my editor as illustrated in the following video:&lt;/p&gt;
+&lt;video width="640" height="480" controls&gt;
+  &lt;source src="/videos/auto-reload-001-dot.mp4" type="video/mp4"&gt;
+  &lt;source src="/videos/auto-reload-001-dot.webm" type="video/webm"&gt;
+&lt;/video&gt;
+&lt;/section&gt;&lt;section class="main-section"&gt;&lt;h2 id="content-generation"&gt;content-generation&lt;/h2&gt;
+&lt;p&gt;The core-business of a static-site generator is to generate HTML output from
+various input.  Thus, we could pedentically say that all content is
+“generated”. Here we discuss cases where Kitchen-Sink goes the extra-mile to
+provide extra features.&lt;/p&gt;
+&lt;h3 id="embedded-data"&gt;embedded data&lt;/h3&gt;
+&lt;p&gt;Kitchen-Sink generate a host of data while assembling targets from input files.
+Intermediary-representations. In particular, there is a &lt;code&gt;json&lt;/code&gt; file generated
+with each HTML article and is linked in the HTML &lt;code&gt;meta&lt;/code&gt; tag with name
+&lt;code&gt;ks:article_json&lt;/code&gt; (generally at the special location &lt;code&gt;/json/&amp;lt;my-article&amp;gt;.cmark.json&lt;/code&gt;). So that individual scripts can then locate these
+information. As we get more mileage, we’ll likely add more of such paths and
+formalize a bit their expected content.  However, keep in mind that
+Kitchen-Sink generates more than just the static aspects of the HTML: it
+provides a bunch of extra information which can be useful for &lt;a href="#content-analysis"&gt;creative and advanced analyses&lt;/a&gt;.&lt;/p&gt;
+&lt;h3 id="experimental-textual-output-for-ai-agents"&gt;[experimental] textual output for AI agents&lt;/h3&gt;
+&lt;p&gt;In this day and age of AI agents, providing a textual output can help reduce
+tokenization and processing costs.  Kitchen-Sink generates a &lt;code&gt;text&lt;/code&gt; file for
+each HTML article. This text-file is linked in the HTML &lt;code&gt;meta&lt;/code&gt; tage with name
+&lt;code&gt;ks:article_text&lt;/code&gt; (generally at the special location
+&lt;code&gt;/text/&amp;lt;my-article&amp;gt;.cmark.text&lt;/code&gt;). Since some amount of text can be generated at
+load time, we cannot just serve the source code. This renderer is experimental.&lt;/p&gt;
+&lt;h3 id="command-based-generators"&gt;command-based generators&lt;/h3&gt;
+&lt;p&gt;In this article I’ve already pointed to a number of links (e.g., the source of
+this article, some directory listings).  In short, you can add one-off data
+collections that produce their own targets.&lt;/p&gt;
+&lt;p&gt;A typical usage is to turn some information about the system generating the
+blog (e.g. &lt;code&gt;uname -a&lt;/code&gt;). However you could get creative such as&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;fetch the latest news-article
+&lt;/li&gt;
+&lt;li&gt;run some database query to be displayed in javascript later
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Less typical usage is for “personal” features like taking a selfie on demand:
+yes, this picture happens to be my face when I generate my &lt;a href="https://dicioccio.fr/"&gt;personal
+blog&lt;/a&gt; as I’ve added this section in the
+“about-me” page – hat tip to &lt;code&gt;fswebcam&lt;/code&gt;.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;=generator:cmd.json
+{&amp;quot;cmd&amp;quot;:&amp;quot;fswebcam&amp;quot;
+,&amp;quot;args&amp;quot;:[&amp;quot;-r&amp;quot;, &amp;quot;320x240&amp;quot;, &amp;quot;--jpeg&amp;quot;, &amp;quot;85&amp;quot;, &amp;quot;-D&amp;quot;, &amp;quot;1&amp;quot;, &amp;quot;/dev/stdout&amp;quot;]
+,&amp;quot;target&amp;quot;:&amp;quot;latest-selfie.jpg&amp;quot;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src="https://lucasdicioccio.github.io/gen/out/about-me.cmark__latest-selfie.jpg" alt="selfie" /&gt;&lt;/p&gt;
+&lt;p&gt;Another fun usage is to roast your articles, provided a script I made called &lt;code&gt;ollama.sh&lt;/code&gt;, the following uses an LLM to roast an article (example at &lt;a href="/gen/out/philosophy.cmark__roast-me"&gt;a generated-file path&lt;/a&gt;). Here I’ve used the Dhall section (see below) so that the source-path is accessible to the generator command.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;=generator:cmd.dhall
+
+let cmdcontent =
+  { cmd = &amp;quot;ollama.sh&amp;quot;
+  , args =
+    [ &amp;quot;task-file&amp;quot;, &amp;quot;you are given a source file of a blog post, the content resides below a =base:main-content.cmark marker. comment on the article by giving honest feedback in a sarcastic manner&amp;quot;
+    , kitchensink.file
+    ]
+  , target = &amp;quot;roast-me&amp;quot;
+  }
+
+in 
+{ contents = cmdcontent
+, format = &amp;quot;json&amp;quot;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3 id="microscriptable-in-dhall"&gt;microscriptable in Dhall&lt;/h3&gt;
+&lt;p&gt;I have written a &lt;a href="https://dicioccio.fr/dhall-section-demo.html"&gt;full article&lt;/a&gt; on my personal blog a while ago to motivate the whole usage of &lt;a href="https://dhall-lang.org/"&gt;Dhall&lt;/a&gt;. Keep in mind that I’m still happy about the choice. Dhall “powers” my photo galleries and my &lt;a href="https://lucasdicioccio.github.io/notes.html"&gt;stream of notes&lt;/a&gt; on my personal blog.&lt;/p&gt;
+&lt;/section&gt;&lt;section class="main-section"&gt;&lt;h2 id="article-organization"&gt;article organization&lt;/h2&gt;
+&lt;p&gt;An article needs some &lt;em&gt;decorum&lt;/em&gt; to help readers of your site as well as other
+applications relaying your articles. For instance, who is the author? what
+topics are covered? can you summarize it for me? Kitchen-Sink has a number of
+features to answer such questions. Most if not all of these features are
+controlled by specific &lt;a href="/sections.html"&gt;sections&lt;/a&gt; in the section-based-format.
+Here we merely give an overview of what is feasible.&lt;/p&gt;
+&lt;h3 id="categories-and-series-using-topics"&gt;categories and series using topics&lt;/h3&gt;
+&lt;p&gt;Article can be labelled with a set of topics. Kitchen-Sink then collects all
+articles for a given topic under special categories and under the &lt;code&gt;/topics&lt;/code&gt;
+route. This is not especially innovative but I believe it’s a must have even if
+I suppose most readers do not really use these topics listing a lot, they are
+used to connect articles in the &lt;a href="#sitemap"&gt;site map&lt;/a&gt; graph.&lt;/p&gt;
+&lt;p&gt;Furthermore &lt;em&gt;topics double as series&lt;/em&gt; that is, a “previous/next” link show up
+on the article header. To follow the previous-next article within a topic.&lt;/p&gt;
+&lt;h3 id="article-summaries"&gt;article summaries&lt;/h3&gt;
+&lt;p&gt;Article have summaries. The use case for summaries is to entice readers into
+committing more time to read an article in full.&lt;/p&gt;
+&lt;p&gt;Technically, summaries are inserted in article listings. The main listing is
+the home-page of a blog.  &lt;a href="#categories-using-topics"&gt;Categories listings&lt;/a&gt; also
+repeat the listings. The summary also is used in some &lt;code&gt;&amp;lt;meta&amp;gt;&lt;/code&gt; headers, in
+particular to provide neat summaries when people share your articles (cf. &lt;a href="#open-graph-and-twitter-card-metas"&gt;open-graph&lt;/a&gt;).&lt;/p&gt;
+&lt;h3 id="social-links"&gt;social links&lt;/h3&gt;
+&lt;p&gt;In this age of pervasive Internet, you may have accounts in a number of online
+social-networks. Kitchen-Sink supports some of these: list your handles and
+enable features (as of today: it’s only a link to your canonical profile, in
+the future we could imagine more interactions).&lt;/p&gt;
+&lt;h3 id="open-graph-and-twitter-card-metas"&gt;open-graph and twitter-card metas&lt;/h3&gt;
+&lt;p&gt;You’ve probably already seen how some chat-applications (e.g., Discord, Slack)
+and social-services (e.g., LinkedIn, Twitter) provide a preview of webpages
+that are linked. These previews can embed images. You need to follow some
+specifications to control these, and that is what Kitchen-Sink does.  Indeed
+Kitchen-Sink generates &lt;code&gt;&amp;lt;meta&amp;gt;&lt;/code&gt; HTML headers for &lt;a href="https://ogp.me/"&gt;OpenGraph&lt;/a&gt;
+and &lt;a href="https://developer.twitter.com/en/docs/twitter-for-websites/cards/overview/abouts-cards"&gt;Twitter
+cards&lt;/a&gt;.&lt;/p&gt;
+&lt;h3 id="consolidated-glossary"&gt;consolidated glossary&lt;/h3&gt;
+&lt;p&gt;KitchenSink allows you to add glossary items to individual articles as well as
+&lt;a href="/glossary.html"&gt;a consolidated glossary&lt;/a&gt; where multiple definitions may coexist.&lt;/p&gt;
+&lt;/section&gt;&lt;section class="main-section"&gt;&lt;h2 id="content-analysis"&gt;content-analysis&lt;/h2&gt;
+&lt;p&gt;Whether you write individual articles or a long series of multiple articles, it
+is useful to have some way to summarize what you have written. For instance,
+you want to know whether an article is connected to other articles, you want to
+understand if sections are well-balanced or not.&lt;/p&gt;
+&lt;p&gt;All of these reasons were decisive factors when deciding to write and while &lt;a href="/design-points.html"&gt;designing&lt;/a&gt; Kitchen-Sink. I’ve merely scratched the surface of the analyses I want to make on my own writing and I hope you’ll find some of these helpful too.&lt;/p&gt;
+&lt;h3 id="atom-feeds"&gt;Atom feeds&lt;/h3&gt;
+&lt;p&gt;KitchenSink generates a
+&lt;a href="https://validator.w3.org/feed/docs/atom.html"&gt;Atom&lt;/a&gt; feed for the whole site at
+the &lt;a href="/atom.xml"&gt;/atom.xml&lt;/a&gt; path as well as one Atom feed for each of the topics
+listing. In short: every topic is its own Atom feed. For now only summaries in
+raw text format are provided.&lt;/p&gt;
+&lt;h3 id="sitemap"&gt;sitemap&lt;/h3&gt;
+&lt;p&gt;KitchenSink generates a &lt;a href="/sitemap.txt"&gt;sitemap.txt&lt;/a&gt; linking to all articles.
+Remember to “ping” Google afterwards by visiting
+&lt;code&gt;https://www.google.com/ping?sitemap=&amp;lt;your-deploy-url&amp;gt;/sitemap.txt&lt;/code&gt; (I’m not an SEO expert so I cannot really vouch for other crawlers).&lt;/p&gt;
+&lt;h3 id="site-listing-and-search-box"&gt;site listing and search-box&lt;/h3&gt;
+&lt;p&gt;Static sites lack a good user-driven search as there are no servers to answer
+search queries. Topics listing alleviate some of these need. Topics merely are
+pre-computed indexes (and Atom feeds). Thus, KitchenSink also want to
+pre-compute search indexes. At the moment, the search-box is primitive and only
+allows to search into filenames (and I use it all the time when authoring
+articles to find &lt;a href="/json/paths.json"&gt;links to images and generated outputs&lt;/a&gt;).
+However we could definitely go a step further by also searching, or displaying
+summaries in the search box. As people say: watch this space!&lt;/p&gt;
+&lt;h3 id="wordcounts-and-article-staircases"&gt;wordcounts and article staircases&lt;/h3&gt;
+&lt;p&gt;One key aspect of writing content for the web is to control the length of an
+article. While writing for a printed format (my experience is with academic
+publishing) the number of pages and the number of column-per-page for articles
+is a good indication of the size of the content.  Infinitely-long pages on the
+web blur this signal. Thus, to rebuild some understanding of how-long an
+article is, we need to run word counts.&lt;/p&gt;
+&lt;p&gt;As a result, Kitchen-Sink compute a word count for each article (in addition to
+images, links counts). Even further, Kitchen-Sink computes a word-count per
+title-section. Which allows us to display what I call article staircases with visualization libraries (here we use &lt;a href="https://echarts.apache.org/en/index.html"&gt;Apache ECharts&lt;/a&gt;):&lt;/p&gt;
+&lt;div id="histogram"&gt;
+&lt;/div&gt;
+&lt;script src="/js/echarts.min.js"&gt;&lt;/script&gt;
+&lt;script src="/js/echart-histogram.js"&gt;&lt;/script&gt;
+&lt;p&gt;The above histogram shows, for each section in the article, the number of words
+and the cumulated number of words in the article. This histogram allows me,
+when writing an article, to spot which sections are abnormally-long or
+abnormally short. I interpret this graph to find opportunities to split or
+merge sections together, hopefully improving my writing for users.&lt;/p&gt;
+&lt;p&gt;Kitchen-Sink also computes &lt;a href="/json/filecounts.json"&gt;whole-site summaries&lt;/a&gt;
+although I have no great use-case yet for these.&lt;/p&gt;
+&lt;h3 id="sitemap-graph"&gt;sitemap graph&lt;/h3&gt;
+&lt;p&gt;Kitchen-Sink processes all of the above information (topics, links between
+pages, image lists, etc.) to populate a &lt;a href="/json/topicsgraph.json"&gt;JSON representation of a
+graph&lt;/a&gt; summarizing the structure of the whole site.
+This special target is built with the website and you can be creative with it.
+So far, Kitchen-Sink provides a &lt;a href="/js/topicgraph.js"&gt;PureScript compiled to
+JavaScript&lt;/a&gt; minimal app to turn the graph into an
+interactive-picture using &lt;a href="https://echarts.apache.org/en/index.html"&gt;Apache Echarts&lt;/a&gt;.&lt;/p&gt;
+&lt;div id="echartzone"&gt;
+&lt;/div&gt;
+&lt;script src="js/topicgraph.js"&gt;&lt;/script&gt;
+&lt;p&gt;A special config in &lt;a href="/kitchen-sink-dot-json.html"&gt;kitchen-sink.json&lt;/a&gt; allows to
+give extra importance to a &lt;em&gt;subset of&lt;/em&gt; externally linked sites.  For instance a
+connection between this page and &lt;a href="https://en.wikipedia.org/wiki/Special:Random"&gt;a random WikiPedia
+article&lt;/a&gt; exists because we
+defined an entry for WikiPedia.
+Think of this feature like a revisit of the good-old webrings.&lt;/p&gt;
+&lt;script src="js/copy-snippets.js"&gt;&lt;/script&gt;
+&lt;/section&gt;&lt;/div&gt;</content><link href="https://kitchensink-tech.github.io/features.html" rel="alternate"/><summary type="text">This article lists the main features of Kitchen Sink. We do not really compare it to the vast amount of other static-site generators.</summary></entry></feed>

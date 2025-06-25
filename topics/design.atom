@@ -1,58 +1,86 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom">
-    <title type="text">
-        The Kitchen Sink Blog Generator
-    </title>
-    <id>
-        https://kitchensink-tech.github.io/atom.xml
-    </id>
-    <updated>
-        1970-01-01T00:00:00Z
-    </updated>
-    <entry>
-        <id>
-            https://kitchensink-tech.github.io/design-points.html
-        </id>
-        <title type="text">
-            Design points
-        </title>
-        <updated>
-            1970-01-01T00:00:00Z
-        </updated>
-        <author>
-            <name>
-                Lucas DiCioccio
-            </name>
-        </author>
-        <content type="html">
-            &lt;div class="main-article"&gt;&lt;section class="main-section"&gt;&lt;h1 id="the-default-site-loader-is-a-kitchen-sink"&gt;The default site-loader is a kitchen-sink&lt;/h1&gt; &lt;p&gt;This tradeoff gave name to the whole tool. In short, KitchenSink loads site contents in a directory which has no organization whatsoever. All files must be in a same directory and map to a target based on filenames and filetypes.&lt;/p&gt; &lt;p&gt;It is often the case that in static-site generators like Jekyll you need to organize your posts, categories and so on in a given directory structure, sometimes by year etc. Other ones, like Hakyll, requires you to configure globbing patterns. KitchenSink takes the opposite approach because what wrench my heart is when I see a personal blog with as few as two posts in them for someone who took all the time to setup a static-site generator.&lt;/p&gt; &lt;p&gt;Besides convenience, having a large kitchen sink means:&lt;/p&gt; &lt;ul&gt; &lt;li&gt;we prevents the annoyance of conflicts in names, prefixing by year and so on can go in filenames &lt;/li&gt; &lt;li&gt;we reduce the URL churn because we often move and shake hierarchies around but the content of leaves remains unchanged (I’ve no data for this but it’s a feeling) &lt;/li&gt; &lt;li&gt;when you look for some file you know where it is &lt;/li&gt; &lt;li&gt;when you need to add some file you know where to put it &lt;/li&gt; &lt;li&gt;if someones grows out of the limitation of the single-directory approach, they met success and will be ready to allocate some time to either adapt KitchenSink to load the site from different place or to switch to another static-site generator &lt;/li&gt; &lt;/ul&gt; &lt;h1 id="layouts-are-hard-to-change"&gt;Layouts are hard to change&lt;/h1&gt; &lt;ul&gt; &lt;li&gt;Wordpress, Blogspot online services are a testimonial that tuning layouts may not be that much important for people; tuning layouts for people who really want to do it is feasible because the code is open-source, and corporations or professionals should afford to pay something more “hand-tuned” (they may even consider KitchenSink is not a good solution to their needs) &lt;/li&gt; &lt;li&gt;nowadays we can significantly alter the look and even some UX-interactivity with CSS only &lt;/li&gt; &lt;li&gt;you can even do JavaScript in KitchenSink pages to add even more “interactivity &lt;/li&gt; &lt;li&gt;you can even provide control of all the page to a single-page application if you want &lt;/li&gt; &lt;li&gt;I believe people should focus more time on the content rather than on the wrapping, thus having fewer knobs makes it a liberating constraint &lt;/li&gt; &lt;/ul&gt; &lt;p&gt;&lt;span class="emoji" data-emoji="point_right"&gt;👉&lt;/span&gt; note that some re-engineering is going on in KitchenSink to separate the layout engine more cleanly from the rest of the engine. We could soon support some form of templates, however it is clearly not a direction I need personally at this point.&lt;/p&gt; &lt;h1 id="generator-sections-dont-take-input-data"&gt;Generator sections don’t take input data&lt;/h1&gt; &lt;ul&gt; &lt;li&gt;design is still unclear to me (static-website with dynamic envy) &lt;/li&gt; &lt;li&gt;sequence of steps may be better handled outside the generator &lt;/li&gt; &lt;li&gt;definitely a security risk that prevent some ‘hosting scenarios’ &lt;/li&gt; &lt;/ul&gt; &lt;h1 id="lack-of-overloading-repeating-many-things-across-articles"&gt;Lack of overloading (repeating many things across articles)&lt;/h1&gt; &lt;p&gt;&lt;span class="emoji" data-emoji="bulb"&gt;💡&lt;/span&gt; Much of this concerned is now addressable using &lt;a href="/sections-dhall.html"&gt;Dhall-sections&lt;/a&gt; sections because Dhall has local (and even remote) imports. However we keep the discussion below for archival reasons.&lt;/p&gt; &lt;p&gt;Oftentimes you would like one parameter to take effect on multiple pages (e.g., the social links). KitchenSink edges on the side of caution where we prefer to repeat the same small bit of information many times rather than forcing an overloading hierarchy:&lt;/p&gt; &lt;p&gt;Often you end up requiring to overload some “global parameter”, which means you need special documentation, special handling for overloading the parameter, which in turn means you need strictly more code just than just assuming the global parameter is empty. I call that &lt;em&gt;adding code to remove features&lt;/em&gt;.&lt;/p&gt; &lt;p&gt;For a blog-like page, I think it would be infrequent to add new pages. Adding one substential article per week means only around 50 articles a year. I’m pretty sure only few blog-like pages have that many articles and the effort to write them is diluted over long periods of time. Thus, overall, I prefer to force having a ‘social links’ session in every page. CSS is the only case I can think of where you’d need substential copy-pasting across articles. And for this use case, CSS supports &lt;code&gt;@import&lt;/code&gt; directives.&lt;/p&gt; &lt;p&gt;In the end, by repeating things across articles: the edge case where you want to tune a parameter on a single article is already supported with less code. The associated overhead is rather small and easy to circumvent with a low-tech solution (e.g., you’d copy section-based files from a template you keep around for yourself – much like the scaffolding in the &lt;a href="/getting-started.html"&gt;getting started article&lt;/a&gt;). In the eventual case where one needs to change values (e.g., they changed their Twitter handle), it is still possible to modify articles in batch with some shell scripting and &lt;code&gt;sed -i&lt;/code&gt;.&lt;/p&gt; &lt;/section&gt;&lt;/div&gt;
-        </content>
-        <link href="https://kitchensink-tech.github.io/design-points.html" rel="alternate"/>
-        <summary type="text">
-            This article gives a number of design points and architecture tradeoffs.
-        </summary>
-    </entry>
-    <entry>
-        <id>
-            https://kitchensink-tech.github.io/wishlist.html
-        </id>
-        <title type="text">
-            Whishlist
-        </title>
-        <updated>
-            1970-01-01T00:00:00Z
-        </updated>
-        <author>
-            <name>
-                Lucas DiCioccio
-            </name>
-        </author>
-        <content type="html">
-            &lt;div class="main-article"&gt;&lt;section class="main-section"&gt;&lt;ul&gt; &lt;li&gt;test and fix what we find on commonmark module &lt;/li&gt; &lt;li&gt;port all .js to a single PureScript lib, deprecate histogram &lt;/li&gt; &lt;li&gt;constellation mode/app to search/graph multiple kitchen-sinks &lt;/li&gt; &lt;li&gt;load from elsewhere than disk &lt;/li&gt; &lt;li&gt;support citation references &lt;/li&gt; &lt;li&gt;consider listing/index of all code snippets,images,etc. &lt;/li&gt; &lt;li&gt;hide zero-counts of links etc. &lt;/li&gt; &lt;/ul&gt; &lt;/section&gt;&lt;/div&gt;
-        </content>
-        <link href="https://kitchensink-tech.github.io/wishlist.html" rel="alternate"/>
-        <summary type="text">
-            A whishlist, which actually is a todolist.
-        </summary>
-    </entry>
-</feed>
+<?xml version="1.0" encoding="UTF-8"?><feed xmlns="http://www.w3.org/2005/Atom"><title type="text">The Kitchen Sink Blog Generator</title><id>https://kitchensink-tech.github.io/atom.xml</id><updated>1970-01-01T00:00:00Z</updated><entry><id>https://kitchensink-tech.github.io/design-points.html</id><title type="text">Design points</title><updated>1970-01-01T00:00:00Z</updated><author><name>Lucas DiCioccio</name></author><content type="html">&lt;div class="main-article"&gt;&lt;section class="main-section"&gt;&lt;h1 id="the-default-site-loader-is-a-kitchen-sink"&gt;The default site-loader is a kitchen-sink&lt;/h1&gt;
+&lt;p&gt;This tradeoff gave name to the whole tool. In short, KitchenSink loads site
+contents in a directory which has no organization whatsoever.  All files must
+be in a same directory and map to a target based on filenames and filetypes.&lt;/p&gt;
+&lt;p&gt;It is often the case that in static-site generators like Jekyll you need to
+organize your posts, categories and so on in a given directory structure,
+sometimes by year etc. Other ones, like Hakyll, requires you to configure
+globbing patterns.  KitchenSink takes the opposite approach because what wrench
+my heart is when I see a personal blog with as few as two posts in them for
+someone who took all the time to setup a static-site generator.&lt;/p&gt;
+&lt;p&gt;Besides convenience, having a large kitchen sink means:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;we prevents the annoyance of conflicts in names, prefixing by year and so on can go in filenames
+&lt;/li&gt;
+&lt;li&gt;we reduce the URL churn because we often move and shake hierarchies around but the content of leaves remains unchanged (I’ve no data for this but it’s a feeling)
+&lt;/li&gt;
+&lt;li&gt;when you look for some file you know where it is
+&lt;/li&gt;
+&lt;li&gt;when you need to add some file you know where to put it
+&lt;/li&gt;
+&lt;li&gt;if someones grows out of the limitation of the single-directory approach, they met success and will be ready to allocate some time to either adapt KitchenSink to load the site from different place or to switch to another static-site generator
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id="layouts-are-hard-to-change"&gt;Layouts are hard to change&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;Wordpress, Blogspot online services are a testimonial that tuning layouts may not be that much important for people; tuning layouts for people who really want to do it is feasible because the code is open-source, and corporations or professionals should afford to pay something more “hand-tuned” (they may even consider KitchenSink is not a good solution to their needs)
+&lt;/li&gt;
+&lt;li&gt;nowadays we can significantly alter the look and even some UX-interactivity with CSS only
+&lt;/li&gt;
+&lt;li&gt;you can even do JavaScript in KitchenSink pages to add even more “interactivity
+&lt;/li&gt;
+&lt;li&gt;you can even provide control of all the page to a single-page application if you want
+&lt;/li&gt;
+&lt;li&gt;I believe people should focus more time on the content rather than on the wrapping, thus having fewer knobs makes it a liberating constraint
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;span class="emoji" data-emoji="point_right"&gt;👉&lt;/span&gt; note that some re-engineering is going on in KitchenSink to separate the layout engine more cleanly from the rest of the engine. We could soon support some form of templates, however it is clearly not a direction I need personally at this point.&lt;/p&gt;
+&lt;h1 id="generator-sections-dont-take-input-data"&gt;Generator sections don’t take input data&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;design is still unclear to me (static-website with dynamic envy)
+&lt;/li&gt;
+&lt;li&gt;sequence of steps may be better handled outside the generator
+&lt;/li&gt;
+&lt;li&gt;definitely a security risk that prevent some ‘hosting scenarios’
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id="lack-of-overloading-repeating-many-things-across-articles"&gt;Lack of overloading (repeating many things across articles)&lt;/h1&gt;
+&lt;p&gt;&lt;span class="emoji" data-emoji="bulb"&gt;💡&lt;/span&gt; Much of this concerned is now addressable using &lt;a href="/sections-dhall.html"&gt;Dhall-sections&lt;/a&gt; sections because Dhall has local (and even remote) imports. However we keep the discussion below for archival reasons.&lt;/p&gt;
+&lt;p&gt;Oftentimes you would like one parameter to take effect on multiple pages (e.g., the social links).
+KitchenSink edges on the side of caution where we prefer to repeat the same small bit of information many times rather than forcing an overloading hierarchy:&lt;/p&gt;
+&lt;p&gt;Often you end up requiring to overload some “global parameter”, which means you
+need special documentation, special handling for overloading the parameter,
+which in turn means you need strictly more code just than just assuming the
+global parameter is empty. I call that &lt;em&gt;adding code to remove features&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;For a blog-like page, I think it would be infrequent to add new pages. Adding
+one substential article per week means only around 50 articles a year. I’m
+pretty sure only few blog-like pages have that many articles and the effort to
+write them is diluted over long periods of time. Thus, overall, I prefer to
+force having a ‘social links’ session in every page.
+CSS is the only case I can think of where you’d need substential copy-pasting
+across articles. And for this use case, CSS supports &lt;code&gt;@import&lt;/code&gt; directives.&lt;/p&gt;
+&lt;p&gt;In the end, by repeating things across articles: the edge case where you want
+to tune a parameter on a single article is already supported with less code.
+The associated overhead is rather small and easy to circumvent with a low-tech
+solution (e.g., you’d copy section-based files from a template you keep around
+for yourself – much like the scaffolding in the &lt;a href="/getting-started.html"&gt;getting started
+article&lt;/a&gt;). In the eventual case where one needs to
+change values (e.g., they changed their Twitter handle), it is still possible
+to modify articles in batch with some shell scripting and &lt;code&gt;sed -i&lt;/code&gt;.&lt;/p&gt;
+&lt;/section&gt;&lt;/div&gt;</content><link href="https://kitchensink-tech.github.io/design-points.html" rel="alternate"/><summary type="text">This article gives a number of design points and architecture tradeoffs.</summary></entry><entry><id>https://kitchensink-tech.github.io/wishlist.html</id><title type="text">Whishlist</title><updated>1970-01-01T00:00:00Z</updated><author><name>Lucas DiCioccio</name></author><content type="html">&lt;div class="main-article"&gt;&lt;section class="main-section"&gt;&lt;ul&gt;
+&lt;li&gt;test and fix what we find on commonmark module
+&lt;/li&gt;
+&lt;li&gt;port all .js to a single PureScript lib, deprecate histogram
+&lt;/li&gt;
+&lt;li&gt;constellation mode/app to search/graph multiple kitchen-sinks
+&lt;/li&gt;
+&lt;li&gt;load from elsewhere than disk
+&lt;/li&gt;
+&lt;li&gt;support citation references
+&lt;/li&gt;
+&lt;li&gt;consider listing/index of all code snippets,images,etc.
+&lt;/li&gt;
+&lt;li&gt;hide zero-counts of links etc.
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/section&gt;&lt;/div&gt;</content><link href="https://kitchensink-tech.github.io/wishlist.html" rel="alternate"/><summary type="text">A whishlist, which actually is a todolist.</summary></entry></feed>

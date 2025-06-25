@@ -1,0 +1,16 @@
+- test and fix what we find on commonmark module
+
+- port all .js to a single PureScript lib, deprecate histogram
+
+- constellation mode/app to search/graph multiple kitchen-sinks
+
+- load from elsewhere than disk
+
+- support citation references
+
+- consider listing/index of all code snippets,images,etc.
+
+- hide zero-counts of links etc.
+
+
+

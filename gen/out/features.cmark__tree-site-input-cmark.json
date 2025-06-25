@@ -1,5 +1,5 @@
 [
-  {"type":"link","name":"website-src","contents":[
+  {"type":"directory","name":"website-src","contents":[
     {"type":"file","name":"0001-we-wish-u-a-merry-xmas.mp3"},
     {"type":"file","name":"add-dev-route.js"},
     {"type":"file","name":"architecture-01-pipeline.dot"},
@@ -13,6 +13,7 @@
     {"type":"file","name":"auto-reload-002-liveedit.webm"},
     {"type":"file","name":"autoreload.js"},
     {"type":"file","name":"colors.css"},
+    {"type":"file","name":"complicated-demo.cmark.unused"},
     {"type":"file","name":"copy-snippets.js"},
     {"type":"file","name":"design-points.cmark"},
     {"type":"file","name":"dev.css"},
@@ -48,5 +49,5 @@
     {"type":"file","name":"wishlist.cmark"}
   ]}
 ,
-  {"type":"report","directories":1,"files":46}
+  {"type":"report","directories":1,"files":47}
 ]

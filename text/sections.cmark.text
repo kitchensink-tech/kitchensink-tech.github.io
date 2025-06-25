@@ -1,0 +1,382 @@
+In my [first article about why I wrote my own blog-engine](https://dicioccio.fr/how-this-blog-works.html ), I introduce an important separation between content and structure of articles. In short, the _meaty content_ is what readers are interested in, whereas structure is what readers navigate. You need both meaty content and some structure to make an article. However, you do not want to alternate switching between the two to [protect your state of flow](https://en.wikipedia.org/wiki/Flow_(psychology) ) while writing.
+
+I grew the section-based format out of frustration using blogs that require templates with partials and special directory listings: I always felt like the added structure did not bring much. The key idea here is to put as much information in a same file as possible and just drop all files in a same directory (it's a kitchen-sink after all). From this "minimalist" design, arises the need to separate big blocks of texts (markdown/commonmark) from structural information (json, CSS).  Here comes the section-based format: an article file consists of multiple sections separated with special line separators.
+
+# Section-based files
+
+A Section starts with a `=` followed by a section name (e.g., `base:main-css.css`) and ends with an empty line followed by another section (or the end of the file).
+
+For instance, a fictional file containing three sections could be
+
+```
+=foo.json
+{"a": 123}
+
+=foobar.css
+@import "toto.css";
+
+=foobar.css
+@import "titi.css";
+html{ background: cyan };
+```
+
+In that case, the three sections would consists of one `foo.json` with some JSON object and two `foobar.css` with some CSS rules.  We note that sections can be repeated: the section-format itself does not prescibe whether sections can appear multiple times or whether they are mandatory. It is then the role of the KitchenSink blog engine to decide whether it makes sense to have such a structure. For instance, having two paragraphs of texts makes sense, having two titles may be a stretch.
+
+Alas (fortunately?) KitchenSink `foo.json` and `foobar.css` do not exist. Instead, this article list sections supported by KitchenSink. Modifying the KitchenSink engine to support new sections is out of scope of this article. You'll find plenty of section-based format examples by browsing the [source-files for this very website](https://github.com/kitchensink-tech/kitchensink/tree/main/website-src ), KitchenSink names section-based format with the `.cmark` extension for convenience (because the meaty-content is written in CommonMark).
+
+# Supported sections
+
+Recall that KitchenSink is both a library and an engine. We describe here sections when using KitchenSink without tuning. While using KitchenSink as a library, it should be easy enough to add new sections or new layouts or modify subtly how Kitchen-Sink interprets some section data.
+
+Thus, the following documentation is descriptive of how the default KitchenSink engine works. It is not the case that this documentation is prescriptive (i.e., you are free to modify any behavior -- just avoid confusing your users that may end up reading this piece of documentation).
+
+## build-info [mandatory]
+
+    An important section to let Kitchen-Sink know which **layout** to apply.  Known layouts are `article`, `index` (for `index.cmark`), `glossary` (for `glossary.cmark`), `topics` (for `topics.cmark`), `application` for JavaScript single-page apps, `gallery` for content galleries, and `listing` for various listings. Overall, except for index and topics, the layout of content does not change significantly besides the HTML-nesting (which then allows you to modify CSS or hijack DOM elements for single-page apps).
+
+    The publicationStatus is either: `Public`, `Upcoming`, or `Archived`. Upcoming and Archived articles are treated slightly differently from Public articles in listing or in the home page: they are ranked lower and they do not carry a summary. A warning is also inserted on Upcoming and Archived articles.
+
+    **example**
+
+    ```
+=base:build-info.json
+{"layout":"article"
+,"publicationStatus":"Public"
+}
+```
+
+
+## preamble [mandatory]
+
+    Contains bibliographical information such as the title and author of the article. Optionally, you can add some link to a representative image.
+
+    Titles and authors are used throughout where it makes sense.
+
+    You can also overload the [favicon](https://www.w3.org/2005/10/howto-favicon ) using the `faviconUrl` JSON key.
+
+    **example**
+
+    ```
+=base:preamble.json
+{"author": "Lucas DiCioccio"
+,"date": "2022-01-30T12:00:00Z"
+,"title": "The section-based format"
+}
+```
+
+
+## summary [recommended]
+
+    Some commonmark to generate a short summary about the article.
+
+    The summary is displayed in article listings but also in OpenGraph and Twitter summaries when people share links on various media.
+
+    Also use as HTML Meta header for search engines.
+
+    Although the summary is arbitrary CommonMark, you should avoid complexifying it too much (i.e., stick to emphasis, inlined code, and bold).
+
+    You should also keep it short (a few sentences).
+
+    **example**
+
+    ```
+=base:summary.cmark
+A small article about _something_ interesting.
+```
+
+
+## topics [recommended]
+
+    Meta-information for contextualizing the article content.
+
+    The representative image is displayed in article listings but also in OpenGraph and Twitter summaries when people share links on various media.
+
+    - topics: for internally-generated topics labels (for visitors, and for creating series)
+
+- keywords: for HTML meta headers (for search engines)
+
+
+    **example**
+
+    ```
+=base:topic.json
+{"topics":["authoring articles", "how-to", "sections"]
+,"keywords":["static-site generators", "design"]
+,"imageLink": "/images/some-image.jpeg"
+}
+```
+
+
+## social [recommended]
+
+    Listing of social-profiles on various sites, will drive the inclusion of links and some Twitter meta headers.
+
+    **example**
+
+    ```
+=base:social.json
+{"twitter": "lucasdicioccio"
+,"linkedin": "lucasdicioccio"
+,"github": "lucasdicioccio"
+}
+```
+
+
+## main content
+
+    Well, sometimes you have good reason to not have some content. But these sections are where you should be spending most of your effort.
+
+    Sections are inserted in order under `<section>` html tags. This fact is important when you are tuning the CSS of your articles (e.g., using CSS `nth-*` selectors).
+
+    **example**
+
+    ```
+=base:main-content.cmark
+
+some commonmark
+```
+
+
+## taken-off cmark [good-to-know]
+
+    Sometimes you really are taking notes along the way and you want to leave out some paragraph out of the generated output. For instance you wrote some paragraph but realized it's better to keep it around for future articles only.
+
+    Such content is merely ignored by KitchenSink when generating the HTML for articles.
+
+    **example**
+
+    ```
+=base:taken-off.cmark
+
+some content that will not show up in the article
+```
+
+
+## CSS [recommended]
+
+    Some CSS block that is inlined in the HTML header. Includes are supported via the `@import` CSS directive (note KitchenSink doesn't interpret the CSS, it merely defers the [import-feature in CSS](https://developer.mozilla.org/en-US/docs/Web/CSS/@import ) that web browsers implement).
+
+    Most often you'll `@import` some repeated CSS for your specific layout and then tune some rules that match the generated HTML structure and CSS classes you may have added in your articles.
+
+    **example**
+
+    ```
+=base:main-css.css
+@import "css/colors.css";
+@import "css/article.css";
+
+h1 {
+  margin: auto;
+}
+```
+
+
+## commands [advanced]
+
+    Sometimes you want to build content from an external command.  For instance, you could snapshot the agenda of your favorite music band each time you generate your blog.
+
+    KitchenSink has minimal support for such a scheme. The feature requires to specify
+
+    - a command name (e.g. `ping`)
+
+- command arguments, arguments are a fixed array (e.g., `["-c", "3", "8.8.4.4"]`)
+
+- a target name (e.g., `latency_to_best_ip`)
+
+
+    KitchenSink then reserves the filename `/gen/out/<filename.cmark>__<target name>` (i.e., `/gen/out/sections.cmark__latency_to_best_ip` if we were to add this section in this article) and will execute the command, retrieve the standard output and put it in the file content.
+
+    The main intended use cases are:
+
+    - to generate extra or debugging metadata (e.g., to get the git-hash of the source repository or the hostname of the machine that built the website)
+
+- to help writing blog articles where you want to "show some code" (which I do extensively to `cat` some example source files rather than copying them in the source directory upfront)
+
+- to support funny features (e.g., take a selfie when generating the site)
+
+
+    Keep in mind that you may hit portability issues when switching systems (e.g., if you build your website in some automation, the automation need to be able to execute the commands).
+
+    :warning: Yes, this section is a bit like a CGI-bin and it opens all sorts of security risks if you do not know what you are doing.  In particular, do not copy-paste commands from the Internet without paying close attention.  In future version of KitchenSink I'll likely add a flag to ignore this section to reduce security risks for people who would like to run KitchenSink on external sources. At this point I assume that KitchenSink users are tech-savvy geeks.
+
+    **example**
+
+    ```
+=generator:cmd.json
+{"cmd": "ping"
+,"args": ["-c", "3", "8.8.4.4"]
+,"target":"latency_to_best_ip"
+}
+```
+
+    **example with datasets**
+
+    ```
+=base:dataset.json items2
+[ {"name": "foo"}
+, {"name": "bar"}
+, {"name": "baz"}
+]
+
+=base:dataset.json items1
+[ {"letter": "alpha"}
+, {"letter": "beta"}
+, {"letter": "gamma"}
+]
+
+=generator:cmd.json
+{"cmd": "jq"
+,"args": ["."]
+,"target":"jqified-dataset"
+}
+```
+
+
+
+## dhall [advanced]
+
+    There is one difficult design point when statically-generating website is when we have datasets of repeated structure (e.g., an image list with title, date, sizes, filepath, preferred corner thickness etc.) and you want to generate some content on a page in a static form. I touch on this difficult use-case in a [past article on my blog](https://dicioccio.fr/dhall-section-demo.html ).
+
+    In this specific case, the section consists of a [Dhall](https://dhall-lang.org/ ) expression typed so that it returns a page content.
+
+    The returned object must be of `Type`
+
+    ```dhall
+{ contents : Text
+, format : Text
+}
+```
+
+    Where `format` is either `cmark` or `html` and `contents` is formatted in the appropriate format. The return type is currently rather primitive and will likely change in the future. Changes and specifications are tracked in a [WIP-page](/sections-dhall.html ).
+
+    **example**
+
+    ```
+=base:main-content.dhall
+
+let map =  https://prelude.dhall-lang.org/List/map
+
+let alphabet : List Text =
+  [ "Applicative"
+  , "Bisiumulation"
+  , "Closure"
+  , "Distributive"
+  , "..."
+  ]
+
+let toCmarkListItem = \(v : Text) -> "- ${v}"
+
+let cmarkContents : List Text =
+  map Text Text toCmarkListItem alphabet
+
+in
+{ contents =  cmarkContents
+, format = "cmark"
+}
+```
+
+
+## glossary [experimental]
+
+    Whether its a TLA or some other term, you sometimes want to introduce glossary terms. KitchenSink has some support for glossary in the form of parsing a special section and turning that in a series of `dl/dt/dd` HTML tags towards the end of the article.
+
+    Glossary terms should be repeated across articles and can have diverging definitions across articles. A consolidated view of glossary terms is built when the special article `glossary.cmark` with layout type `glossary` is present.
+
+    In the future we may modify the  generated HTML to include some glossary-links directly in the render body of articles or add glossary terms as nodes into the sitemap.
+
+    **example**
+
+    ```
+=base:glossary.json
+{"glossary":
+  [ {"term": "KS", "definition": "Kitchen Sink"}
+  , {"term": "TLA", "definition": "Three-letter acroynym"}
+  ]
+}
+```
+
+
+## embedded datasets [experimental]
+
+    Sometimes you want to ship a dataset. An option is to create one file in the Kitchen-Sink directory. However you may not want to multiply files.  Rather, sometimes you just want to inline some dataset in a document.
+
+    Datasets are useful if you write a small JavaScript demo tool. Datasets also are useful as templating mechanisms as JSON datasets are input of Dhall and Mustache sections.
+
+    The `dataset` section addresses such needs, by generating.  :warning: The ordering of the insertion determines the resulting filename, for instance `/raw/data/sections.cmark__<datasetname><index>.csv` for the first dataset in the `sections.cmark` file. With ```html
+<datasetname>``` a name given on the section marker (cf. example) and ```html
+<index>``` a Kitchen-Sink chosen value (for now a numeric index but it could become a hash)
+
+    In the future we will likely create extra metadata information:
+
+    - computing sha256 signatures of datasets
+
+- inserting some `<meta>` tags in the HTML `head` section
+
+
+    **example**
+
+    ```
+=base:dataset.csv some-csv-dataset
+foo;bar
+a;42
+b;51
+
+=base:dataset.json some-json-dataset
+[{"foo":"a", "bar": 42}
+,{"foo":"b", "bar": 51}
+]
+```
+
+
+
+## Mustache templates [experimental]
+
+    A well-known templating language for substituting a few variables in text objects is the [Mustache](http://mustache.github.io/mustache.5.html ) template language.
+
+    As of today the implementation is as follows:
+
+    - Evaluation occurs at Site-Loading time (i.e., once for a running blog in server mode).
+
+- There are no partials.
+
+- The value available to templates is a object-collection of available datasets. Use `{{ . }}` to "debug" the contents.
+
+- The content must return `.cmark` contents (which in turns get turned into HTML).
+
+
+    I'll likely change all of the above (for more control) but I've yet to fully-form ideas about the details. In particular, I have some PHP-envy to turn server-mode KitchenSink in a light webapp framework: after all, it's a kitchen-sink.
+
+    **example**
+
+    ```
+=base:dataset.json users
+[{"name":"Albert", "color": "darksalmon"}
+,{"name":"Barbara", "color": "rebeccapurple"}
+]
+
+=base:main-content.mustache
+
+### hello from a Mustache template
+
+{{# users }}
+  - {{ name }} : <span style="color: {{ color }}">Preferred Color</span>
+{{/ users }}
+```
+
+
+
+### hello from a Mustache template
+
+- Albert : ```html
+<span style="color: darksalmon">```Preferred Color```html
+</span>```
+
+- Barbara : ```html
+<span style="color: rebeccapurple">```Preferred Color```html
+</span>```
+
+
+
+-----------------------------
+
+

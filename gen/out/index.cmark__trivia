@@ -1,11 +1,11 @@
 git commits:
-163
+172
 src files:
-54
+55
 code size (lines):
-5081
+5336
 code size (bytes):
-183279
+191058
 details:
    220    952   6232 ./hs/src/KitchenSink/Commonmark/Free.hs
     55    165   1364 ./hs/src/KitchenSink/Commonmark/HashTag.hs
@@ -16,7 +16,7 @@ details:
     25     74    960 ./hs/src/KitchenSink/Core/Assembler/Sections.hs
     24     90    766 ./hs/src/KitchenSink/Core/Assembler/Base.hs
     27    158   1213 ./hs/src/KitchenSink/Core/Assembler/Sections/Json.hs
-    59    231   2397 ./hs/src/KitchenSink/Core/Assembler/Sections/CommonMark.hs
+    62    231   2425 ./hs/src/KitchenSink/Core/Assembler/Sections/CommonMark.hs
     75    282   2128 ./hs/src/KitchenSink/Core/Assembler/Sections/Primitives.hs
      8     15    164 ./hs/src/KitchenSink/Core/Assembler/Sections/PreRendered.hs
     10     17    292 ./hs/src/KitchenSink/Core/Section.hs
@@ -29,30 +29,31 @@ details:
     19     48    438 ./hs/src/KitchenSink/Core/Generator.hs
     55    178   1676 ./hs/src/KitchenSink/Engine/Track.hs
     89    247   2470 ./hs/src/KitchenSink/Engine/MultiSiteConfig.hs
-    51    215   1936 ./hs/src/KitchenSink/Engine/SiteBuilder.hs
-    36    133   1052 ./hs/src/KitchenSink/Engine/Utils.hs
+    66    258   2241 ./hs/src/KitchenSink/Engine/SiteBuilder.hs
+    35    123    997 ./hs/src/KitchenSink/Engine/Utils.hs
     74    199   1787 ./hs/src/KitchenSink/Engine/Config.hs
     94    401   3673 ./hs/src/KitchenSink/Engine/OnTheFly.hs
     35     98    818 ./hs/src/KitchenSink/Engine/SiteConfig.hs
     79    361   3297 ./hs/src/KitchenSink/Engine/Counters.hs
-   359   1693  15673 ./hs/src/KitchenSink/Engine/MultiSite.hs
-   153    640   6079 ./hs/src/KitchenSink/Engine/Serve.hs
-    60    227   2073 ./hs/src/KitchenSink/Engine/Produce.hs
+   368   1678  15656 ./hs/src/KitchenSink/Engine/MultiSite.hs
+   162    619   6108 ./hs/src/KitchenSink/Engine/Serve.hs
+    67    218   2148 ./hs/src/KitchenSink/Engine/Produce.hs
     57    184   1656 ./hs/src/KitchenSink/Engine/Api.hs
-   308   1436  11965 ./hs/src/KitchenSink/Engine/SiteLoader.hs
+   325   1499  12613 ./hs/src/KitchenSink/Engine/SiteLoader.hs
    193    932   7211 ./hs/src/KitchenSink/Engine/Runtime.hs
    156    820   6893 ./hs/src/KitchenSink/Engine/Handlers.hs
     10     42    386 ./hs/src/KitchenSink/Layout/Base.hs
-   550   2319  24363 ./hs/src/KitchenSink/Layout/Blog/Targets.hs
+   629   2442  25969 ./hs/src/KitchenSink/Layout/Blog/Targets.hs
     38    171   1437 ./hs/src/KitchenSink/Layout/Blog/SpecialArticles.hs
     23     73    673 ./hs/src/KitchenSink/Layout/Blog/Metadata.hs
     15     29    703 ./hs/src/KitchenSink/Layout/Blog/Analyses.hs
     16     81    578 ./hs/src/KitchenSink/Layout/Blog/Extensions.hs
-   658   3105  25385 ./hs/src/KitchenSink/Layout/Blog/Fragments.hs
+   666   3130  25676 ./hs/src/KitchenSink/Layout/Blog/Fragments.hs
     53    219   2094 ./hs/src/KitchenSink/Layout/Blog/ArticleTypes.hs
    141    381   3671 ./hs/src/KitchenSink/Layout/Blog/Summary.hs
-   158    669   6172 ./hs/src/KitchenSink/Layout/Blog/Destinations.hs
+   164    693   6400 ./hs/src/KitchenSink/Layout/Blog/Destinations.hs
     82    357   2711 ./hs/src/KitchenSink/Layout/Blog/Analyses/SkyLine.hs
+    85    423   3823 ./hs/src/KitchenSink/Layout/Blog/Analyses/TextRender.hs
     32    119    986 ./hs/src/KitchenSink/Layout/Blog/Analyses/FileCount.hs
    151    585   5106 ./hs/src/KitchenSink/Layout/Blog/Analyses/SiteGraph.hs
    105    405   3275 ./hs/src/KitchenSink/Layout/Blog/Analyses/ArticleInfos.hs
@@ -60,5 +61,5 @@ details:
     57    196   1744 ./hs/src/KitchenSink/Layout/Blog/Analyses/GlossaryGrouping.hs
     22     85    715 ./hs/src/KitchenSink/Layout/Blog/Analyses/Wordcount.hs
     16     41    455 ./hs/src/KitchenSink/Layout/Blog.hs
-    49    236   1774 ./hs/src/KitchenSink/Engine.hs
-  5081  21020 183279 total
+    67    363   2592 ./hs/src/KitchenSink/Engine.hs
+  5336  21793 191058 total

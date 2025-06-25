@@ -1,35 +1,217 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom">
-    <title type="text">
-        The Kitchen Sink Blog Generator
-    </title>
-    <id>
-        https://kitchensink-tech.github.io/atom.xml
-    </id>
-    <updated>
-        1970-01-01T00:00:00Z
-    </updated>
-    <entry>
-        <id>
-            https://kitchensink-tech.github.io/layouts.html
-        </id>
-        <title type="text">
-            Layouts and extensions
-        </title>
-        <updated>
-            1970-01-01T00:00:00Z
-        </updated>
-        <author>
-            <name>
-                Lucas DiCioccio
-            </name>
-        </author>
-        <content type="html">
-            &lt;div class="main-article"&gt;&lt;section class="main-section"&gt;&lt;p&gt;There are two notions of layouts in KitchenSink: &lt;em&gt;article layouts&lt;/em&gt; and &lt;em&gt;website layouts&lt;/em&gt;. This article first discusses how they differ, then we deep-dive in Website Layouts.&lt;/p&gt; &lt;h2 id="article-vs-website-layouts"&gt;Article vs. Website layouts&lt;/h2&gt; &lt;p&gt;Article Layouts are per-article configurations which allow to tune what a rendered-article looks like. This configuration is set in the &lt;code&gt;base:build-info.json&lt;/code&gt; &lt;a href="/sections.html"&gt;section&lt;/a&gt;. For instance, while writing this text, this page is an &lt;strong&gt;Upcoming Article&lt;/strong&gt;, when I’ll find that the content is ready, I’ll change this configuration to a &lt;strong&gt;Published Article&lt;/strong&gt; . An example configuration is as follows:.&lt;/p&gt; &lt;pre&gt;&lt;code&gt;=base:build-info.json {&amp;quot;layout&amp;quot;:&amp;quot;article&amp;quot; ,&amp;quot;publicationStatus&amp;quot;:&amp;quot;Upcoming&amp;quot; } &lt;/code&gt;&lt;/pre&gt; &lt;p&gt;The &lt;code&gt;layout&lt;/code&gt; directive indicates how KitchenSink should intepret (in a broad sense) the rest of the &lt;code&gt;.cmark&lt;/code&gt; article. The layout not only influences the HTML output of the article content: the layout also can influence the presence of the navigation bar at the top, or just about anything. If the directive were &lt;code&gt;application&lt;/code&gt; instead, we would have no default CSS and no navigation bar as we expect the article content to take-over the whole page. Currently, these layouts are mostly documented in the documentation about the build-info &lt;a href="/sections.html"&gt;section&lt;/a&gt;.&lt;/p&gt; &lt;p&gt;In addition, KitchenSink utilises the &lt;code&gt;publicationStatus&lt;/code&gt; to further tweak some behaviours here and there. For instance, an &lt;code&gt;Upcoming&lt;/code&gt; article will have a warning banner. Upcoming articles will show up grayed-out in article listings. Upcoming articles will not appear in the Atom feed. We’ve yet to document all such behaviors. However, if you wonder where KitchenSink takes all these rules, we can give you the answer right away: from the Website Layout &lt;span class="emoji" data-emoji="bulb"&gt;💡&lt;/span&gt;!&lt;/p&gt; &lt;p&gt;Website Layouts carry most of the “business rules” in KitchenSink. Creating a Website Layout is a significant modification of KitchenSink. Indeed, Website Layouts control how the collection of files in the KitchenSink directory are interpreted into a website in a broad sense. The Website Layout dictates the directory structure, the HTML contents, CSS files, videos, what have you.&lt;/p&gt; &lt;p&gt;Writing your own Layout allows you to:&lt;/p&gt; &lt;ul&gt; &lt;li&gt;support more or fewer Section types &lt;/li&gt; &lt;li&gt;redefine the set of Targets and their contents &lt;/li&gt; &lt;/ul&gt; &lt;p&gt;Layouts in KitchenSink are implemented in the &lt;a href="https://haskell.org/"&gt;Haskell&lt;/a&gt; programming language and require some firm understanding of Haskell if you want to modify a layout, let-alone build a layout from scratch.&lt;/p&gt; &lt;h2 id="article-layouts"&gt;Article layouts&lt;/h2&gt; &lt;p&gt;Website layouts define the behaviour of Article layouts. Kitchen-Sink currently supports a single website-layout (the one for this website). For now, I’ll refer you to &lt;a href="/sections.html#build-info-mandatory"&gt;the build-info section documentation&lt;/a&gt;.&lt;/p&gt; &lt;h2 id="writing-website-layouts"&gt;Writing website layouts&lt;/h2&gt; &lt;p&gt;The Website Layout is so important that the KichenSink code merely speak about Layout. This section describes KitchenSink’s Layout type in depth.&lt;/p&gt; &lt;p&gt;Previous paragraphs introduced Website Layouts as the way to customize the business rules to turn &lt;code&gt;.cmark&lt;/code&gt; section-files into &lt;code&gt;.html&lt;/code&gt; and other sort of files. Hence, so far we’ve answered &lt;strong&gt;what&lt;/strong&gt; is the purpose of Website Layouts. We now discuss &lt;strong&gt;how&lt;/strong&gt; Website Layouts operate. As often in Haskell, the best way to describe &lt;strong&gt;how&lt;/strong&gt; something works is to show and scrutinize type signatures. Hence, let’s dive-in the &lt;code&gt;Layout&lt;/code&gt; type and see for ourselves. As of today, the &lt;code&gt;Layout&lt;/code&gt; type is defined as follows:&lt;/p&gt; &lt;div class="code code--highlighted"&gt;&lt;div class="sourceCode"&gt;&lt;pre class="sourceCode"&gt;&lt;code class="sourceCode"&gt;&lt;span id="1"&gt;&lt;a href="#1" aria-hidden="true" tabindex="-1"&gt;&lt;/a&gt;&lt;span class="kw"&gt;data&lt;/span&gt; &lt;span class="dt"&gt;Layout&lt;/span&gt; ext meta summary&lt;/span&gt; &lt;span id="2"&gt;&lt;a href="#2" aria-hidden="true" tabindex="-1"&gt;&lt;/a&gt; &lt;span class="ot"&gt;=&lt;/span&gt; &lt;span class="dt"&gt;Layout&lt;/span&gt;&lt;/span&gt; &lt;span id="3"&gt;&lt;a href="#3" aria-hidden="true" tabindex="-1"&gt;&lt;/a&gt; {&lt;span class="ot"&gt; siteTargets ::&lt;/span&gt; &lt;span class="dt"&gt;OutputPrefix&lt;/span&gt; &lt;span class="ot"&gt;-&amp;gt;&lt;/span&gt; meta &lt;span class="ot"&gt;-&amp;gt;&lt;/span&gt; &lt;span class="dt"&gt;Site&lt;/span&gt; ext &lt;span class="ot"&gt;-&amp;gt;&lt;/span&gt; [&lt;span class="dt"&gt;Target&lt;/span&gt; ext summary]&lt;/span&gt; &lt;span id="4"&gt;&lt;a href="#4" aria-hidden="true" tabindex="-1"&gt;&lt;/a&gt; ,&lt;span class="ot"&gt; extraSectiontypes ::&lt;/span&gt; [&lt;span class="dt"&gt;ExtraSectionType&lt;/span&gt; ext]&lt;/span&gt; &lt;span id="5"&gt;&lt;a href="#5" aria-hidden="true" tabindex="-1"&gt;&lt;/a&gt; }&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;&lt;p&gt;It helps to squint a bit and ignore type-level parameters. Simplifying the above, we could write Layout as:&lt;/p&gt; &lt;div class="code code--highlighted"&gt;&lt;div class="sourceCode"&gt;&lt;pre class="sourceCode"&gt;&lt;code class="sourceCode"&gt;&lt;span id="1"&gt;&lt;a href="#1" aria-hidden="true" tabindex="-1"&gt;&lt;/a&gt;&lt;span class="kw"&gt;data&lt;/span&gt; &lt;span class="dt"&gt;Layout&lt;/span&gt;&lt;/span&gt; &lt;span id="2"&gt;&lt;a href="#2" aria-hidden="true" tabindex="-1"&gt;&lt;/a&gt; &lt;span class="ot"&gt;=&lt;/span&gt; &lt;span class="dt"&gt;Layout&lt;/span&gt;&lt;/span&gt; &lt;span id="3"&gt;&lt;a href="#3" aria-hidden="true" tabindex="-1"&gt;&lt;/a&gt; {&lt;span class="ot"&gt; siteTargets ::&lt;/span&gt; &lt;span class="dt"&gt;Site&lt;/span&gt; &lt;span class="ot"&gt;-&amp;gt;&lt;/span&gt; [&lt;span class="dt"&gt;Target&lt;/span&gt;]&lt;/span&gt; &lt;span id="4"&gt;&lt;a href="#4" aria-hidden="true" tabindex="-1"&gt;&lt;/a&gt; ,&lt;span class="ot"&gt; extraSectiontypes ::&lt;/span&gt; [&lt;span class="dt"&gt;ExtraSectionType&lt;/span&gt;]&lt;/span&gt; &lt;span id="5"&gt;&lt;a href="#5" aria-hidden="true" tabindex="-1"&gt;&lt;/a&gt; }&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;&lt;p&gt;In short, a &lt;code&gt;Layout&lt;/code&gt; has two main purposes:&lt;/p&gt; &lt;ul&gt; &lt;li&gt;provide a &lt;code&gt;siteTargets&lt;/code&gt; that turns a &lt;code&gt;Site&lt;/code&gt; into a list of &lt;code&gt;Target&lt;/code&gt; &lt;/li&gt; &lt;li&gt;provide a &lt;code&gt;extraSectiontypes&lt;/code&gt; which is a list of Sections KitchenSink should learn how to parse &lt;/li&gt; &lt;/ul&gt; &lt;p&gt;The type parameters &lt;code&gt;ext&lt;/code&gt;, &lt;code&gt;summary&lt;/code&gt;, &lt;code&gt;meta&lt;/code&gt; and so on and so forth are required to let the Haskell compiler ensure that everything is consistent (e.g., you can only build Targets in &lt;code&gt;siteTargets&lt;/code&gt; for an extension if the extension is declared in &lt;code&gt;extraSectiontypes&lt;/code&gt;).&lt;/p&gt; &lt;h3 id="understanding-sitetargets"&gt;understanding &lt;code&gt;siteTargets&lt;/code&gt;&lt;/h3&gt; &lt;p&gt;A Layout gets to decide how to translate the in-memory represention of a whole Site into files, including their content-generation logic.&lt;/p&gt; &lt;p&gt;Thus what is important is to get some example of &lt;code&gt;siteTargets&lt;/code&gt; function. And understand, at least at a shallow-level, what is a Target.&lt;/p&gt; &lt;pre&gt;&lt;code&gt;data Target ext a = Target { destination :: DestinationLocation , productionRule :: ProductionRule ext , summary :: a } deriving (Functor) &lt;/code&gt;&lt;/pre&gt; &lt;p&gt;The &lt;code&gt;destination&lt;/code&gt; is roughly the HTTP path of where the content is placed. The &lt;code&gt;productionRule&lt;/code&gt; is roughly the IO-inducing code to generate the content (e.g., rendering some HTML, copying some file, or executing a command). Finally, the &lt;code&gt;summary&lt;/code&gt; serves the purpose of having previews (e.g., in the search box).&lt;/p&gt; &lt;p&gt;In short, a Target contains enough information &lt;strong&gt;to locate, describe, and build&lt;/strong&gt; some document piece of your website.&lt;/p&gt; &lt;p&gt;Let’s now open KitchenSink’s default &lt;code&gt;siteTargets&lt;/code&gt; function at a first-level of details:&lt;/p&gt; &lt;pre&gt;&lt;code&gt;siteTargets :: OutputPrefix -&amp;gt; MetaData -&amp;gt; Site -&amp;gt; [Target] siteTargets prefix extra site = allTargets where allTargets = mconcat [ embeddedGeneratorTargets , embeddedDataTargets , fmap fst articleTargets , imageTargets prefix site , dotimageTargets prefix site , videoTargets prefix site , rawTargets prefix site , documentTargets prefix site , cssTargets prefix site , jsTargets prefix site , htmlTargets prefix site , topicIndexesTargets (lookupSpecialArticle SpecialArticles.Topics site) , topicAtomTargets (lookupSpecialArticle SpecialArticles.Topics site) , glossaryTargets (lookupSpecialArticleSource SpecialArticles.Glossary site) , jsonDataTargets , seoTargets ] &lt;/code&gt;&lt;/pre&gt; &lt;p&gt;Unsurprisingly, the default &lt;code&gt;siteTargets&lt;/code&gt; parrots what the documentation pages about &lt;a href="/sections.html"&gt;sections&lt;/a&gt; and &lt;a href="/other-formats.html"&gt;other types of files&lt;/a&gt; decribe. Each family of document, each specific section in article files, each magic-file (like glossaries) gets a specific target. Each of these functions then have different techniques (e.g., HTML targets will render some HTML using an HTML-layout library, JSON targets will use Aeson-encoding of some structure etc.)&lt;/p&gt; &lt;p&gt;As you can guess, writing a whole new &lt;code&gt;siteTargets&lt;/code&gt; is a lot of work. That’s why we recommend to start contacting me before jumping into such an endeavor. Longer-term I’d like to have support for templated-targets, much like Dhall, but with a mini language better-suited for markup (like Mustache or ERB for instance).&lt;/p&gt; &lt;h3 id="some-words-on-extrasectiontypes"&gt;some words on &lt;code&gt;extraSectiontypes&lt;/code&gt;&lt;/h3&gt; &lt;p&gt;The way KitchenSink divides work operates in two phases:&lt;/p&gt; &lt;ul&gt; &lt;li&gt;load the &lt;code&gt;Site&lt;/code&gt; object &lt;ul&gt; &lt;li&gt;read articles from disk (we discuss only &lt;code&gt;.cmark&lt;/code&gt;, but other files like &lt;code&gt;.png&lt;/code&gt; are listed too) &lt;/li&gt; &lt;li&gt;parsing content of &lt;code&gt;.cmark&lt;/code&gt; as section format &lt;/li&gt; &lt;li&gt;evaluating &lt;code&gt;.dhall&lt;/code&gt; sections &lt;/li&gt; &lt;/ul&gt; &lt;/li&gt; &lt;li&gt;assemble targets &lt;ul&gt; &lt;li&gt;compute all the siteTargets (cf. above) &lt;/li&gt; &lt;li&gt;evaluate all the targets &lt;/li&gt; &lt;/ul&gt; &lt;/li&gt; &lt;/ul&gt; &lt;p&gt;If you were to extend the &lt;code&gt;.cmark&lt;/code&gt; file with some form of new section type (e.g., you want to support some “license” section), you would have to modify KitchenSink in both phases:&lt;/p&gt; &lt;ul&gt; &lt;li&gt;during the &lt;strong&gt;load&lt;/strong&gt; phase: you need a name &lt;code&gt;ext:my-license-extension&lt;/code&gt; so that the loader recognizes &lt;code&gt;=ext:my-license-extension&lt;/code&gt; like &lt;code&gt;=base:main-content.cmark&lt;/code&gt; &lt;/li&gt; &lt;li&gt;for the &lt;strong&gt;assemble&lt;/strong&gt; phase: you later need &lt;code&gt;Assembler&lt;/code&gt; functions (that are capable of reading article sections) to decide how your license is interpreted and rendered in your Website layout. &lt;/li&gt; &lt;/ul&gt; &lt;p&gt;Following the type-machinery should be enough. One remark though: there is one single “extension” parameter, so if you want to support multiple ones, you should build a sum-type of the extensions you support.&lt;/p&gt; &lt;h2 id="extending-kitchensink-in-other-forms"&gt;Extending KitchenSink in other forms&lt;/h2&gt; &lt;p&gt;You may want to modify KitchenSink in ways we have not discussed yet. For intance, you may want to support new filetypes (e.g., &lt;code&gt;docx&lt;/code&gt; documents) in an existing family of filetypes, or new families of file types altogether (e.g., source code of some form).&lt;/p&gt; &lt;p&gt;Such changes are feasible but not &lt;em&gt;that easily&lt;/em&gt;. Your best chance likely is to &lt;a href="https://dicioccio.fr/about-me.html"&gt;contact me&lt;/a&gt; or by opening an issue on the &lt;a href="https://github.com/kitchensink-tech/kitchensink"&gt;GitHub page&lt;/a&gt;.&lt;/p&gt; &lt;h2 id="summary"&gt;Summary&lt;/h2&gt; &lt;p&gt;You want to modify how a given article is rendered using an existing Article layout:&lt;/p&gt; &lt;ul&gt; &lt;li&gt;a) modify &lt;code&gt;=base:build-info.json&lt;/code&gt; section &lt;/li&gt; &lt;/ul&gt; &lt;p&gt;You want to modify the structure of the generated HTML (or create an Article Layout):&lt;/p&gt; &lt;ul&gt; &lt;li&gt;a) the &lt;code&gt;siteTargets&lt;/code&gt; function &lt;/li&gt; &lt;/ul&gt; &lt;p&gt;You want to generate addition &lt;code&gt;.json&lt;/code&gt; magic file (or similar):&lt;/p&gt; &lt;ul&gt; &lt;li&gt;a) the &lt;code&gt;siteTargets&lt;/code&gt; function &lt;/li&gt; &lt;/ul&gt; &lt;p&gt;You want to modify the structure of the rendered HTML:&lt;/p&gt; &lt;ul&gt; &lt;li&gt;a) the &lt;code&gt;siteTargets&lt;/code&gt; function &lt;/li&gt; &lt;/ul&gt; &lt;p&gt;You want to support a new section:&lt;/p&gt; &lt;ul&gt; &lt;li&gt;a) modify the Layout to be able to parse the new data type &lt;/li&gt; &lt;li&gt;b) modify the &lt;code&gt;evalTarget&lt;/code&gt; function to apply the needed changes (most likely, you want to generate some extra information) &lt;/li&gt; &lt;/ul&gt; &lt;p&gt;You want to support a new filetype:&lt;/p&gt; &lt;ul&gt; &lt;li&gt;a) contact me &lt;/li&gt; &lt;li&gt;b) modify the Site loader &lt;/li&gt; &lt;li&gt;c) modify the Layout function with whatever you need to turn the filetype into a set of targets &lt;/li&gt; &lt;/ul&gt; &lt;p&gt;Other changes:&lt;/p&gt; &lt;ul&gt; &lt;li&gt;a) contact me &lt;/li&gt; &lt;/ul&gt; &lt;/section&gt;&lt;/div&gt;
-        </content>
-        <link href="https://kitchensink-tech.github.io/layouts.html" rel="alternate"/>
-        <summary type="text">
-            There are two notions of layouts in KitchenSink: article layouts and website layouts. This article answers questions like: how do you change the layout of the blog? how do you extend KitchenSink?
-        </summary>
-    </entry>
-</feed>
+<?xml version="1.0" encoding="UTF-8"?><feed xmlns="http://www.w3.org/2005/Atom"><title type="text">The Kitchen Sink Blog Generator</title><id>https://kitchensink-tech.github.io/atom.xml</id><updated>1970-01-01T00:00:00Z</updated><entry><id>https://kitchensink-tech.github.io/layouts.html</id><title type="text">Layouts and extensions</title><updated>1970-01-01T00:00:00Z</updated><author><name>Lucas DiCioccio</name></author><content type="html">&lt;div class="main-article"&gt;&lt;section class="main-section"&gt;&lt;p&gt;There are two notions of layouts in KitchenSink: &lt;em&gt;article layouts&lt;/em&gt; and &lt;em&gt;website
+layouts&lt;/em&gt;. This article first discusses how they differ, then we deep-dive in
+Website Layouts.&lt;/p&gt;
+&lt;h2 id="article-vs-website-layouts"&gt;Article vs. Website layouts&lt;/h2&gt;
+&lt;p&gt;Article Layouts are per-article configurations which allow to tune what a
+rendered-article looks like. This configuration is set in the
+&lt;code&gt;base:build-info.json&lt;/code&gt; &lt;a href="/sections.html"&gt;section&lt;/a&gt;. For instance, while writing
+this text, this page is an &lt;strong&gt;Upcoming Article&lt;/strong&gt;, when I’ll find that the
+content is ready, I’ll change this configuration to a &lt;strong&gt;Published Article&lt;/strong&gt; .
+An example configuration is as follows:.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;=base:build-info.json
+{&amp;quot;layout&amp;quot;:&amp;quot;article&amp;quot;
+,&amp;quot;publicationStatus&amp;quot;:&amp;quot;Upcoming&amp;quot;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The &lt;code&gt;layout&lt;/code&gt; directive indicates how KitchenSink should intepret (in a broad
+sense) the rest of the &lt;code&gt;.cmark&lt;/code&gt; article. The layout not only influences the
+HTML output of the article content: the layout also can influence the presence
+of the navigation bar at the top, or just about anything.  If the directive
+were &lt;code&gt;application&lt;/code&gt; instead, we would have no default CSS and no navigation bar
+as we expect the article content to take-over the whole page.  Currently, these
+layouts are mostly documented in the documentation about the build-info
+&lt;a href="/sections.html"&gt;section&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;In addition, KitchenSink utilises the &lt;code&gt;publicationStatus&lt;/code&gt; to further tweak some
+behaviours here and there. For instance, an &lt;code&gt;Upcoming&lt;/code&gt; article will have a warning
+banner. Upcoming articles will show up grayed-out in article listings. Upcoming
+articles will not appear in the Atom feed. We’ve yet to document all such
+behaviors. However, if you wonder where KitchenSink takes all these rules, we
+can give you the answer right away: from the Website Layout &lt;span class="emoji" data-emoji="bulb"&gt;💡&lt;/span&gt;!&lt;/p&gt;
+&lt;p&gt;Website Layouts carry most of the “business rules” in KitchenSink. Creating a
+Website Layout is a significant modification of KitchenSink. Indeed, Website
+Layouts control how the collection of files in the KitchenSink directory are
+interpreted into a website in a broad sense. The Website Layout dictates the
+directory structure, the HTML contents, CSS files, videos, what have you.&lt;/p&gt;
+&lt;p&gt;Writing your own Layout allows you to:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;support more or fewer Section types
+&lt;/li&gt;
+&lt;li&gt;redefine the set of Targets and their contents
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Layouts in KitchenSink are implemented in the &lt;a href="https://haskell.org/"&gt;Haskell&lt;/a&gt;
+programming language and require some firm understanding of Haskell if you want
+to modify a layout, let-alone build a layout from scratch.&lt;/p&gt;
+&lt;h2 id="article-layouts"&gt;Article layouts&lt;/h2&gt;
+&lt;p&gt;Website layouts define the behaviour of Article layouts. Kitchen-Sink currently
+supports a single website-layout (the one for this website).  For now, I’ll
+refer you to &lt;a href="/sections.html#build-info-mandatory"&gt;the build-info section
+documentation&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id="writing-website-layouts"&gt;Writing website layouts&lt;/h2&gt;
+&lt;p&gt;The Website Layout is so important that the KichenSink code merely speak about
+Layout.  This section describes KitchenSink’s Layout type in depth.&lt;/p&gt;
+&lt;p&gt;Previous paragraphs introduced Website Layouts as the way to customize the
+business rules to turn &lt;code&gt;.cmark&lt;/code&gt; section-files into &lt;code&gt;.html&lt;/code&gt; and other sort of
+files. Hence, so far we’ve answered &lt;strong&gt;what&lt;/strong&gt; is the purpose of Website Layouts.
+We now discuss &lt;strong&gt;how&lt;/strong&gt; Website Layouts operate.  As often in Haskell, the best
+way to describe &lt;strong&gt;how&lt;/strong&gt; something works is to show and scrutinize type
+signatures. Hence, let’s dive-in the &lt;code&gt;Layout&lt;/code&gt; type and see for ourselves.  As
+of today, the &lt;code&gt;Layout&lt;/code&gt; type is defined as follows:&lt;/p&gt;
+&lt;div class="code code--highlighted"&gt;&lt;div class="sourceCode"&gt;&lt;pre class="sourceCode"&gt;&lt;code class="sourceCode"&gt;&lt;span id="1"&gt;&lt;a href="#1" aria-hidden="true" tabindex="-1"&gt;&lt;/a&gt;&lt;span class="kw"&gt;data&lt;/span&gt; &lt;span class="dt"&gt;Layout&lt;/span&gt; ext meta summary&lt;/span&gt;
+&lt;span id="2"&gt;&lt;a href="#2" aria-hidden="true" tabindex="-1"&gt;&lt;/a&gt;  &lt;span class="ot"&gt;=&lt;/span&gt; &lt;span class="dt"&gt;Layout&lt;/span&gt;&lt;/span&gt;
+&lt;span id="3"&gt;&lt;a href="#3" aria-hidden="true" tabindex="-1"&gt;&lt;/a&gt;  {&lt;span class="ot"&gt; siteTargets ::&lt;/span&gt; &lt;span class="dt"&gt;OutputPrefix&lt;/span&gt; &lt;span class="ot"&gt;-&amp;gt;&lt;/span&gt; meta &lt;span class="ot"&gt;-&amp;gt;&lt;/span&gt; &lt;span class="dt"&gt;Site&lt;/span&gt; ext &lt;span class="ot"&gt;-&amp;gt;&lt;/span&gt; [&lt;span class="dt"&gt;Target&lt;/span&gt; ext summary]&lt;/span&gt;
+&lt;span id="4"&gt;&lt;a href="#4" aria-hidden="true" tabindex="-1"&gt;&lt;/a&gt;  ,&lt;span class="ot"&gt; extraSectiontypes ::&lt;/span&gt; [&lt;span class="dt"&gt;ExtraSectionType&lt;/span&gt; ext]&lt;/span&gt;
+&lt;span id="5"&gt;&lt;a href="#5" aria-hidden="true" tabindex="-1"&gt;&lt;/a&gt;  }&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;&lt;p&gt;It helps to squint a bit and ignore type-level parameters. Simplifying the
+above, we could write Layout as:&lt;/p&gt;
+&lt;div class="code code--highlighted"&gt;&lt;div class="sourceCode"&gt;&lt;pre class="sourceCode"&gt;&lt;code class="sourceCode"&gt;&lt;span id="1"&gt;&lt;a href="#1" aria-hidden="true" tabindex="-1"&gt;&lt;/a&gt;&lt;span class="kw"&gt;data&lt;/span&gt; &lt;span class="dt"&gt;Layout&lt;/span&gt;&lt;/span&gt;
+&lt;span id="2"&gt;&lt;a href="#2" aria-hidden="true" tabindex="-1"&gt;&lt;/a&gt;  &lt;span class="ot"&gt;=&lt;/span&gt; &lt;span class="dt"&gt;Layout&lt;/span&gt;&lt;/span&gt;
+&lt;span id="3"&gt;&lt;a href="#3" aria-hidden="true" tabindex="-1"&gt;&lt;/a&gt;  {&lt;span class="ot"&gt; siteTargets ::&lt;/span&gt; &lt;span class="dt"&gt;Site&lt;/span&gt; &lt;span class="ot"&gt;-&amp;gt;&lt;/span&gt; [&lt;span class="dt"&gt;Target&lt;/span&gt;]&lt;/span&gt;
+&lt;span id="4"&gt;&lt;a href="#4" aria-hidden="true" tabindex="-1"&gt;&lt;/a&gt;  ,&lt;span class="ot"&gt; extraSectiontypes ::&lt;/span&gt; [&lt;span class="dt"&gt;ExtraSectionType&lt;/span&gt;]&lt;/span&gt;
+&lt;span id="5"&gt;&lt;a href="#5" aria-hidden="true" tabindex="-1"&gt;&lt;/a&gt;  }&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;&lt;p&gt;In short, a &lt;code&gt;Layout&lt;/code&gt; has two main purposes:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;provide a &lt;code&gt;siteTargets&lt;/code&gt; that turns a &lt;code&gt;Site&lt;/code&gt; into a list of &lt;code&gt;Target&lt;/code&gt;
+&lt;/li&gt;
+&lt;li&gt;provide a &lt;code&gt;extraSectiontypes&lt;/code&gt; which is a list of Sections KitchenSink should learn how to parse
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The type parameters &lt;code&gt;ext&lt;/code&gt;, &lt;code&gt;summary&lt;/code&gt;, &lt;code&gt;meta&lt;/code&gt; and so on and so forth are
+required to let the Haskell compiler ensure that everything is consistent
+(e.g., you can only build Targets in &lt;code&gt;siteTargets&lt;/code&gt; for an extension if the
+extension is declared in &lt;code&gt;extraSectiontypes&lt;/code&gt;).&lt;/p&gt;
+&lt;h3 id="understanding-sitetargets"&gt;understanding &lt;code&gt;siteTargets&lt;/code&gt;&lt;/h3&gt;
+&lt;p&gt;A Layout gets to decide how to translate the in-memory represention of a whole
+Site into files, including their content-generation logic.&lt;/p&gt;
+&lt;p&gt;Thus what is important is to get some example of &lt;code&gt;siteTargets&lt;/code&gt; function.
+And understand, at least at a shallow-level, what is a Target.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;data Target ext a = Target
+  { destination :: DestinationLocation
+  , productionRule :: ProductionRule ext
+  , summary :: a
+  } deriving (Functor)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The &lt;code&gt;destination&lt;/code&gt; is roughly the HTTP path of where the content is placed.  The
+&lt;code&gt;productionRule&lt;/code&gt; is roughly the IO-inducing code to generate the content (e.g.,
+rendering some HTML, copying some file, or executing a command).  Finally, the
+&lt;code&gt;summary&lt;/code&gt; serves the purpose of having previews (e.g., in the search box).&lt;/p&gt;
+&lt;p&gt;In short, a Target contains enough information &lt;strong&gt;to locate, describe, and build&lt;/strong&gt;
+some document piece of your website.&lt;/p&gt;
+&lt;p&gt;Let’s now open KitchenSink’s default &lt;code&gt;siteTargets&lt;/code&gt; function at a first-level of details:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;siteTargets :: OutputPrefix -&amp;gt; MetaData -&amp;gt; Site -&amp;gt; [Target]
+siteTargets prefix extra site = allTargets
+  where
+    allTargets = mconcat
+      [ embeddedGeneratorTargets
+      , embeddedDataTargets
+      , fmap fst articleTargets
+      , imageTargets prefix site
+      , dotimageTargets prefix site
+      , videoTargets prefix site
+      , rawTargets prefix site
+      , documentTargets prefix site
+      , cssTargets prefix site
+      , jsTargets prefix site
+      , htmlTargets prefix site
+      , topicIndexesTargets (lookupSpecialArticle SpecialArticles.Topics site)
+      , topicAtomTargets (lookupSpecialArticle SpecialArticles.Topics site)
+      , glossaryTargets (lookupSpecialArticleSource SpecialArticles.Glossary site)
+      , jsonDataTargets
+      , seoTargets
+      ]
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Unsurprisingly, the default &lt;code&gt;siteTargets&lt;/code&gt; parrots what the documentation pages
+about &lt;a href="/sections.html"&gt;sections&lt;/a&gt; and &lt;a href="/other-formats.html"&gt;other types of
+files&lt;/a&gt; decribe.  Each family of document, each specific
+section in article files, each magic-file (like glossaries)  gets a specific
+target. Each of these functions then have different techniques (e.g., HTML
+targets will render some HTML using an HTML-layout library, JSON targets will
+use Aeson-encoding of some structure etc.)&lt;/p&gt;
+&lt;p&gt;As you can guess, writing a whole new &lt;code&gt;siteTargets&lt;/code&gt; is a lot of work. That’s
+why we recommend to start contacting me before jumping into such an endeavor.
+Longer-term I’d like to have support for templated-targets, much like Dhall,
+but with a mini language better-suited for markup (like Mustache or ERB for
+instance).&lt;/p&gt;
+&lt;h3 id="some-words-on-extrasectiontypes"&gt;some words on &lt;code&gt;extraSectiontypes&lt;/code&gt;&lt;/h3&gt;
+&lt;p&gt;The way KitchenSink divides work operates in two phases:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;load the &lt;code&gt;Site&lt;/code&gt; object
+&lt;ul&gt;
+&lt;li&gt;read articles from disk (we discuss only &lt;code&gt;.cmark&lt;/code&gt;, but other files like &lt;code&gt;.png&lt;/code&gt; are listed too)
+&lt;/li&gt;
+&lt;li&gt;parsing content of &lt;code&gt;.cmark&lt;/code&gt; as section format
+&lt;/li&gt;
+&lt;li&gt;evaluating &lt;code&gt;.dhall&lt;/code&gt; sections
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;assemble targets
+&lt;ul&gt;
+&lt;li&gt;compute all the siteTargets (cf. above)
+&lt;/li&gt;
+&lt;li&gt;evaluate all the targets
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;If you were to extend the &lt;code&gt;.cmark&lt;/code&gt; file with some form of new section type
+(e.g., you want to support some “license” section), you would have to modify
+KitchenSink in both phases:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;during the &lt;strong&gt;load&lt;/strong&gt; phase: you need a name &lt;code&gt;ext:my-license-extension&lt;/code&gt; so that the loader recognizes &lt;code&gt;=ext:my-license-extension&lt;/code&gt; like &lt;code&gt;=base:main-content.cmark&lt;/code&gt;
+&lt;/li&gt;
+&lt;li&gt;for the &lt;strong&gt;assemble&lt;/strong&gt; phase: you later need &lt;code&gt;Assembler&lt;/code&gt; functions (that are capable of reading article sections) to decide how your license is interpreted and rendered in your Website layout.
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Following the type-machinery should be enough. One remark though: there is one
+single “extension” parameter, so if you want to support multiple ones, you
+should build a sum-type of the extensions you support.&lt;/p&gt;
+&lt;h2 id="extending-kitchensink-in-other-forms"&gt;Extending KitchenSink in other forms&lt;/h2&gt;
+&lt;p&gt;You may want to modify KitchenSink in ways we have not discussed yet. For
+intance, you may want to support new filetypes (e.g., &lt;code&gt;docx&lt;/code&gt; documents) in an
+existing family of filetypes, or new families of file types altogether (e.g.,
+source code of some form).&lt;/p&gt;
+&lt;p&gt;Such changes are feasible but not &lt;em&gt;that easily&lt;/em&gt;. Your best chance likely is to
+&lt;a href="https://dicioccio.fr/about-me.html"&gt;contact me&lt;/a&gt; or by opening an issue on the
+&lt;a href="https://github.com/kitchensink-tech/kitchensink"&gt;GitHub page&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id="summary"&gt;Summary&lt;/h2&gt;
+&lt;p&gt;You want to modify how a given article is rendered using an existing Article layout:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;a) modify &lt;code&gt;=base:build-info.json&lt;/code&gt; section
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;You want to modify the structure of the generated HTML (or create an Article Layout):&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;a) the &lt;code&gt;siteTargets&lt;/code&gt; function
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;You want to generate addition &lt;code&gt;.json&lt;/code&gt; magic file (or similar):&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;a) the &lt;code&gt;siteTargets&lt;/code&gt; function
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;You want to modify the structure of the rendered HTML:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;a) the &lt;code&gt;siteTargets&lt;/code&gt; function
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;You want to support a new section:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;a) modify the Layout to be able to parse the new data type
+&lt;/li&gt;
+&lt;li&gt;b) modify the &lt;code&gt;evalTarget&lt;/code&gt; function to apply the needed changes (most likely, you want to generate some extra information)
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;You want to support a new filetype:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;a) contact me
+&lt;/li&gt;
+&lt;li&gt;b) modify the Site loader
+&lt;/li&gt;
+&lt;li&gt;c) modify the Layout function with whatever you need to turn the filetype into a set of targets
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Other changes:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;a) contact me
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/section&gt;&lt;/div&gt;</content><link href="https://kitchensink-tech.github.io/layouts.html" rel="alternate"/><summary type="text">There are two notions of layouts in KitchenSink: article layouts and website layouts. This article answers questions like: how do you change the layout of the blog? how do you extend KitchenSink?</summary></entry></feed>

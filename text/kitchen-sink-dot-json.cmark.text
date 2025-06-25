@@ -1,0 +1,73 @@
+When generating HTML content, most of the work can be done without context of "where" an application will be hosted. Unfortunately, some information do leak a bit.  In particular, if you want to support some features like OpenGraph or RSS, you are supposed to know, at the time of generating the HTML and before publishing the HTML, the URL of published URLs. Rather than polluting all articles with this concern, we do it once for all articles. Enters the `kitchen-sink.json` configuration file.
+
+# contents of kitchen-sink.json
+
+As the time of writing this article, `kitchen-sink.json` supports the following keys:
+
+- `title`: the title on the index page and the prefix of per-articles titles
+
+- `publishURL`: the url that will be added as prefix of links in permalinks
+
+- `twitterLogin` (optional): the Twitter handle for the website, which may differ from the Twitter handle of individual authors
+
+- `commands`: an array of json objects containing:
+- - a  `display` for the text on the web
+
+- a  `handle` that must be unique across command and gives a command name, this value is used as a query-param (suggestion: a lower-kebab-case word)
+
+- a  `exe` as a path to a script that is executable from the webserver
+
+
+
+- `publishScript` (deprecated, use a command instead): an historical "blessed" command. This is documented only if you ever encounter a kitchen-sink.json with this field, the support for this field will be removed in the feature.
+
+- `api` (required,experimental): asks kitchen-sink, **when run in DEV mode**, to proxy `/api`-prefixed requests to an `[host,port]` destination
+- - the proper type is an Aeson-encoded Haskell datatype (i.e., using a level of JSON-object containing `tag` and `contents` keys)
+
+- values can either be
+- - `{"tag": "NoProxying"}`
+
+- `{"tag": "SlashApiProxy", "contents": ["localhost",3000]}`
+
+- `{"tag": "SlashApiProxyList", "contents": [ {"security": "UsePlainText", "prefix":"/api/appli-1", "rewrite": {"tag": "NoRewrite"}, "hostname":"localhost", "portnum":8001}, {"security": "UseHTTPS", "prefix":"/api/appli-2", "rewrite": {"tag": "NoRewrite"}, "hostname":"some.example.com", "portnum":443} ]}`
+
+
+
+
+
+- `linkedSites` (optional, experimental): a series of json objects containing a listing of the external sites you consider especially important (and they show up on the site-graph for instance):
+- - a `baseUrl` string
+
+- a `siteTitle` string
+
+- a `siteType` string
+
+
+
+
+An example of kitchen-sink.json
+
+```json
+{ "title": "Kitchen Sink Default Page"
+, "publishURL": "https://kitchensink.github.io"
+, "twitterLogin": "lucasdicioccio"
+, "commands":
+  [ {"display": "publish to github", "handle": "publish", "exe": "./scripts/publish.sh" }
+  ]
+, "api": {"tag": "SlashApiProxy", "contents": ["localhost", 3000] }
+, "linkedSites":
+  [ {"baseURL": "https://dicioccio.fr/", "siteTitle": "Lucas' blog.", "siteType": "kitchen-sink"}
+  , {"baseURL": "https://en.wikipedia.org/", "siteTitle": "The English WikiPedia.", "siteType": "website"}
+  ]
+}
+```
+
+The `publishScript` here is very simple (switches to the output dir, git-add and commit everything, git pushes).
+
+# specifying a special-location
+
+The normal mode for KitchenSink is to locate `kitchen-sink.json` in your site source directory. Thus, if your `--srcDir` parameter is `foobar`, KitchenSink will look for `foobar/kitchen-sink.json`.
+
+You can override where to locate this special file with the `--ksFile` command line argument.
+
+

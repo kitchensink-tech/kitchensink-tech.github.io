@@ -1,5 +1,5 @@
 [
-  {"type":"link","name":"website-www","contents":[
+  {"type":"directory","name":"website-www","contents":[
     {"type":"file","name":"atom.xml"},
     {"type":"directory","name":"audios","contents":[
       {"type":"file","name":"0001-we-wish-u-a-merry-xmas.mp3"}
@@ -112,6 +112,7 @@
     {"type":"file","name":"sections-dhall.html"},
     {"type":"file","name":"sections.html"},
     {"type":"file","name":"sitemap.txt"},
+    {"type":"directory","name":"text"},
     {"type":"directory","name":"topics","contents":[
       {"type":"file","name":"authoring-articles.atom"},
       {"type":"file","name":"authoring-articles.html"},
@@ -143,5 +144,5 @@
     {"type":"file","name":"wishlist.html"}
   ]}
 ,
-  {"type":"report","directories":14,"files":115}
+  {"type":"report","directories":15,"files":115}
 ]
