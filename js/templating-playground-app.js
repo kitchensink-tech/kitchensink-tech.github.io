@@ -505,6 +505,48 @@
       };
     };
   };
+  var max = function(dictOrd) {
+    var compare3 = compare(dictOrd);
+    return function(x) {
+      return function(y) {
+        var v = compare3(x)(y);
+        if (v instanceof LT) {
+          return y;
+        }
+        ;
+        if (v instanceof EQ) {
+          return x;
+        }
+        ;
+        if (v instanceof GT) {
+          return x;
+        }
+        ;
+        throw new Error("Failed pattern match at Data.Ord (line 181, column 3 - line 184, column 12): " + [v.constructor.name]);
+      };
+    };
+  };
+  var min = function(dictOrd) {
+    var compare3 = compare(dictOrd);
+    return function(x) {
+      return function(y) {
+        var v = compare3(x)(y);
+        if (v instanceof LT) {
+          return x;
+        }
+        ;
+        if (v instanceof EQ) {
+          return x;
+        }
+        ;
+        if (v instanceof GT) {
+          return y;
+        }
+        ;
+        throw new Error("Failed pattern match at Data.Ord (line 172, column 3 - line 175, column 12): " + [v.constructor.name]);
+      };
+    };
+  };
 
   // output/Data.Bounded/index.js
   var top = function(dict) {
@@ -585,8 +627,8 @@
             return "\\v";
         }
         var k = i2 + 1;
-        var empty7 = k < l && s[k] >= "0" && s[k] <= "9" ? "\\&" : "";
-        return "\\" + c.charCodeAt(0).toString(10) + empty7;
+        var empty8 = k < l && s[k] >= "0" && s[k] <= "9" ? "\\&" : "";
+        return "\\" + c.charCodeAt(0).toString(10) + empty8;
       }
     ) + '"';
   };
@@ -961,9 +1003,9 @@
         var bkeys = Object.keys(b2);
         if (akeys.length < bkeys.length) return LT2;
         else if (akeys.length > bkeys.length) return GT2;
-        var keys2 = akeys.concat(bkeys).sort();
-        for (var j = 0; j < keys2.length; j++) {
-          var k = keys2[j];
+        var keys3 = akeys.concat(bkeys).sort();
+        for (var j = 0; j < keys3.length; j++) {
+          var k = keys3[j];
           if (a2[k] === void 0) return LT2;
           else if (b2[k] === void 0) return GT2;
           var ck = _compare(EQ2, GT2, LT2, a2[k], b2[k]);
@@ -1039,6 +1081,24 @@
       throw new Error("Failed pattern match at Data.Maybe (line 288, column 1 - line 288, column 46): " + [v.constructor.name]);
     };
   };
+  var eqMaybe = function(dictEq) {
+    var eq5 = eq(dictEq);
+    return {
+      eq: function(x) {
+        return function(y) {
+          if (x instanceof Nothing && y instanceof Nothing) {
+            return true;
+          }
+          ;
+          if (x instanceof Just && y instanceof Just) {
+            return eq5(x.value0)(y.value0);
+          }
+          ;
+          return false;
+        };
+      }
+    };
+  };
   var applyMaybe = {
     apply: function(v) {
       return function(v1) {
@@ -1077,8 +1137,39 @@
   };
 
   // output/Foreign.Object/foreign.js
+  function _copyST(m) {
+    return function() {
+      var r = {};
+      for (var k in m) {
+        if (hasOwnProperty.call(m, k)) {
+          r[k] = m[k];
+        }
+      }
+      return r;
+    };
+  }
   function runST(f) {
     return f();
+  }
+  function _foldM(bind9) {
+    return function(f) {
+      return function(mz) {
+        return function(m) {
+          var acc = mz;
+          function g(k2) {
+            return function(z) {
+              return f(z)(k2)(m[k2]);
+            };
+          }
+          for (var k in m) {
+            if (hasOwnProperty.call(m, k)) {
+              acc = bind9(acc)(g(k));
+            }
+          }
+          return acc;
+        };
+      };
+    };
   }
   function size(m) {
     var s = 0;
@@ -1638,8 +1729,8 @@
   var length = function(xs) {
     return xs.length;
   };
-  var unconsImpl = function(empty7, next, xs) {
-    return xs.length === 0 ? empty7({}) : next(xs[0])(xs.slice(1));
+  var unconsImpl = function(empty8, next, xs) {
+    return xs.length === 0 ? empty8({}) : next(xs[0])(xs.slice(1));
   };
   var indexImpl = function(just, nothing, xs, i2) {
     return i2 < 0 || i2 >= xs.length ? nothing : just(xs[i2]);
@@ -1654,6 +1745,12 @@
     if (i2 < 0 || i2 >= l.length) return nothing;
     var l1 = l.slice();
     l1.splice(i2, 1);
+    return just(l1);
+  };
+  var _updateAt = function(just, nothing, i2, a2, l) {
+    if (i2 < 0 || i2 >= l.length) return nothing;
+    var l1 = l.slice();
+    l1[i2] = a2;
     return just(l1);
   };
   var reverse = function(l) {
@@ -1742,6 +1839,10 @@
   }
   var unsafeFreezeImpl = unsafeFreezeThawImpl;
   var unsafeThawImpl = unsafeFreezeThawImpl;
+  function copyImpl(xs) {
+    return xs.slice();
+  }
+  var thawImpl = copyImpl;
   var pushImpl = function(a2, xs) {
     return xs.push(a2);
   };
@@ -1767,6 +1868,16 @@
   // output/Data.Array.ST/index.js
   var unsafeThaw = /* @__PURE__ */ runSTFn1(unsafeThawImpl);
   var unsafeFreeze = /* @__PURE__ */ runSTFn1(unsafeFreezeImpl);
+  var thaw = /* @__PURE__ */ runSTFn1(thawImpl);
+  var withArray = function(f) {
+    return function(xs) {
+      return function __do2() {
+        var result = thaw(xs)();
+        f(result)();
+        return unsafeFreeze(result)();
+      };
+    };
+  };
   var push = /* @__PURE__ */ runSTFn2(pushImpl);
 
   // output/Data.Foldable/foreign.js
@@ -1898,12 +2009,12 @@
   var foldMapDefaultR = function(dictFoldable) {
     var foldr22 = foldr(dictFoldable);
     return function(dictMonoid) {
-      var append9 = append(dictMonoid.Semigroup0());
+      var append8 = append(dictMonoid.Semigroup0());
       var mempty2 = mempty(dictMonoid);
       return function(f) {
         return foldr22(function(x) {
           return function(acc) {
-            return append9(f(x))(acc);
+            return append8(f(x))(acc);
           };
         })(mempty2);
       };
@@ -1970,6 +2081,19 @@
         return function(c) {
           return function(d) {
             return fn(a2, b2, c, d);
+          };
+        };
+      };
+    };
+  };
+  var runFn5 = function(fn) {
+    return function(a2) {
+      return function(b2) {
+        return function(c) {
+          return function(d) {
+            return function(e) {
+              return fn(a2, b2, c, d, e);
+            };
           };
         };
       };
@@ -2095,9 +2219,9 @@
     }
   };
   var sequenceDefault = function(dictTraversable) {
-    var traverse22 = traverse(dictTraversable);
+    var traverse23 = traverse(dictTraversable);
     return function(dictApplicative) {
-      return traverse22(dictApplicative)(identity5);
+      return traverse23(dictApplicative)(identity5);
     };
   };
   var traversableArray = {
@@ -2193,6 +2317,9 @@
   var zip = /* @__PURE__ */ (function() {
     return zipWith(Tuple.create);
   })();
+  var updateAt = /* @__PURE__ */ (function() {
+    return runFn5(_updateAt)(Just.create)(Nothing.value);
+  })();
   var unsafeIndex = function() {
     return runFn2(unsafeIndexImpl);
   };
@@ -2230,6 +2357,11 @@
     };
   };
   var sortWith1 = /* @__PURE__ */ sortWith(ordInt);
+  var snoc = function(xs) {
+    return function(x) {
+      return withArray(push(x))(xs)();
+    };
+  };
   var singleton2 = function(a2) {
     return [a2];
   };
@@ -2242,6 +2374,16 @@
   })();
   var last = function(xs) {
     return index(xs)(length(xs) - 1 | 0);
+  };
+  var modifyAt = function(i2) {
+    return function(f) {
+      return function(xs) {
+        var go2 = function(x) {
+          return updateAt(i2)(f(x))(xs);
+        };
+        return maybe(Nothing.value)(go2)(index(xs)(i2));
+      };
+    };
   };
   var head = function(xs) {
     return index(xs)(0);
@@ -2353,6 +2495,16 @@
 
   // output/Foreign.Object/index.js
   var $$void4 = /* @__PURE__ */ $$void(functorST);
+  var thawST = _copyST;
+  var mutate = function(f) {
+    return function(m) {
+      return runST(function __do2() {
+        var s = thawST(m)();
+        f(s)();
+        return s;
+      });
+    };
+  };
   var member = /* @__PURE__ */ runFn4(_lookup)(false)(/* @__PURE__ */ $$const(true));
   var lookup = /* @__PURE__ */ (function() {
     return runFn4(_lookup)(Nothing.value)(Just.create);
@@ -2368,6 +2520,27 @@
         return s;
       });
     };
+  };
+  var foldM2 = function(dictMonad) {
+    var bind16 = bind(dictMonad.Bind1());
+    var pure13 = pure(dictMonad.Applicative0());
+    return function(f) {
+      return function(z) {
+        return _foldM(bind16)(f)(pure13(z));
+      };
+    };
+  };
+  var foldM1 = /* @__PURE__ */ foldM2(monadST);
+  var union = function(m) {
+    return mutate(function(s) {
+      return foldM1(function(s$prime) {
+        return function(k) {
+          return function(v) {
+            return poke2(k)(v)(s$prime);
+          };
+        };
+      })(s)(m);
+    });
   };
 
   // output/Data.Argonaut.Core/index.js
@@ -2469,6 +2642,909 @@
     return _jsonParser(Left.create, Right.create, j);
   };
 
+  // output/Data.NonEmpty/index.js
+  var NonEmpty = /* @__PURE__ */ (function() {
+    function NonEmpty2(value0, value1) {
+      this.value0 = value0;
+      this.value1 = value1;
+    }
+    ;
+    NonEmpty2.create = function(value0) {
+      return function(value1) {
+        return new NonEmpty2(value0, value1);
+      };
+    };
+    return NonEmpty2;
+  })();
+  var singleton4 = function(dictPlus) {
+    var empty8 = empty(dictPlus);
+    return function(a2) {
+      return new NonEmpty(a2, empty8);
+    };
+  };
+  var foldableNonEmpty = function(dictFoldable) {
+    var foldMap2 = foldMap(dictFoldable);
+    var foldl4 = foldl(dictFoldable);
+    var foldr4 = foldr(dictFoldable);
+    return {
+      foldMap: function(dictMonoid) {
+        var append14 = append(dictMonoid.Semigroup0());
+        var foldMap12 = foldMap2(dictMonoid);
+        return function(f) {
+          return function(v) {
+            return append14(f(v.value0))(foldMap12(f)(v.value1));
+          };
+        };
+      },
+      foldl: function(f) {
+        return function(b2) {
+          return function(v) {
+            return foldl4(f)(f(b2)(v.value0))(v.value1);
+          };
+        };
+      },
+      foldr: function(f) {
+        return function(b2) {
+          return function(v) {
+            return f(v.value0)(foldr4(f)(b2)(v.value1));
+          };
+        };
+      }
+    };
+  };
+
+  // output/Data.List.Types/index.js
+  var Nil = /* @__PURE__ */ (function() {
+    function Nil3() {
+    }
+    ;
+    Nil3.value = new Nil3();
+    return Nil3;
+  })();
+  var Cons = /* @__PURE__ */ (function() {
+    function Cons3(value0, value1) {
+      this.value0 = value0;
+      this.value1 = value1;
+    }
+    ;
+    Cons3.create = function(value0) {
+      return function(value1) {
+        return new Cons3(value0, value1);
+      };
+    };
+    return Cons3;
+  })();
+  var NonEmptyList = function(x) {
+    return x;
+  };
+  var listMap = function(f) {
+    var chunkedRevMap = function($copy_v) {
+      return function($copy_v1) {
+        var $tco_var_v = $copy_v;
+        var $tco_done = false;
+        var $tco_result;
+        function $tco_loop(v, v1) {
+          if (v1 instanceof Cons && (v1.value1 instanceof Cons && v1.value1.value1 instanceof Cons)) {
+            $tco_var_v = new Cons(v1, v);
+            $copy_v1 = v1.value1.value1.value1;
+            return;
+          }
+          ;
+          var unrolledMap = function(v2) {
+            if (v2 instanceof Cons && (v2.value1 instanceof Cons && v2.value1.value1 instanceof Nil)) {
+              return new Cons(f(v2.value0), new Cons(f(v2.value1.value0), Nil.value));
+            }
+            ;
+            if (v2 instanceof Cons && v2.value1 instanceof Nil) {
+              return new Cons(f(v2.value0), Nil.value);
+            }
+            ;
+            return Nil.value;
+          };
+          var reverseUnrolledMap = function($copy_v2) {
+            return function($copy_v3) {
+              var $tco_var_v2 = $copy_v2;
+              var $tco_done1 = false;
+              var $tco_result2;
+              function $tco_loop2(v2, v3) {
+                if (v2 instanceof Cons && (v2.value0 instanceof Cons && (v2.value0.value1 instanceof Cons && v2.value0.value1.value1 instanceof Cons))) {
+                  $tco_var_v2 = v2.value1;
+                  $copy_v3 = new Cons(f(v2.value0.value0), new Cons(f(v2.value0.value1.value0), new Cons(f(v2.value0.value1.value1.value0), v3)));
+                  return;
+                }
+                ;
+                $tco_done1 = true;
+                return v3;
+              }
+              ;
+              while (!$tco_done1) {
+                $tco_result2 = $tco_loop2($tco_var_v2, $copy_v3);
+              }
+              ;
+              return $tco_result2;
+            };
+          };
+          $tco_done = true;
+          return reverseUnrolledMap(v)(unrolledMap(v1));
+        }
+        ;
+        while (!$tco_done) {
+          $tco_result = $tco_loop($tco_var_v, $copy_v1);
+        }
+        ;
+        return $tco_result;
+      };
+    };
+    return chunkedRevMap(Nil.value);
+  };
+  var functorList = {
+    map: listMap
+  };
+  var foldableList = {
+    foldr: function(f) {
+      return function(b2) {
+        var rev3 = (function() {
+          var go2 = function($copy_v) {
+            return function($copy_v1) {
+              var $tco_var_v = $copy_v;
+              var $tco_done = false;
+              var $tco_result;
+              function $tco_loop(v, v1) {
+                if (v1 instanceof Nil) {
+                  $tco_done = true;
+                  return v;
+                }
+                ;
+                if (v1 instanceof Cons) {
+                  $tco_var_v = new Cons(v1.value0, v);
+                  $copy_v1 = v1.value1;
+                  return;
+                }
+                ;
+                throw new Error("Failed pattern match at Data.List.Types (line 107, column 7 - line 107, column 23): " + [v.constructor.name, v1.constructor.name]);
+              }
+              ;
+              while (!$tco_done) {
+                $tco_result = $tco_loop($tco_var_v, $copy_v1);
+              }
+              ;
+              return $tco_result;
+            };
+          };
+          return go2(Nil.value);
+        })();
+        var $284 = foldl(foldableList)(flip(f))(b2);
+        return function($285) {
+          return $284(rev3($285));
+        };
+      };
+    },
+    foldl: function(f) {
+      var go2 = function($copy_b) {
+        return function($copy_v) {
+          var $tco_var_b = $copy_b;
+          var $tco_done1 = false;
+          var $tco_result;
+          function $tco_loop(b2, v) {
+            if (v instanceof Nil) {
+              $tco_done1 = true;
+              return b2;
+            }
+            ;
+            if (v instanceof Cons) {
+              $tco_var_b = f(b2)(v.value0);
+              $copy_v = v.value1;
+              return;
+            }
+            ;
+            throw new Error("Failed pattern match at Data.List.Types (line 111, column 12 - line 113, column 30): " + [v.constructor.name]);
+          }
+          ;
+          while (!$tco_done1) {
+            $tco_result = $tco_loop($tco_var_b, $copy_v);
+          }
+          ;
+          return $tco_result;
+        };
+      };
+      return go2;
+    },
+    foldMap: function(dictMonoid) {
+      var append22 = append(dictMonoid.Semigroup0());
+      var mempty2 = mempty(dictMonoid);
+      return function(f) {
+        return foldl(foldableList)(function(acc) {
+          var $286 = append22(acc);
+          return function($287) {
+            return $286(f($287));
+          };
+        })(mempty2);
+      };
+    }
+  };
+  var foldr2 = /* @__PURE__ */ foldr(foldableList);
+  var foldableNonEmptyList = /* @__PURE__ */ foldableNonEmpty(foldableList);
+  var semigroupList = {
+    append: function(xs) {
+      return function(ys) {
+        return foldr2(Cons.create)(ys)(xs);
+      };
+    }
+  };
+  var append1 = /* @__PURE__ */ append(semigroupList);
+  var altList = {
+    alt: append1,
+    Functor0: function() {
+      return functorList;
+    }
+  };
+  var plusList = /* @__PURE__ */ (function() {
+    return {
+      empty: Nil.value,
+      Alt0: function() {
+        return altList;
+      }
+    };
+  })();
+
+  // output/Data.Map.Internal/index.js
+  var $runtime_lazy3 = function(name15, moduleName, init3) {
+    var state3 = 0;
+    var val;
+    return function(lineNumber) {
+      if (state3 === 2) return val;
+      if (state3 === 1) throw new ReferenceError(name15 + " was needed before it finished initializing (module " + moduleName + ", line " + lineNumber + ")", moduleName, lineNumber);
+      state3 = 1;
+      val = init3();
+      state3 = 2;
+      return val;
+    };
+  };
+  var identity6 = /* @__PURE__ */ identity(categoryFn);
+  var Leaf = /* @__PURE__ */ (function() {
+    function Leaf2() {
+    }
+    ;
+    Leaf2.value = new Leaf2();
+    return Leaf2;
+  })();
+  var Node = /* @__PURE__ */ (function() {
+    function Node2(value0, value1, value22, value32, value42, value52) {
+      this.value0 = value0;
+      this.value1 = value1;
+      this.value2 = value22;
+      this.value3 = value32;
+      this.value4 = value42;
+      this.value5 = value52;
+    }
+    ;
+    Node2.create = function(value0) {
+      return function(value1) {
+        return function(value22) {
+          return function(value32) {
+            return function(value42) {
+              return function(value52) {
+                return new Node2(value0, value1, value22, value32, value42, value52);
+              };
+            };
+          };
+        };
+      };
+    };
+    return Node2;
+  })();
+  var IterLeaf = /* @__PURE__ */ (function() {
+    function IterLeaf2() {
+    }
+    ;
+    IterLeaf2.value = new IterLeaf2();
+    return IterLeaf2;
+  })();
+  var IterEmit = /* @__PURE__ */ (function() {
+    function IterEmit2(value0, value1, value22) {
+      this.value0 = value0;
+      this.value1 = value1;
+      this.value2 = value22;
+    }
+    ;
+    IterEmit2.create = function(value0) {
+      return function(value1) {
+        return function(value22) {
+          return new IterEmit2(value0, value1, value22);
+        };
+      };
+    };
+    return IterEmit2;
+  })();
+  var IterNode = /* @__PURE__ */ (function() {
+    function IterNode2(value0, value1) {
+      this.value0 = value0;
+      this.value1 = value1;
+    }
+    ;
+    IterNode2.create = function(value0) {
+      return function(value1) {
+        return new IterNode2(value0, value1);
+      };
+    };
+    return IterNode2;
+  })();
+  var Split = /* @__PURE__ */ (function() {
+    function Split2(value0, value1, value22) {
+      this.value0 = value0;
+      this.value1 = value1;
+      this.value2 = value22;
+    }
+    ;
+    Split2.create = function(value0) {
+      return function(value1) {
+        return function(value22) {
+          return new Split2(value0, value1, value22);
+        };
+      };
+    };
+    return Split2;
+  })();
+  var SplitLast = /* @__PURE__ */ (function() {
+    function SplitLast2(value0, value1, value22) {
+      this.value0 = value0;
+      this.value1 = value1;
+      this.value2 = value22;
+    }
+    ;
+    SplitLast2.create = function(value0) {
+      return function(value1) {
+        return function(value22) {
+          return new SplitLast2(value0, value1, value22);
+        };
+      };
+    };
+    return SplitLast2;
+  })();
+  var unsafeNode = function(k, v, l, r) {
+    if (l instanceof Leaf) {
+      if (r instanceof Leaf) {
+        return new Node(1, 1, k, v, l, r);
+      }
+      ;
+      if (r instanceof Node) {
+        return new Node(1 + r.value0 | 0, 1 + r.value1 | 0, k, v, l, r);
+      }
+      ;
+      throw new Error("Failed pattern match at Data.Map.Internal (line 702, column 5 - line 706, column 39): " + [r.constructor.name]);
+    }
+    ;
+    if (l instanceof Node) {
+      if (r instanceof Leaf) {
+        return new Node(1 + l.value0 | 0, 1 + l.value1 | 0, k, v, l, r);
+      }
+      ;
+      if (r instanceof Node) {
+        return new Node(1 + (function() {
+          var $280 = l.value0 > r.value0;
+          if ($280) {
+            return l.value0;
+          }
+          ;
+          return r.value0;
+        })() | 0, (1 + l.value1 | 0) + r.value1 | 0, k, v, l, r);
+      }
+      ;
+      throw new Error("Failed pattern match at Data.Map.Internal (line 708, column 5 - line 712, column 68): " + [r.constructor.name]);
+    }
+    ;
+    throw new Error("Failed pattern match at Data.Map.Internal (line 700, column 32 - line 712, column 68): " + [l.constructor.name]);
+  };
+  var toMapIter = /* @__PURE__ */ (function() {
+    return flip(IterNode.create)(IterLeaf.value);
+  })();
+  var stepWith = function(f) {
+    return function(next) {
+      return function(done) {
+        var go2 = function($copy_v) {
+          var $tco_done = false;
+          var $tco_result;
+          function $tco_loop(v) {
+            if (v instanceof IterLeaf) {
+              $tco_done = true;
+              return done(unit);
+            }
+            ;
+            if (v instanceof IterEmit) {
+              $tco_done = true;
+              return next(v.value0, v.value1, v.value2);
+            }
+            ;
+            if (v instanceof IterNode) {
+              $copy_v = f(v.value1)(v.value0);
+              return;
+            }
+            ;
+            throw new Error("Failed pattern match at Data.Map.Internal (line 940, column 8 - line 946, column 20): " + [v.constructor.name]);
+          }
+          ;
+          while (!$tco_done) {
+            $tco_result = $tco_loop($copy_v);
+          }
+          ;
+          return $tco_result;
+        };
+        return go2;
+      };
+    };
+  };
+  var singleton5 = function(k) {
+    return function(v) {
+      return new Node(1, 1, k, v, Leaf.value, Leaf.value);
+    };
+  };
+  var unsafeBalancedNode = /* @__PURE__ */ (function() {
+    var height8 = function(v) {
+      if (v instanceof Leaf) {
+        return 0;
+      }
+      ;
+      if (v instanceof Node) {
+        return v.value0;
+      }
+      ;
+      throw new Error("Failed pattern match at Data.Map.Internal (line 757, column 12 - line 759, column 26): " + [v.constructor.name]);
+    };
+    var rotateLeft = function(k, v, l, rk, rv, rl, rr) {
+      if (rl instanceof Node && rl.value0 > height8(rr)) {
+        return unsafeNode(rl.value2, rl.value3, unsafeNode(k, v, l, rl.value4), unsafeNode(rk, rv, rl.value5, rr));
+      }
+      ;
+      return unsafeNode(rk, rv, unsafeNode(k, v, l, rl), rr);
+    };
+    var rotateRight = function(k, v, lk, lv, ll, lr, r) {
+      if (lr instanceof Node && height8(ll) <= lr.value0) {
+        return unsafeNode(lr.value2, lr.value3, unsafeNode(lk, lv, ll, lr.value4), unsafeNode(k, v, lr.value5, r));
+      }
+      ;
+      return unsafeNode(lk, lv, ll, unsafeNode(k, v, lr, r));
+    };
+    return function(k, v, l, r) {
+      if (l instanceof Leaf) {
+        if (r instanceof Leaf) {
+          return singleton5(k)(v);
+        }
+        ;
+        if (r instanceof Node && r.value0 > 1) {
+          return rotateLeft(k, v, l, r.value2, r.value3, r.value4, r.value5);
+        }
+        ;
+        return unsafeNode(k, v, l, r);
+      }
+      ;
+      if (l instanceof Node) {
+        if (r instanceof Node) {
+          if (r.value0 > (l.value0 + 1 | 0)) {
+            return rotateLeft(k, v, l, r.value2, r.value3, r.value4, r.value5);
+          }
+          ;
+          if (l.value0 > (r.value0 + 1 | 0)) {
+            return rotateRight(k, v, l.value2, l.value3, l.value4, l.value5, r);
+          }
+          ;
+        }
+        ;
+        if (r instanceof Leaf && l.value0 > 1) {
+          return rotateRight(k, v, l.value2, l.value3, l.value4, l.value5, r);
+        }
+        ;
+        return unsafeNode(k, v, l, r);
+      }
+      ;
+      throw new Error("Failed pattern match at Data.Map.Internal (line 717, column 40 - line 738, column 34): " + [l.constructor.name]);
+    };
+  })();
+  var $lazy_unsafeSplit = /* @__PURE__ */ $runtime_lazy3("unsafeSplit", "Data.Map.Internal", function() {
+    return function(comp, k, m) {
+      if (m instanceof Leaf) {
+        return new Split(Nothing.value, Leaf.value, Leaf.value);
+      }
+      ;
+      if (m instanceof Node) {
+        var v = comp(k)(m.value2);
+        if (v instanceof LT) {
+          var v1 = $lazy_unsafeSplit(793)(comp, k, m.value4);
+          return new Split(v1.value0, v1.value1, unsafeBalancedNode(m.value2, m.value3, v1.value2, m.value5));
+        }
+        ;
+        if (v instanceof GT) {
+          var v1 = $lazy_unsafeSplit(796)(comp, k, m.value5);
+          return new Split(v1.value0, unsafeBalancedNode(m.value2, m.value3, m.value4, v1.value1), v1.value2);
+        }
+        ;
+        if (v instanceof EQ) {
+          return new Split(new Just(m.value3), m.value4, m.value5);
+        }
+        ;
+        throw new Error("Failed pattern match at Data.Map.Internal (line 791, column 5 - line 799, column 30): " + [v.constructor.name]);
+      }
+      ;
+      throw new Error("Failed pattern match at Data.Map.Internal (line 787, column 34 - line 799, column 30): " + [m.constructor.name]);
+    };
+  });
+  var unsafeSplit = /* @__PURE__ */ $lazy_unsafeSplit(786);
+  var $lazy_unsafeSplitLast = /* @__PURE__ */ $runtime_lazy3("unsafeSplitLast", "Data.Map.Internal", function() {
+    return function(k, v, l, r) {
+      if (r instanceof Leaf) {
+        return new SplitLast(k, v, l);
+      }
+      ;
+      if (r instanceof Node) {
+        var v1 = $lazy_unsafeSplitLast(779)(r.value2, r.value3, r.value4, r.value5);
+        return new SplitLast(v1.value0, v1.value1, unsafeBalancedNode(k, v, l, v1.value2));
+      }
+      ;
+      throw new Error("Failed pattern match at Data.Map.Internal (line 776, column 37 - line 780, column 57): " + [r.constructor.name]);
+    };
+  });
+  var unsafeSplitLast = /* @__PURE__ */ $lazy_unsafeSplitLast(775);
+  var unsafeJoinNodes = function(v, v1) {
+    if (v instanceof Leaf) {
+      return v1;
+    }
+    ;
+    if (v instanceof Node) {
+      var v2 = unsafeSplitLast(v.value2, v.value3, v.value4, v.value5);
+      return unsafeBalancedNode(v2.value0, v2.value1, v2.value2, v1);
+    }
+    ;
+    throw new Error("Failed pattern match at Data.Map.Internal (line 764, column 25 - line 768, column 38): " + [v.constructor.name, v1.constructor.name]);
+  };
+  var member2 = function(dictOrd) {
+    var compare3 = compare(dictOrd);
+    return function(k) {
+      var go2 = function($copy_v) {
+        var $tco_done = false;
+        var $tco_result;
+        function $tco_loop(v) {
+          if (v instanceof Leaf) {
+            $tco_done = true;
+            return false;
+          }
+          ;
+          if (v instanceof Node) {
+            var v1 = compare3(k)(v.value2);
+            if (v1 instanceof LT) {
+              $copy_v = v.value4;
+              return;
+            }
+            ;
+            if (v1 instanceof GT) {
+              $copy_v = v.value5;
+              return;
+            }
+            ;
+            if (v1 instanceof EQ) {
+              $tco_done = true;
+              return true;
+            }
+            ;
+            throw new Error("Failed pattern match at Data.Map.Internal (line 459, column 7 - line 462, column 19): " + [v1.constructor.name]);
+          }
+          ;
+          throw new Error("Failed pattern match at Data.Map.Internal (line 456, column 8 - line 462, column 19): " + [v.constructor.name]);
+        }
+        ;
+        while (!$tco_done) {
+          $tco_result = $tco_loop($copy_v);
+        }
+        ;
+        return $tco_result;
+      };
+      return go2;
+    };
+  };
+  var lookup2 = function(dictOrd) {
+    var compare3 = compare(dictOrd);
+    return function(k) {
+      var go2 = function($copy_v) {
+        var $tco_done = false;
+        var $tco_result;
+        function $tco_loop(v) {
+          if (v instanceof Leaf) {
+            $tco_done = true;
+            return Nothing.value;
+          }
+          ;
+          if (v instanceof Node) {
+            var v1 = compare3(k)(v.value2);
+            if (v1 instanceof LT) {
+              $copy_v = v.value4;
+              return;
+            }
+            ;
+            if (v1 instanceof GT) {
+              $copy_v = v.value5;
+              return;
+            }
+            ;
+            if (v1 instanceof EQ) {
+              $tco_done = true;
+              return new Just(v.value3);
+            }
+            ;
+            throw new Error("Failed pattern match at Data.Map.Internal (line 283, column 7 - line 286, column 22): " + [v1.constructor.name]);
+          }
+          ;
+          throw new Error("Failed pattern match at Data.Map.Internal (line 280, column 8 - line 286, column 22): " + [v.constructor.name]);
+        }
+        ;
+        while (!$tco_done) {
+          $tco_result = $tco_loop($copy_v);
+        }
+        ;
+        return $tco_result;
+      };
+      return go2;
+    };
+  };
+  var iterMapL = /* @__PURE__ */ (function() {
+    var go2 = function($copy_iter) {
+      return function($copy_v) {
+        var $tco_var_iter = $copy_iter;
+        var $tco_done = false;
+        var $tco_result;
+        function $tco_loop(iter, v) {
+          if (v instanceof Leaf) {
+            $tco_done = true;
+            return iter;
+          }
+          ;
+          if (v instanceof Node) {
+            if (v.value5 instanceof Leaf) {
+              $tco_var_iter = new IterEmit(v.value2, v.value3, iter);
+              $copy_v = v.value4;
+              return;
+            }
+            ;
+            $tco_var_iter = new IterEmit(v.value2, v.value3, new IterNode(v.value5, iter));
+            $copy_v = v.value4;
+            return;
+          }
+          ;
+          throw new Error("Failed pattern match at Data.Map.Internal (line 951, column 13 - line 958, column 48): " + [v.constructor.name]);
+        }
+        ;
+        while (!$tco_done) {
+          $tco_result = $tco_loop($tco_var_iter, $copy_v);
+        }
+        ;
+        return $tco_result;
+      };
+    };
+    return go2;
+  })();
+  var stepAscCps = /* @__PURE__ */ stepWith(iterMapL);
+  var stepUnfoldr = /* @__PURE__ */ (function() {
+    var step4 = function(k, v, next) {
+      return new Just(new Tuple(new Tuple(k, v), next));
+    };
+    return stepAscCps(step4)(function(v) {
+      return Nothing.value;
+    });
+  })();
+  var toUnfoldable2 = function(dictUnfoldable) {
+    var $784 = unfoldr(dictUnfoldable)(stepUnfoldr);
+    return function($785) {
+      return $784(toMapIter($785));
+    };
+  };
+  var insert = function(dictOrd) {
+    var compare3 = compare(dictOrd);
+    return function(k) {
+      return function(v) {
+        var go2 = function(v1) {
+          if (v1 instanceof Leaf) {
+            return singleton5(k)(v);
+          }
+          ;
+          if (v1 instanceof Node) {
+            var v2 = compare3(k)(v1.value2);
+            if (v2 instanceof LT) {
+              return unsafeBalancedNode(v1.value2, v1.value3, go2(v1.value4), v1.value5);
+            }
+            ;
+            if (v2 instanceof GT) {
+              return unsafeBalancedNode(v1.value2, v1.value3, v1.value4, go2(v1.value5));
+            }
+            ;
+            if (v2 instanceof EQ) {
+              return new Node(v1.value0, v1.value1, k, v, v1.value4, v1.value5);
+            }
+            ;
+            throw new Error("Failed pattern match at Data.Map.Internal (line 471, column 7 - line 474, column 35): " + [v2.constructor.name]);
+          }
+          ;
+          throw new Error("Failed pattern match at Data.Map.Internal (line 468, column 8 - line 474, column 35): " + [v1.constructor.name]);
+        };
+        return go2;
+      };
+    };
+  };
+  var functorMap = {
+    map: function(f) {
+      var go2 = function(v) {
+        if (v instanceof Leaf) {
+          return Leaf.value;
+        }
+        ;
+        if (v instanceof Node) {
+          return new Node(v.value0, v.value1, v.value2, f(v.value3), go2(v.value4), go2(v.value5));
+        }
+        ;
+        throw new Error("Failed pattern match at Data.Map.Internal (line 147, column 10 - line 150, column 39): " + [v.constructor.name]);
+      };
+      return go2;
+    }
+  };
+  var foldableMap = {
+    foldr: function(f) {
+      return function(z) {
+        var $lazy_go = $runtime_lazy3("go", "Data.Map.Internal", function() {
+          return function(m$prime, z$prime) {
+            if (m$prime instanceof Leaf) {
+              return z$prime;
+            }
+            ;
+            if (m$prime instanceof Node) {
+              return $lazy_go(172)(m$prime.value4, f(m$prime.value3)($lazy_go(172)(m$prime.value5, z$prime)));
+            }
+            ;
+            throw new Error("Failed pattern match at Data.Map.Internal (line 169, column 26 - line 172, column 43): " + [m$prime.constructor.name]);
+          };
+        });
+        var go2 = $lazy_go(169);
+        return function(m) {
+          return go2(m, z);
+        };
+      };
+    },
+    foldl: function(f) {
+      return function(z) {
+        var $lazy_go = $runtime_lazy3("go", "Data.Map.Internal", function() {
+          return function(z$prime, m$prime) {
+            if (m$prime instanceof Leaf) {
+              return z$prime;
+            }
+            ;
+            if (m$prime instanceof Node) {
+              return $lazy_go(178)(f($lazy_go(178)(z$prime, m$prime.value4))(m$prime.value3), m$prime.value5);
+            }
+            ;
+            throw new Error("Failed pattern match at Data.Map.Internal (line 175, column 26 - line 178, column 43): " + [m$prime.constructor.name]);
+          };
+        });
+        var go2 = $lazy_go(175);
+        return function(m) {
+          return go2(z, m);
+        };
+      };
+    },
+    foldMap: function(dictMonoid) {
+      var mempty2 = mempty(dictMonoid);
+      var append14 = append(dictMonoid.Semigroup0());
+      return function(f) {
+        var go2 = function(v) {
+          if (v instanceof Leaf) {
+            return mempty2;
+          }
+          ;
+          if (v instanceof Node) {
+            return append14(go2(v.value4))(append14(f(v.value3))(go2(v.value5)));
+          }
+          ;
+          throw new Error("Failed pattern match at Data.Map.Internal (line 181, column 10 - line 184, column 28): " + [v.constructor.name]);
+        };
+        return go2;
+      };
+    }
+  };
+  var traversableMap = {
+    traverse: function(dictApplicative) {
+      var pure13 = pure(dictApplicative);
+      var Apply0 = dictApplicative.Apply0();
+      var apply4 = apply(Apply0);
+      var map110 = map(Apply0.Functor0());
+      return function(f) {
+        var go2 = function(v) {
+          if (v instanceof Leaf) {
+            return pure13(Leaf.value);
+          }
+          ;
+          if (v instanceof Node) {
+            return apply4(apply4(map110(function(l$prime) {
+              return function(v$prime) {
+                return function(r$prime) {
+                  return new Node(v.value0, v.value1, v.value2, v$prime, l$prime, r$prime);
+                };
+              };
+            })(go2(v.value4)))(f(v.value3)))(go2(v.value5));
+          }
+          ;
+          throw new Error("Failed pattern match at Data.Map.Internal (line 209, column 10 - line 215, column 19): " + [v.constructor.name]);
+        };
+        return go2;
+      };
+    },
+    sequence: function(dictApplicative) {
+      return traverse(traversableMap)(dictApplicative)(identity6);
+    },
+    Functor0: function() {
+      return functorMap;
+    },
+    Foldable1: function() {
+      return foldableMap;
+    }
+  };
+  var empty3 = /* @__PURE__ */ (function() {
+    return Leaf.value;
+  })();
+  var fromFoldable3 = function(dictOrd) {
+    var insert13 = insert(dictOrd);
+    return function(dictFoldable) {
+      return foldl(dictFoldable)(function(m) {
+        return function(v) {
+          return insert13(v.value0)(v.value1)(m);
+        };
+      })(empty3);
+    };
+  };
+  var $$delete = function(dictOrd) {
+    var compare3 = compare(dictOrd);
+    return function(k) {
+      var go2 = function(v) {
+        if (v instanceof Leaf) {
+          return Leaf.value;
+        }
+        ;
+        if (v instanceof Node) {
+          var v1 = compare3(k)(v.value2);
+          if (v1 instanceof LT) {
+            return unsafeBalancedNode(v.value2, v.value3, go2(v.value4), v.value5);
+          }
+          ;
+          if (v1 instanceof GT) {
+            return unsafeBalancedNode(v.value2, v.value3, v.value4, go2(v.value5));
+          }
+          ;
+          if (v1 instanceof EQ) {
+            return unsafeJoinNodes(v.value4, v.value5);
+          }
+          ;
+          throw new Error("Failed pattern match at Data.Map.Internal (line 498, column 7 - line 501, column 43): " + [v1.constructor.name]);
+        }
+        ;
+        throw new Error("Failed pattern match at Data.Map.Internal (line 495, column 8 - line 501, column 43): " + [v.constructor.name]);
+      };
+      return go2;
+    };
+  };
+  var alter = function(dictOrd) {
+    var compare3 = compare(dictOrd);
+    return function(f) {
+      return function(k) {
+        return function(m) {
+          var v = unsafeSplit(compare3, k, m);
+          var v2 = f(v.value0);
+          if (v2 instanceof Nothing) {
+            return unsafeJoinNodes(v.value1, v.value2);
+          }
+          ;
+          if (v2 instanceof Just) {
+            return unsafeBalancedNode(k, v2.value0, v.value1, v.value2);
+          }
+          ;
+          throw new Error("Failed pattern match at Data.Map.Internal (line 514, column 3 - line 518, column 41): " + [v2.constructor.name]);
+        };
+      };
+    };
+  };
+
   // output/Data.String.Common/foreign.js
   var joinWith = function(s) {
     return function(xs) {
@@ -2546,15 +3622,15 @@
     }
     var Scheduler = (function() {
       var limit = 1024;
-      var size4 = 0;
+      var size5 = 0;
       var ix = 0;
       var queue = new Array(limit);
       var draining = false;
       function drain() {
         var thunk;
         draining = true;
-        while (size4 !== 0) {
-          size4--;
+        while (size5 !== 0) {
+          size5--;
           thunk = queue[ix];
           queue[ix] = void 0;
           ix = (ix + 1) % limit;
@@ -2568,13 +3644,13 @@
         },
         enqueue: function(cb) {
           var i2, tmp;
-          if (size4 === limit) {
+          if (size5 === limit) {
             tmp = draining;
             drain();
             draining = tmp;
           }
-          queue[(ix + size4) % limit] = cb;
-          size4++;
+          queue[(ix + size5) % limit] = cb;
+          size5++;
           if (!draining) {
             drain();
           }
@@ -3509,7 +4585,7 @@
   };
 
   // output/Control.Parallel/index.js
-  var identity6 = /* @__PURE__ */ identity(categoryFn);
+  var identity7 = /* @__PURE__ */ identity(categoryFn);
   var parTraverse_ = function(dictParallel) {
     var sequential3 = sequential(dictParallel);
     var parallel4 = parallel(dictParallel);
@@ -3533,7 +4609,7 @@
     return function(dictApplicative) {
       var parTraverse_2 = parTraverse_1(dictApplicative);
       return function(dictFoldable) {
-        return parTraverse_2(dictFoldable)(identity6);
+        return parTraverse_2(dictFoldable)(identity7);
       };
     };
   };
@@ -3568,7 +4644,7 @@
   };
 
   // output/Effect.Aff/index.js
-  var $runtime_lazy3 = function(name15, moduleName, init3) {
+  var $runtime_lazy4 = function(name15, moduleName, init3) {
     var state3 = 0;
     var val;
     return function(lineNumber) {
@@ -3682,7 +4758,7 @@
       return $lazy_applyAff(0);
     }
   };
-  var $lazy_applyAff = /* @__PURE__ */ $runtime_lazy3("applyAff", "Effect.Aff", function() {
+  var $lazy_applyAff = /* @__PURE__ */ $runtime_lazy4("applyAff", "Effect.Aff", function() {
     return {
       apply: ap(monadAff),
       Functor0: function() {
@@ -4141,811 +5217,6 @@
     }
   };
   var liftCoyoneda = /* @__PURE__ */ coyoneda(/* @__PURE__ */ identity(categoryFn));
-
-  // output/Data.NonEmpty/index.js
-  var NonEmpty = /* @__PURE__ */ (function() {
-    function NonEmpty2(value0, value1) {
-      this.value0 = value0;
-      this.value1 = value1;
-    }
-    ;
-    NonEmpty2.create = function(value0) {
-      return function(value1) {
-        return new NonEmpty2(value0, value1);
-      };
-    };
-    return NonEmpty2;
-  })();
-  var singleton4 = function(dictPlus) {
-    var empty7 = empty(dictPlus);
-    return function(a2) {
-      return new NonEmpty(a2, empty7);
-    };
-  };
-  var foldableNonEmpty = function(dictFoldable) {
-    var foldMap2 = foldMap(dictFoldable);
-    var foldl3 = foldl(dictFoldable);
-    var foldr4 = foldr(dictFoldable);
-    return {
-      foldMap: function(dictMonoid) {
-        var append12 = append(dictMonoid.Semigroup0());
-        var foldMap12 = foldMap2(dictMonoid);
-        return function(f) {
-          return function(v) {
-            return append12(f(v.value0))(foldMap12(f)(v.value1));
-          };
-        };
-      },
-      foldl: function(f) {
-        return function(b2) {
-          return function(v) {
-            return foldl3(f)(f(b2)(v.value0))(v.value1);
-          };
-        };
-      },
-      foldr: function(f) {
-        return function(b2) {
-          return function(v) {
-            return f(v.value0)(foldr4(f)(b2)(v.value1));
-          };
-        };
-      }
-    };
-  };
-
-  // output/Data.List.Types/index.js
-  var Nil = /* @__PURE__ */ (function() {
-    function Nil3() {
-    }
-    ;
-    Nil3.value = new Nil3();
-    return Nil3;
-  })();
-  var Cons = /* @__PURE__ */ (function() {
-    function Cons3(value0, value1) {
-      this.value0 = value0;
-      this.value1 = value1;
-    }
-    ;
-    Cons3.create = function(value0) {
-      return function(value1) {
-        return new Cons3(value0, value1);
-      };
-    };
-    return Cons3;
-  })();
-  var NonEmptyList = function(x) {
-    return x;
-  };
-  var listMap = function(f) {
-    var chunkedRevMap = function($copy_v) {
-      return function($copy_v1) {
-        var $tco_var_v = $copy_v;
-        var $tco_done = false;
-        var $tco_result;
-        function $tco_loop(v, v1) {
-          if (v1 instanceof Cons && (v1.value1 instanceof Cons && v1.value1.value1 instanceof Cons)) {
-            $tco_var_v = new Cons(v1, v);
-            $copy_v1 = v1.value1.value1.value1;
-            return;
-          }
-          ;
-          var unrolledMap = function(v2) {
-            if (v2 instanceof Cons && (v2.value1 instanceof Cons && v2.value1.value1 instanceof Nil)) {
-              return new Cons(f(v2.value0), new Cons(f(v2.value1.value0), Nil.value));
-            }
-            ;
-            if (v2 instanceof Cons && v2.value1 instanceof Nil) {
-              return new Cons(f(v2.value0), Nil.value);
-            }
-            ;
-            return Nil.value;
-          };
-          var reverseUnrolledMap = function($copy_v2) {
-            return function($copy_v3) {
-              var $tco_var_v2 = $copy_v2;
-              var $tco_done1 = false;
-              var $tco_result2;
-              function $tco_loop2(v2, v3) {
-                if (v2 instanceof Cons && (v2.value0 instanceof Cons && (v2.value0.value1 instanceof Cons && v2.value0.value1.value1 instanceof Cons))) {
-                  $tco_var_v2 = v2.value1;
-                  $copy_v3 = new Cons(f(v2.value0.value0), new Cons(f(v2.value0.value1.value0), new Cons(f(v2.value0.value1.value1.value0), v3)));
-                  return;
-                }
-                ;
-                $tco_done1 = true;
-                return v3;
-              }
-              ;
-              while (!$tco_done1) {
-                $tco_result2 = $tco_loop2($tco_var_v2, $copy_v3);
-              }
-              ;
-              return $tco_result2;
-            };
-          };
-          $tco_done = true;
-          return reverseUnrolledMap(v)(unrolledMap(v1));
-        }
-        ;
-        while (!$tco_done) {
-          $tco_result = $tco_loop($tco_var_v, $copy_v1);
-        }
-        ;
-        return $tco_result;
-      };
-    };
-    return chunkedRevMap(Nil.value);
-  };
-  var functorList = {
-    map: listMap
-  };
-  var foldableList = {
-    foldr: function(f) {
-      return function(b2) {
-        var rev3 = (function() {
-          var go2 = function($copy_v) {
-            return function($copy_v1) {
-              var $tco_var_v = $copy_v;
-              var $tco_done = false;
-              var $tco_result;
-              function $tco_loop(v, v1) {
-                if (v1 instanceof Nil) {
-                  $tco_done = true;
-                  return v;
-                }
-                ;
-                if (v1 instanceof Cons) {
-                  $tco_var_v = new Cons(v1.value0, v);
-                  $copy_v1 = v1.value1;
-                  return;
-                }
-                ;
-                throw new Error("Failed pattern match at Data.List.Types (line 107, column 7 - line 107, column 23): " + [v.constructor.name, v1.constructor.name]);
-              }
-              ;
-              while (!$tco_done) {
-                $tco_result = $tco_loop($tco_var_v, $copy_v1);
-              }
-              ;
-              return $tco_result;
-            };
-          };
-          return go2(Nil.value);
-        })();
-        var $284 = foldl(foldableList)(flip(f))(b2);
-        return function($285) {
-          return $284(rev3($285));
-        };
-      };
-    },
-    foldl: function(f) {
-      var go2 = function($copy_b) {
-        return function($copy_v) {
-          var $tco_var_b = $copy_b;
-          var $tco_done1 = false;
-          var $tco_result;
-          function $tco_loop(b2, v) {
-            if (v instanceof Nil) {
-              $tco_done1 = true;
-              return b2;
-            }
-            ;
-            if (v instanceof Cons) {
-              $tco_var_b = f(b2)(v.value0);
-              $copy_v = v.value1;
-              return;
-            }
-            ;
-            throw new Error("Failed pattern match at Data.List.Types (line 111, column 12 - line 113, column 30): " + [v.constructor.name]);
-          }
-          ;
-          while (!$tco_done1) {
-            $tco_result = $tco_loop($tco_var_b, $copy_v);
-          }
-          ;
-          return $tco_result;
-        };
-      };
-      return go2;
-    },
-    foldMap: function(dictMonoid) {
-      var append22 = append(dictMonoid.Semigroup0());
-      var mempty2 = mempty(dictMonoid);
-      return function(f) {
-        return foldl(foldableList)(function(acc) {
-          var $286 = append22(acc);
-          return function($287) {
-            return $286(f($287));
-          };
-        })(mempty2);
-      };
-    }
-  };
-  var foldr2 = /* @__PURE__ */ foldr(foldableList);
-  var foldableNonEmptyList = /* @__PURE__ */ foldableNonEmpty(foldableList);
-  var semigroupList = {
-    append: function(xs) {
-      return function(ys) {
-        return foldr2(Cons.create)(ys)(xs);
-      };
-    }
-  };
-  var append1 = /* @__PURE__ */ append(semigroupList);
-  var altList = {
-    alt: append1,
-    Functor0: function() {
-      return functorList;
-    }
-  };
-  var plusList = /* @__PURE__ */ (function() {
-    return {
-      empty: Nil.value,
-      Alt0: function() {
-        return altList;
-      }
-    };
-  })();
-
-  // output/Data.Map.Internal/index.js
-  var $runtime_lazy4 = function(name15, moduleName, init3) {
-    var state3 = 0;
-    var val;
-    return function(lineNumber) {
-      if (state3 === 2) return val;
-      if (state3 === 1) throw new ReferenceError(name15 + " was needed before it finished initializing (module " + moduleName + ", line " + lineNumber + ")", moduleName, lineNumber);
-      state3 = 1;
-      val = init3();
-      state3 = 2;
-      return val;
-    };
-  };
-  var Leaf = /* @__PURE__ */ (function() {
-    function Leaf2() {
-    }
-    ;
-    Leaf2.value = new Leaf2();
-    return Leaf2;
-  })();
-  var Node = /* @__PURE__ */ (function() {
-    function Node2(value0, value1, value22, value32, value42, value52) {
-      this.value0 = value0;
-      this.value1 = value1;
-      this.value2 = value22;
-      this.value3 = value32;
-      this.value4 = value42;
-      this.value5 = value52;
-    }
-    ;
-    Node2.create = function(value0) {
-      return function(value1) {
-        return function(value22) {
-          return function(value32) {
-            return function(value42) {
-              return function(value52) {
-                return new Node2(value0, value1, value22, value32, value42, value52);
-              };
-            };
-          };
-        };
-      };
-    };
-    return Node2;
-  })();
-  var IterLeaf = /* @__PURE__ */ (function() {
-    function IterLeaf2() {
-    }
-    ;
-    IterLeaf2.value = new IterLeaf2();
-    return IterLeaf2;
-  })();
-  var IterEmit = /* @__PURE__ */ (function() {
-    function IterEmit2(value0, value1, value22) {
-      this.value0 = value0;
-      this.value1 = value1;
-      this.value2 = value22;
-    }
-    ;
-    IterEmit2.create = function(value0) {
-      return function(value1) {
-        return function(value22) {
-          return new IterEmit2(value0, value1, value22);
-        };
-      };
-    };
-    return IterEmit2;
-  })();
-  var IterNode = /* @__PURE__ */ (function() {
-    function IterNode2(value0, value1) {
-      this.value0 = value0;
-      this.value1 = value1;
-    }
-    ;
-    IterNode2.create = function(value0) {
-      return function(value1) {
-        return new IterNode2(value0, value1);
-      };
-    };
-    return IterNode2;
-  })();
-  var Split = /* @__PURE__ */ (function() {
-    function Split2(value0, value1, value22) {
-      this.value0 = value0;
-      this.value1 = value1;
-      this.value2 = value22;
-    }
-    ;
-    Split2.create = function(value0) {
-      return function(value1) {
-        return function(value22) {
-          return new Split2(value0, value1, value22);
-        };
-      };
-    };
-    return Split2;
-  })();
-  var SplitLast = /* @__PURE__ */ (function() {
-    function SplitLast2(value0, value1, value22) {
-      this.value0 = value0;
-      this.value1 = value1;
-      this.value2 = value22;
-    }
-    ;
-    SplitLast2.create = function(value0) {
-      return function(value1) {
-        return function(value22) {
-          return new SplitLast2(value0, value1, value22);
-        };
-      };
-    };
-    return SplitLast2;
-  })();
-  var unsafeNode = function(k, v, l, r) {
-    if (l instanceof Leaf) {
-      if (r instanceof Leaf) {
-        return new Node(1, 1, k, v, l, r);
-      }
-      ;
-      if (r instanceof Node) {
-        return new Node(1 + r.value0 | 0, 1 + r.value1 | 0, k, v, l, r);
-      }
-      ;
-      throw new Error("Failed pattern match at Data.Map.Internal (line 702, column 5 - line 706, column 39): " + [r.constructor.name]);
-    }
-    ;
-    if (l instanceof Node) {
-      if (r instanceof Leaf) {
-        return new Node(1 + l.value0 | 0, 1 + l.value1 | 0, k, v, l, r);
-      }
-      ;
-      if (r instanceof Node) {
-        return new Node(1 + (function() {
-          var $280 = l.value0 > r.value0;
-          if ($280) {
-            return l.value0;
-          }
-          ;
-          return r.value0;
-        })() | 0, (1 + l.value1 | 0) + r.value1 | 0, k, v, l, r);
-      }
-      ;
-      throw new Error("Failed pattern match at Data.Map.Internal (line 708, column 5 - line 712, column 68): " + [r.constructor.name]);
-    }
-    ;
-    throw new Error("Failed pattern match at Data.Map.Internal (line 700, column 32 - line 712, column 68): " + [l.constructor.name]);
-  };
-  var toMapIter = /* @__PURE__ */ (function() {
-    return flip(IterNode.create)(IterLeaf.value);
-  })();
-  var stepWith = function(f) {
-    return function(next) {
-      return function(done) {
-        var go2 = function($copy_v) {
-          var $tco_done = false;
-          var $tco_result;
-          function $tco_loop(v) {
-            if (v instanceof IterLeaf) {
-              $tco_done = true;
-              return done(unit);
-            }
-            ;
-            if (v instanceof IterEmit) {
-              $tco_done = true;
-              return next(v.value0, v.value1, v.value2);
-            }
-            ;
-            if (v instanceof IterNode) {
-              $copy_v = f(v.value1)(v.value0);
-              return;
-            }
-            ;
-            throw new Error("Failed pattern match at Data.Map.Internal (line 940, column 8 - line 946, column 20): " + [v.constructor.name]);
-          }
-          ;
-          while (!$tco_done) {
-            $tco_result = $tco_loop($copy_v);
-          }
-          ;
-          return $tco_result;
-        };
-        return go2;
-      };
-    };
-  };
-  var singleton5 = function(k) {
-    return function(v) {
-      return new Node(1, 1, k, v, Leaf.value, Leaf.value);
-    };
-  };
-  var unsafeBalancedNode = /* @__PURE__ */ (function() {
-    var height8 = function(v) {
-      if (v instanceof Leaf) {
-        return 0;
-      }
-      ;
-      if (v instanceof Node) {
-        return v.value0;
-      }
-      ;
-      throw new Error("Failed pattern match at Data.Map.Internal (line 757, column 12 - line 759, column 26): " + [v.constructor.name]);
-    };
-    var rotateLeft = function(k, v, l, rk, rv, rl, rr) {
-      if (rl instanceof Node && rl.value0 > height8(rr)) {
-        return unsafeNode(rl.value2, rl.value3, unsafeNode(k, v, l, rl.value4), unsafeNode(rk, rv, rl.value5, rr));
-      }
-      ;
-      return unsafeNode(rk, rv, unsafeNode(k, v, l, rl), rr);
-    };
-    var rotateRight = function(k, v, lk, lv, ll, lr, r) {
-      if (lr instanceof Node && height8(ll) <= lr.value0) {
-        return unsafeNode(lr.value2, lr.value3, unsafeNode(lk, lv, ll, lr.value4), unsafeNode(k, v, lr.value5, r));
-      }
-      ;
-      return unsafeNode(lk, lv, ll, unsafeNode(k, v, lr, r));
-    };
-    return function(k, v, l, r) {
-      if (l instanceof Leaf) {
-        if (r instanceof Leaf) {
-          return singleton5(k)(v);
-        }
-        ;
-        if (r instanceof Node && r.value0 > 1) {
-          return rotateLeft(k, v, l, r.value2, r.value3, r.value4, r.value5);
-        }
-        ;
-        return unsafeNode(k, v, l, r);
-      }
-      ;
-      if (l instanceof Node) {
-        if (r instanceof Node) {
-          if (r.value0 > (l.value0 + 1 | 0)) {
-            return rotateLeft(k, v, l, r.value2, r.value3, r.value4, r.value5);
-          }
-          ;
-          if (l.value0 > (r.value0 + 1 | 0)) {
-            return rotateRight(k, v, l.value2, l.value3, l.value4, l.value5, r);
-          }
-          ;
-        }
-        ;
-        if (r instanceof Leaf && l.value0 > 1) {
-          return rotateRight(k, v, l.value2, l.value3, l.value4, l.value5, r);
-        }
-        ;
-        return unsafeNode(k, v, l, r);
-      }
-      ;
-      throw new Error("Failed pattern match at Data.Map.Internal (line 717, column 40 - line 738, column 34): " + [l.constructor.name]);
-    };
-  })();
-  var $lazy_unsafeSplit = /* @__PURE__ */ $runtime_lazy4("unsafeSplit", "Data.Map.Internal", function() {
-    return function(comp, k, m) {
-      if (m instanceof Leaf) {
-        return new Split(Nothing.value, Leaf.value, Leaf.value);
-      }
-      ;
-      if (m instanceof Node) {
-        var v = comp(k)(m.value2);
-        if (v instanceof LT) {
-          var v1 = $lazy_unsafeSplit(793)(comp, k, m.value4);
-          return new Split(v1.value0, v1.value1, unsafeBalancedNode(m.value2, m.value3, v1.value2, m.value5));
-        }
-        ;
-        if (v instanceof GT) {
-          var v1 = $lazy_unsafeSplit(796)(comp, k, m.value5);
-          return new Split(v1.value0, unsafeBalancedNode(m.value2, m.value3, m.value4, v1.value1), v1.value2);
-        }
-        ;
-        if (v instanceof EQ) {
-          return new Split(new Just(m.value3), m.value4, m.value5);
-        }
-        ;
-        throw new Error("Failed pattern match at Data.Map.Internal (line 791, column 5 - line 799, column 30): " + [v.constructor.name]);
-      }
-      ;
-      throw new Error("Failed pattern match at Data.Map.Internal (line 787, column 34 - line 799, column 30): " + [m.constructor.name]);
-    };
-  });
-  var unsafeSplit = /* @__PURE__ */ $lazy_unsafeSplit(786);
-  var $lazy_unsafeSplitLast = /* @__PURE__ */ $runtime_lazy4("unsafeSplitLast", "Data.Map.Internal", function() {
-    return function(k, v, l, r) {
-      if (r instanceof Leaf) {
-        return new SplitLast(k, v, l);
-      }
-      ;
-      if (r instanceof Node) {
-        var v1 = $lazy_unsafeSplitLast(779)(r.value2, r.value3, r.value4, r.value5);
-        return new SplitLast(v1.value0, v1.value1, unsafeBalancedNode(k, v, l, v1.value2));
-      }
-      ;
-      throw new Error("Failed pattern match at Data.Map.Internal (line 776, column 37 - line 780, column 57): " + [r.constructor.name]);
-    };
-  });
-  var unsafeSplitLast = /* @__PURE__ */ $lazy_unsafeSplitLast(775);
-  var unsafeJoinNodes = function(v, v1) {
-    if (v instanceof Leaf) {
-      return v1;
-    }
-    ;
-    if (v instanceof Node) {
-      var v2 = unsafeSplitLast(v.value2, v.value3, v.value4, v.value5);
-      return unsafeBalancedNode(v2.value0, v2.value1, v2.value2, v1);
-    }
-    ;
-    throw new Error("Failed pattern match at Data.Map.Internal (line 764, column 25 - line 768, column 38): " + [v.constructor.name, v1.constructor.name]);
-  };
-  var lookup2 = function(dictOrd) {
-    var compare3 = compare(dictOrd);
-    return function(k) {
-      var go2 = function($copy_v) {
-        var $tco_done = false;
-        var $tco_result;
-        function $tco_loop(v) {
-          if (v instanceof Leaf) {
-            $tco_done = true;
-            return Nothing.value;
-          }
-          ;
-          if (v instanceof Node) {
-            var v1 = compare3(k)(v.value2);
-            if (v1 instanceof LT) {
-              $copy_v = v.value4;
-              return;
-            }
-            ;
-            if (v1 instanceof GT) {
-              $copy_v = v.value5;
-              return;
-            }
-            ;
-            if (v1 instanceof EQ) {
-              $tco_done = true;
-              return new Just(v.value3);
-            }
-            ;
-            throw new Error("Failed pattern match at Data.Map.Internal (line 283, column 7 - line 286, column 22): " + [v1.constructor.name]);
-          }
-          ;
-          throw new Error("Failed pattern match at Data.Map.Internal (line 280, column 8 - line 286, column 22): " + [v.constructor.name]);
-        }
-        ;
-        while (!$tco_done) {
-          $tco_result = $tco_loop($copy_v);
-        }
-        ;
-        return $tco_result;
-      };
-      return go2;
-    };
-  };
-  var iterMapL = /* @__PURE__ */ (function() {
-    var go2 = function($copy_iter) {
-      return function($copy_v) {
-        var $tco_var_iter = $copy_iter;
-        var $tco_done = false;
-        var $tco_result;
-        function $tco_loop(iter, v) {
-          if (v instanceof Leaf) {
-            $tco_done = true;
-            return iter;
-          }
-          ;
-          if (v instanceof Node) {
-            if (v.value5 instanceof Leaf) {
-              $tco_var_iter = new IterEmit(v.value2, v.value3, iter);
-              $copy_v = v.value4;
-              return;
-            }
-            ;
-            $tco_var_iter = new IterEmit(v.value2, v.value3, new IterNode(v.value5, iter));
-            $copy_v = v.value4;
-            return;
-          }
-          ;
-          throw new Error("Failed pattern match at Data.Map.Internal (line 951, column 13 - line 958, column 48): " + [v.constructor.name]);
-        }
-        ;
-        while (!$tco_done) {
-          $tco_result = $tco_loop($tco_var_iter, $copy_v);
-        }
-        ;
-        return $tco_result;
-      };
-    };
-    return go2;
-  })();
-  var stepAscCps = /* @__PURE__ */ stepWith(iterMapL);
-  var stepUnfoldr = /* @__PURE__ */ (function() {
-    var step4 = function(k, v, next) {
-      return new Just(new Tuple(new Tuple(k, v), next));
-    };
-    return stepAscCps(step4)(function(v) {
-      return Nothing.value;
-    });
-  })();
-  var toUnfoldable2 = function(dictUnfoldable) {
-    var $784 = unfoldr(dictUnfoldable)(stepUnfoldr);
-    return function($785) {
-      return $784(toMapIter($785));
-    };
-  };
-  var insert = function(dictOrd) {
-    var compare3 = compare(dictOrd);
-    return function(k) {
-      return function(v) {
-        var go2 = function(v1) {
-          if (v1 instanceof Leaf) {
-            return singleton5(k)(v);
-          }
-          ;
-          if (v1 instanceof Node) {
-            var v2 = compare3(k)(v1.value2);
-            if (v2 instanceof LT) {
-              return unsafeBalancedNode(v1.value2, v1.value3, go2(v1.value4), v1.value5);
-            }
-            ;
-            if (v2 instanceof GT) {
-              return unsafeBalancedNode(v1.value2, v1.value3, v1.value4, go2(v1.value5));
-            }
-            ;
-            if (v2 instanceof EQ) {
-              return new Node(v1.value0, v1.value1, k, v, v1.value4, v1.value5);
-            }
-            ;
-            throw new Error("Failed pattern match at Data.Map.Internal (line 471, column 7 - line 474, column 35): " + [v2.constructor.name]);
-          }
-          ;
-          throw new Error("Failed pattern match at Data.Map.Internal (line 468, column 8 - line 474, column 35): " + [v1.constructor.name]);
-        };
-        return go2;
-      };
-    };
-  };
-  var foldableMap = {
-    foldr: function(f) {
-      return function(z) {
-        var $lazy_go = $runtime_lazy4("go", "Data.Map.Internal", function() {
-          return function(m$prime, z$prime) {
-            if (m$prime instanceof Leaf) {
-              return z$prime;
-            }
-            ;
-            if (m$prime instanceof Node) {
-              return $lazy_go(172)(m$prime.value4, f(m$prime.value3)($lazy_go(172)(m$prime.value5, z$prime)));
-            }
-            ;
-            throw new Error("Failed pattern match at Data.Map.Internal (line 169, column 26 - line 172, column 43): " + [m$prime.constructor.name]);
-          };
-        });
-        var go2 = $lazy_go(169);
-        return function(m) {
-          return go2(m, z);
-        };
-      };
-    },
-    foldl: function(f) {
-      return function(z) {
-        var $lazy_go = $runtime_lazy4("go", "Data.Map.Internal", function() {
-          return function(z$prime, m$prime) {
-            if (m$prime instanceof Leaf) {
-              return z$prime;
-            }
-            ;
-            if (m$prime instanceof Node) {
-              return $lazy_go(178)(f($lazy_go(178)(z$prime, m$prime.value4))(m$prime.value3), m$prime.value5);
-            }
-            ;
-            throw new Error("Failed pattern match at Data.Map.Internal (line 175, column 26 - line 178, column 43): " + [m$prime.constructor.name]);
-          };
-        });
-        var go2 = $lazy_go(175);
-        return function(m) {
-          return go2(z, m);
-        };
-      };
-    },
-    foldMap: function(dictMonoid) {
-      var mempty2 = mempty(dictMonoid);
-      var append12 = append(dictMonoid.Semigroup0());
-      return function(f) {
-        var go2 = function(v) {
-          if (v instanceof Leaf) {
-            return mempty2;
-          }
-          ;
-          if (v instanceof Node) {
-            return append12(go2(v.value4))(append12(f(v.value3))(go2(v.value5)));
-          }
-          ;
-          throw new Error("Failed pattern match at Data.Map.Internal (line 181, column 10 - line 184, column 28): " + [v.constructor.name]);
-        };
-        return go2;
-      };
-    }
-  };
-  var empty3 = /* @__PURE__ */ (function() {
-    return Leaf.value;
-  })();
-  var fromFoldable3 = function(dictOrd) {
-    var insert12 = insert(dictOrd);
-    return function(dictFoldable) {
-      return foldl(dictFoldable)(function(m) {
-        return function(v) {
-          return insert12(v.value0)(v.value1)(m);
-        };
-      })(empty3);
-    };
-  };
-  var $$delete = function(dictOrd) {
-    var compare3 = compare(dictOrd);
-    return function(k) {
-      var go2 = function(v) {
-        if (v instanceof Leaf) {
-          return Leaf.value;
-        }
-        ;
-        if (v instanceof Node) {
-          var v1 = compare3(k)(v.value2);
-          if (v1 instanceof LT) {
-            return unsafeBalancedNode(v.value2, v.value3, go2(v.value4), v.value5);
-          }
-          ;
-          if (v1 instanceof GT) {
-            return unsafeBalancedNode(v.value2, v.value3, v.value4, go2(v.value5));
-          }
-          ;
-          if (v1 instanceof EQ) {
-            return unsafeJoinNodes(v.value4, v.value5);
-          }
-          ;
-          throw new Error("Failed pattern match at Data.Map.Internal (line 498, column 7 - line 501, column 43): " + [v1.constructor.name]);
-        }
-        ;
-        throw new Error("Failed pattern match at Data.Map.Internal (line 495, column 8 - line 501, column 43): " + [v.constructor.name]);
-      };
-      return go2;
-    };
-  };
-  var alter = function(dictOrd) {
-    var compare3 = compare(dictOrd);
-    return function(f) {
-      return function(k) {
-        return function(m) {
-          var v = unsafeSplit(compare3, k, m);
-          var v2 = f(v.value0);
-          if (v2 instanceof Nothing) {
-            return unsafeJoinNodes(v.value1, v.value2);
-          }
-          ;
-          if (v2 instanceof Just) {
-            return unsafeBalancedNode(k, v2.value0, v.value1, v.value2);
-          }
-          ;
-          throw new Error("Failed pattern match at Data.Map.Internal (line 514, column 3 - line 518, column 41): " + [v2.constructor.name]);
-        };
-      };
-    };
-  };
 
   // output/Halogen.Data.Slot/index.js
   var foreachSlot = function(dictApplicative) {
@@ -6176,7 +6447,7 @@
   };
 
   // output/Control.Applicative.Free/index.js
-  var identity7 = /* @__PURE__ */ identity(categoryFn);
+  var identity8 = /* @__PURE__ */ identity(categoryFn);
   var Pure = /* @__PURE__ */ (function() {
     function Pure2(value0) {
       this.value0 = value0;
@@ -6356,7 +6627,7 @@
     };
   };
   var retractFreeAp = function(dictApplicative) {
-    return foldFreeAp(dictApplicative)(identity7);
+    return foldFreeAp(dictApplicative)(identity8);
   };
   var applyFreeAp = {
     apply: function(fba) {
@@ -6425,7 +6696,7 @@
     ;
     return $tco_result;
   };
-  var snoc2 = function(v) {
+  var snoc3 = function(v) {
     return function(a2) {
       return new CatQueue(v.value0, new Cons(a2, v.value1));
     };
@@ -6473,7 +6744,7 @@
       }
       ;
       if (v instanceof CatCons) {
-        return new CatCons(v.value0, snoc2(v.value1)(v1));
+        return new CatCons(v.value0, snoc3(v.value1)(v1));
       }
       ;
       throw new Error("Failed pattern match at Data.CatList (line 108, column 1 - line 108, column 54): " + [v.constructor.name, v1.constructor.name]);
@@ -6482,7 +6753,7 @@
   var foldr3 = function(k) {
     return function(b2) {
       return function(q2) {
-        var foldl3 = function($copy_v) {
+        var foldl4 = function($copy_v) {
           return function($copy_v1) {
             return function($copy_v2) {
               var $tco_var_v = $copy_v;
@@ -6522,7 +6793,7 @@
               var v = uncons3(xs);
               if (v instanceof Nothing) {
                 $tco_done1 = true;
-                return foldl3(function(x) {
+                return foldl4(function(x) {
                   return function(i2) {
                     return i2(x);
                   };
@@ -6574,7 +6845,7 @@
   var semigroupCatList = {
     append: append3
   };
-  var snoc3 = function(cat) {
+  var snoc4 = function(cat) {
     return function(a2) {
       return append3(cat)(new CatCons(a2, empty5));
     };
@@ -6699,7 +6970,7 @@
   var freeBind = {
     bind: function(v) {
       return function(k) {
-        return new Free(v.value0, snoc3(v.value1)(k));
+        return new Free(v.value0, snoc4(v.value1)(k));
       };
     },
     Apply0: function() {
@@ -7161,6 +7432,9 @@
   var h1_ = /* @__PURE__ */ h1([]);
   var h2 = /* @__PURE__ */ element2("h2");
   var h2_ = /* @__PURE__ */ h2([]);
+  var input2 = function(props) {
+    return element2("input")(props)([]);
+  };
   var li = /* @__PURE__ */ element2("li");
   var li_ = /* @__PURE__ */ li([]);
   var p = /* @__PURE__ */ element2("p");
@@ -8051,7 +8325,7 @@
   var unwrap4 = /* @__PURE__ */ unwrap();
   var when4 = /* @__PURE__ */ when(applicativeEffect);
   var not2 = /* @__PURE__ */ not(/* @__PURE__ */ heytingAlgebraFunction(/* @__PURE__ */ heytingAlgebraFunction(heytingAlgebraBoolean)));
-  var identity8 = /* @__PURE__ */ identity(categoryFn);
+  var identity9 = /* @__PURE__ */ identity(categoryFn);
   var bind14 = /* @__PURE__ */ bind(bindAff);
   var liftEffect6 = /* @__PURE__ */ liftEffect(monadEffectAff);
   var map20 = /* @__PURE__ */ map(functorEffect);
@@ -8193,7 +8467,7 @@
       };
       return {
         render: render2,
-        renderChild: identity8,
+        renderChild: identity9,
         removeChild: removeChild3,
         dispose: removeChild3
       };
@@ -8768,6 +9042,74 @@
     };
     return ScanExpr2;
   })();
+  var FoldExpr = /* @__PURE__ */ (function() {
+    function FoldExpr2(value0, value1, value22) {
+      this.value0 = value0;
+      this.value1 = value1;
+      this.value2 = value22;
+    }
+    ;
+    FoldExpr2.create = function(value0) {
+      return function(value1) {
+        return function(value22) {
+          return new FoldExpr2(value0, value1, value22);
+        };
+      };
+    };
+    return FoldExpr2;
+  })();
+  var ImportExpr = /* @__PURE__ */ (function() {
+    function ImportExpr2(value0, value1) {
+      this.value0 = value0;
+      this.value1 = value1;
+    }
+    ;
+    ImportExpr2.create = function(value0) {
+      return function(value1) {
+        return new ImportExpr2(value0, value1);
+      };
+    };
+    return ImportExpr2;
+  })();
+  var PartialImportExpr = /* @__PURE__ */ (function() {
+    function PartialImportExpr2(value0, value1) {
+      this.value0 = value0;
+      this.value1 = value1;
+    }
+    ;
+    PartialImportExpr2.create = function(value0) {
+      return function(value1) {
+        return new PartialImportExpr2(value0, value1);
+      };
+    };
+    return PartialImportExpr2;
+  })();
+  var FieldAccess = /* @__PURE__ */ (function() {
+    function FieldAccess2(value0, value1) {
+      this.value0 = value0;
+      this.value1 = value1;
+    }
+    ;
+    FieldAccess2.create = function(value0) {
+      return function(value1) {
+        return new FieldAccess2(value0, value1);
+      };
+    };
+    return FieldAccess2;
+  })();
+  var RemapActionsExpr = /* @__PURE__ */ (function() {
+    function RemapActionsExpr2(value0, value1) {
+      this.value0 = value0;
+      this.value1 = value1;
+    }
+    ;
+    RemapActionsExpr2.create = function(value0) {
+      return function(value1) {
+        return new RemapActionsExpr2(value0, value1);
+      };
+    };
+    return RemapActionsExpr2;
+  })();
   var Lit = /* @__PURE__ */ (function() {
     function Lit2(value0) {
       this.value0 = value0;
@@ -8882,33 +9224,49 @@
     };
     return NText2;
   })();
+  var actionPayloadToJson = function(a2) {
+    return id(fromFoldable5([new Tuple("eventType", id(a2.eventType)), new Tuple("key", id(a2.key)), new Tuple("payload", a2.payload)]));
+  };
   var nodeToJson = function(v) {
     if (v instanceof NText) {
       return id(fromFoldable5([new Tuple("type", id("text")), new Tuple("text", id(v.value0))]));
     }
     ;
     if (v instanceof NElement) {
-      var actionToJson = function(a2) {
-        return id(fromFoldable5([new Tuple("eventType", id(a2.eventType)), new Tuple("key", id(a2.key)), new Tuple("payload", a2.payload)]));
-      };
       return id(fromFoldable5([new Tuple("type", id("element")), new Tuple("tag", id(v.value0.tag)), new Tuple("attrs", id(fromFoldable5(map21(function(v1) {
         return new Tuple(v1.value0, id(v1.value1));
-      })(toUnfoldable3(v.value0.attrs))))), new Tuple("action", maybe(jsonNull)(actionToJson)(v.value0.action)), new Tuple("children", id(map21(nodeToJson)(v.value0.children)))]));
+      })(toUnfoldable3(v.value0.attrs))))), new Tuple("action", maybe(jsonNull)(actionPayloadToJson)(v.value0.action)), new Tuple("children", id(map21(nodeToJson)(v.value0.children)))]));
     }
     ;
-    throw new Error("Failed pattern match at Templating.Ast (line 249, column 1 - line 249, column 27): " + [v.constructor.name]);
+    throw new Error("Failed pattern match at Templating.Ast (line 290, column 1 - line 290, column 27): " + [v.constructor.name]);
   };
 
+  // output/Data.Set/index.js
+  var coerce3 = /* @__PURE__ */ coerce();
+  var member3 = function(dictOrd) {
+    return coerce3(member2(dictOrd));
+  };
+  var insert4 = function(dictOrd) {
+    var insert13 = insert(dictOrd);
+    return function(a2) {
+      return function(v) {
+        return insert13(a2)(unit)(v);
+      };
+    };
+  };
+  var empty7 = empty3;
+
   // output/Templating.Eval/index.js
-  var show3 = /* @__PURE__ */ show(showString);
-  var show12 = /* @__PURE__ */ show(/* @__PURE__ */ showArray(showString));
+  var show3 = /* @__PURE__ */ show(/* @__PURE__ */ showArray(showString));
   var lookup5 = /* @__PURE__ */ lookup2(ordString);
+  var show12 = /* @__PURE__ */ show(showString);
   var bind5 = /* @__PURE__ */ bind(bindEither);
+  var traverse2 = /* @__PURE__ */ traverse(traversableMaybe)(applicativeEither);
+  var traverse12 = /* @__PURE__ */ traverse(traversableArray)(applicativeEither);
+  var pure9 = /* @__PURE__ */ pure(applicativeEither);
   var show22 = /* @__PURE__ */ show(showInt);
   var show32 = /* @__PURE__ */ show(showNumber);
-  var identity9 = /* @__PURE__ */ identity(categoryFn);
-  var pure9 = /* @__PURE__ */ pure(applicativeEither);
-  var traverse2 = /* @__PURE__ */ traverse(traversableArray)(applicativeEither);
+  var identity10 = /* @__PURE__ */ identity(categoryFn);
   var bind15 = /* @__PURE__ */ bind(bindMaybe);
   var conj2 = /* @__PURE__ */ conj(heytingAlgebraBoolean);
   var map24 = /* @__PURE__ */ map(functorEither);
@@ -8918,12 +9276,37 @@
   var lessThanOrEq2 = /* @__PURE__ */ lessThanOrEq(ordNumber);
   var greaterThan2 = /* @__PURE__ */ greaterThan(ordNumber);
   var greaterThanOrEq1 = /* @__PURE__ */ greaterThanOrEq(ordNumber);
+  var eq4 = /* @__PURE__ */ eq(/* @__PURE__ */ eqMaybe(eqString));
+  var member4 = /* @__PURE__ */ member3(ordString);
+  var insert5 = /* @__PURE__ */ insert4(ordString);
+  var fromFoldable6 = /* @__PURE__ */ fromFoldable3(ordString)(foldableArray);
+  var traverse22 = /* @__PURE__ */ traverse(traversableMap)(applicativeEither);
+  var append12 = /* @__PURE__ */ append(semigroupArray);
   var fold3 = /* @__PURE__ */ fold2(monoidString);
-  var fromFoldable6 = /* @__PURE__ */ fromFoldable2(foldableArray);
-  var insert4 = /* @__PURE__ */ insert(ordString);
-  var foldM3 = /* @__PURE__ */ foldM(foldableArray)(monadEither);
-  var fromFoldable1 = /* @__PURE__ */ fromFoldable3(ordString)(foldableArray);
-  var traverse12 = /* @__PURE__ */ traverse(traversableMaybe)(applicativeEither);
+  var fromFoldable1 = /* @__PURE__ */ fromFoldable2(foldableArray);
+  var insert12 = /* @__PURE__ */ insert(ordString);
+  var foldM4 = /* @__PURE__ */ foldM(foldableArray)(monadEither);
+  var foldl3 = /* @__PURE__ */ foldl(foldableArray);
+  var ProgramSource = /* @__PURE__ */ (function() {
+    function ProgramSource2(value0) {
+      this.value0 = value0;
+    }
+    ;
+    ProgramSource2.create = function(value0) {
+      return new ProgramSource2(value0);
+    };
+    return ProgramSource2;
+  })();
+  var JsonSource = /* @__PURE__ */ (function() {
+    function JsonSource2(value0) {
+      this.value0 = value0;
+    }
+    ;
+    JsonSource2.create = function(value0) {
+      return new JsonSource2(value0);
+    };
+    return JsonSource2;
+  })();
   var UnboundName = /* @__PURE__ */ (function() {
     function UnboundName2(value0) {
       this.value0 = value0;
@@ -8964,6 +9347,26 @@
     };
     return TypeMismatch3;
   })();
+  var UnknownLibrary = /* @__PURE__ */ (function() {
+    function UnknownLibrary2(value0) {
+      this.value0 = value0;
+    }
+    ;
+    UnknownLibrary2.create = function(value0) {
+      return new UnknownLibrary2(value0);
+    };
+    return UnknownLibrary2;
+  })();
+  var ImportCycle = /* @__PURE__ */ (function() {
+    function ImportCycle2(value0) {
+      this.value0 = value0;
+    }
+    ;
+    ImportCycle2.create = function(value0) {
+      return new ImportCycle2(value0);
+    };
+    return ImportCycle2;
+  })();
   var VJson = /* @__PURE__ */ (function() {
     function VJson2(value0) {
       this.value0 = value0;
@@ -8990,91 +9393,184 @@
     };
     return VClosure2;
   })();
+  var VNode = /* @__PURE__ */ (function() {
+    function VNode2(value0) {
+      this.value0 = value0;
+    }
+    ;
+    VNode2.create = function(value0) {
+      return new VNode2(value0);
+    };
+    return VNode2;
+  })();
+  var VEnv = /* @__PURE__ */ (function() {
+    function VEnv2(value0) {
+      this.value0 = value0;
+    }
+    ;
+    VEnv2.create = function(value0) {
+      return new VEnv2(value0);
+    };
+    return VEnv2;
+  })();
+  var VPartial = /* @__PURE__ */ (function() {
+    function VPartial2(value0, value1) {
+      this.value0 = value0;
+      this.value1 = value1;
+    }
+    ;
+    VPartial2.create = function(value0) {
+      return function(value1) {
+        return new VPartial2(value0, value1);
+      };
+    };
+    return VPartial2;
+  })();
+  var VRemapPartial = /* @__PURE__ */ (function() {
+    function VRemapPartial2(value0, value1, value22) {
+      this.value0 = value0;
+      this.value1 = value1;
+      this.value2 = value22;
+    }
+    ;
+    VRemapPartial2.create = function(value0) {
+      return function(value1) {
+        return function(value22) {
+          return new VRemapPartial2(value0, value1, value22);
+        };
+      };
+    };
+    return VRemapPartial2;
+  })();
+  var walkFields = function($copy_v) {
+    return function($copy_v1) {
+      return function($copy_v2) {
+        var $tco_var_v = $copy_v;
+        var $tco_var_v1 = $copy_v1;
+        var $tco_done = false;
+        var $tco_result;
+        function $tco_loop(v, v1, v2) {
+          if (v2.length === 0) {
+            $tco_done = true;
+            return new Right(v1);
+          }
+          ;
+          var v4 = uncons(v2);
+          if (v4 instanceof Nothing) {
+            $tco_done = true;
+            return new Right(v1);
+          }
+          ;
+          if (v4 instanceof Just) {
+            if (v1 instanceof VClosure) {
+              $tco_done = true;
+              return new Left(new TypeMismatch2("cannot access field " + (v4.value0.head + (" on a function value in path " + show3(v)))));
+            }
+            ;
+            if (v1 instanceof VNode) {
+              $tco_done = true;
+              return new Left(new TypeMismatch2("cannot access field " + (v4.value0.head + (" on a rendered node in path " + show3(v)))));
+            }
+            ;
+            if (v1 instanceof VPartial) {
+              $tco_done = true;
+              return new Left(new TypeMismatch2("cannot access field " + (v4.value0.head + (" on a partial import in path " + show3(v)))));
+            }
+            ;
+            if (v1 instanceof VRemapPartial) {
+              $tco_done = true;
+              return new Left(new TypeMismatch2("cannot access field " + (v4.value0.head + (" on a partial import in path " + show3(v)))));
+            }
+            ;
+            if (v1 instanceof VEnv) {
+              var v5 = lookup5(v4.value0.head)(v1.value0);
+              if (v5 instanceof Nothing) {
+                $tco_done = true;
+                return new Left(new PathNotFound(v));
+              }
+              ;
+              if (v5 instanceof Just) {
+                $tco_var_v = v;
+                $tco_var_v1 = v5.value0;
+                $copy_v2 = v4.value0.tail;
+                return;
+              }
+              ;
+              throw new Error("Failed pattern match at Templating.Eval (line 518, column 15 - line 520, column 44): " + [v5.constructor.name]);
+            }
+            ;
+            if (v1 instanceof VJson) {
+              var v5 = toObject(v1.value0);
+              if (v5 instanceof Nothing) {
+                $tco_done = true;
+                return new Left(new TypeMismatch2("expected an object to look up field " + (v4.value0.head + (" in path " + show3(v)))));
+              }
+              ;
+              if (v5 instanceof Just) {
+                var v6 = lookup(v4.value0.head)(v5.value0);
+                if (v6 instanceof Nothing) {
+                  $tco_done = true;
+                  return new Left(new PathNotFound(v));
+                }
+                ;
+                if (v6 instanceof Just) {
+                  $tco_var_v = v;
+                  $tco_var_v1 = new VJson(v6.value0);
+                  $copy_v2 = v4.value0.tail;
+                  return;
+                }
+                ;
+                throw new Error("Failed pattern match at Templating.Eval (line 523, column 19 - line 525, column 54): " + [v6.constructor.name]);
+              }
+              ;
+              throw new Error("Failed pattern match at Templating.Eval (line 521, column 16 - line 525, column 54): " + [v5.constructor.name]);
+            }
+            ;
+            throw new Error("Failed pattern match at Templating.Eval (line 513, column 39 - line 525, column 54): " + [v1.constructor.name]);
+          }
+          ;
+          throw new Error("Failed pattern match at Templating.Eval (line 511, column 31 - line 525, column 54): " + [v4.constructor.name]);
+        }
+        ;
+        while (!$tco_done) {
+          $tco_result = $tco_loop($tco_var_v, $tco_var_v1, $copy_v2);
+        }
+        ;
+        return $tco_result;
+      };
+    };
+  };
   var showEvalError = {
     show: function(v) {
       if (v instanceof UnboundName) {
-        return "UnboundName " + show3(v.value0);
+        return "UnboundName " + show12(v.value0);
       }
       ;
       if (v instanceof UnknownFunction) {
-        return "UnknownFunction " + show3(v.value0);
+        return "UnknownFunction " + show12(v.value0);
       }
       ;
       if (v instanceof PathNotFound) {
-        return "PathNotFound " + show12(v.value0);
+        return "PathNotFound " + show3(v.value0);
       }
       ;
       if (v instanceof TypeMismatch2) {
-        return "TypeMismatch " + show3(v.value0);
+        return "TypeMismatch " + show12(v.value0);
       }
       ;
-      throw new Error("Failed pattern match at Templating.Eval (line 43, column 1 - line 47, column 56): " + [v.constructor.name]);
+      if (v instanceof UnknownLibrary) {
+        return "UnknownLibrary " + show12(v.value0);
+      }
+      ;
+      if (v instanceof ImportCycle) {
+        return "ImportCycle " + show12(v.value0);
+      }
+      ;
+      throw new Error("Failed pattern match at Templating.Eval (line 49, column 1 - line 55, column 56): " + [v.constructor.name]);
     }
   };
   var resolvePath = function(env) {
     return function(segs) {
-      var walkFields = function($copy_v) {
-        return function($copy_v1) {
-          var $tco_var_v = $copy_v;
-          var $tco_done = false;
-          var $tco_result;
-          function $tco_loop(v2, v12) {
-            if (v12.length === 0) {
-              $tco_done = true;
-              return new Right(v2);
-            }
-            ;
-            var v3 = uncons(v12);
-            if (v3 instanceof Nothing) {
-              $tco_done = true;
-              return new Right(v2);
-            }
-            ;
-            if (v3 instanceof Just) {
-              if (v2 instanceof VClosure) {
-                $tco_done = true;
-                return new Left(new TypeMismatch2("cannot access field " + (v3.value0.head + (" on a function value in path " + show12(segs)))));
-              }
-              ;
-              if (v2 instanceof VJson) {
-                var v4 = toObject(v2.value0);
-                if (v4 instanceof Nothing) {
-                  $tco_done = true;
-                  return new Left(new TypeMismatch2("expected an object to look up field " + (v3.value0.head + (" in path " + show12(segs)))));
-                }
-                ;
-                if (v4 instanceof Just) {
-                  var v5 = lookup(v3.value0.head)(v4.value0);
-                  if (v5 instanceof Nothing) {
-                    $tco_done = true;
-                    return new Left(new PathNotFound(segs));
-                  }
-                  ;
-                  if (v5 instanceof Just) {
-                    $tco_var_v = new VJson(v5.value0);
-                    $copy_v1 = v3.value0.tail;
-                    return;
-                  }
-                  ;
-                  throw new Error("Failed pattern match at Templating.Eval (line 230, column 21 - line 232, column 48): " + [v5.constructor.name]);
-                }
-                ;
-                throw new Error("Failed pattern match at Templating.Eval (line 228, column 18 - line 232, column 48): " + [v4.constructor.name]);
-              }
-              ;
-              throw new Error("Failed pattern match at Templating.Eval (line 226, column 41 - line 232, column 48): " + [v2.constructor.name]);
-            }
-            ;
-            throw new Error("Failed pattern match at Templating.Eval (line 224, column 25 - line 232, column 48): " + [v3.constructor.name]);
-          }
-          ;
-          while (!$tco_done) {
-            $tco_result = $tco_loop($tco_var_v, $copy_v1);
-          }
-          ;
-          return $tco_result;
-        };
-      };
       var v = uncons(segs);
       if (v instanceof Nothing) {
         return new Left(new PathNotFound(segs));
@@ -9087,13 +9583,13 @@
         }
         ;
         if (v1 instanceof Just) {
-          return walkFields(v1.value0)(v.value0.tail);
+          return walkFields(segs)(v1.value0)(v.value0.tail);
         }
         ;
-        throw new Error("Failed pattern match at Templating.Eval (line 218, column 26 - line 220, column 32): " + [v1.constructor.name]);
+        throw new Error("Failed pattern match at Templating.Eval (line 495, column 26 - line 497, column 37): " + [v1.constructor.name]);
       }
       ;
-      throw new Error("Failed pattern match at Templating.Eval (line 216, column 24 - line 220, column 32): " + [v.constructor.name]);
+      throw new Error("Failed pattern match at Templating.Eval (line 493, column 24 - line 497, column 37): " + [v.constructor.name]);
     };
   };
   var requireJson = function(v) {
@@ -9105,18 +9601,69 @@
       return new Left(new TypeMismatch2("expected a value, got a function \u2014 call it first, e.g. $my-fn(...), instead of using it directly"));
     }
     ;
-    throw new Error("Failed pattern match at Templating.Eval (line 123, column 1 - line 123, column 46): " + [v.constructor.name]);
+    if (v instanceof VNode) {
+      return new Right(nodeToJson(v.value0));
+    }
+    ;
+    if (v instanceof VEnv) {
+      return new Left(new TypeMismatch2("expected a value, got a library/env value \u2014 access .rendered, .vals, or a binding name first"));
+    }
+    ;
+    if (v instanceof VPartial) {
+      return new Left(new TypeMismatch2("expected a value, got a partial import of " + (show12(v.value0) + " still waiting on params \u2014 call it with the missing params first")));
+    }
+    ;
+    if (v instanceof VRemapPartial) {
+      return new Left(new TypeMismatch2("expected a value, got a partial import of " + (show12(v.value0) + " still waiting on params \u2014 call it with the missing params first")));
+    }
+    ;
+    throw new Error("Failed pattern match at Templating.Eval (line 184, column 1 - line 184, column 46): " + [v.constructor.name]);
   };
   var requireBoolean = function(v) {
     return bind5(requireJson(v))(function(j) {
       return maybe(new Left(new TypeMismatch2("expected a boolean")))(Right.create)(toBoolean(j));
     });
   };
+  var remapActionsInNode = function(v) {
+    return function(v1) {
+      if (v1 instanceof NText) {
+        return new Right(v1);
+      }
+      ;
+      if (v1 instanceof NElement) {
+        return bind5(traverse2(v)(v1.value0.action))(function(action$prime) {
+          return bind5(traverse12(remapActionsInNode(v))(v1.value0.children))(function(children$prime) {
+            return pure9(new NElement({
+              tag: v1.value0.tag,
+              attrs: v1.value0.attrs,
+              action: action$prime,
+              children: children$prime
+            }));
+          });
+        });
+      }
+      ;
+      throw new Error("Failed pattern match at Templating.Eval (line 371, column 1 - line 371, column 105): " + [v.constructor.name, v1.constructor.name]);
+    };
+  };
+  var mergeParamObjects = function(who) {
+    return function(given) {
+      return function(extra) {
+        var v = toObject(extra);
+        var v1 = toObject(given);
+        if (v1 instanceof Just && v instanceof Just) {
+          return new Right(id(union(v.value0)(v1.value0)));
+        }
+        ;
+        return new Left(new TypeMismatch2(who + ": completing a partial import expects an object argument"));
+      };
+    };
+  };
   var jsonToDisplayString = function(j) {
     var formatNumber = function(n) {
       var rounded = round2(n);
-      var $127 = toNumber2(rounded) === n;
-      if ($127) {
+      var $186 = toNumber2(rounded) === n;
+      if ($186) {
         return show22(rounded);
       }
       ;
@@ -9130,11 +9677,14 @@
       }
       ;
       return "false";
-    })(formatNumber)(identity9)(function(v) {
+    })(formatNumber)(identity10)(function(v) {
       return stringify(j);
     })(function(v) {
       return stringify(j);
     })(j);
+  };
+  var expectLibName = function(j) {
+    return maybe(new Left(new TypeMismatch2("import(...)/partial-import(...): the library name (1st argument) must be a string")))(Right.create)(toString(j));
   };
   var evalBuiltin = function(name15) {
     return function(args) {
@@ -9193,10 +9743,10 @@
                 });
               }
               ;
-              throw new Error("Failed pattern match at Templating.Eval (line 375, column 47 - line 379, column 57): " + [v1.constructor.name]);
+              throw new Error("Failed pattern match at Templating.Eval (line 670, column 47 - line 674, column 57): " + [v1.constructor.name]);
             }
             ;
-            throw new Error("Failed pattern match at Templating.Eval (line 373, column 24 - line 379, column 57): " + [v2.constructor.name]);
+            throw new Error("Failed pattern match at Templating.Eval (line 668, column 24 - line 674, column 57): " + [v2.constructor.name]);
           };
         };
         var v = uncons(args);
@@ -9208,20 +9758,26 @@
           return go2(v.value0.head)(v.value0.tail);
         }
         ;
-        throw new Error("Failed pattern match at Templating.Eval (line 368, column 16 - line 370, column 60): " + [v.constructor.name]);
+        throw new Error("Failed pattern match at Templating.Eval (line 663, column 16 - line 665, column 60): " + [v.constructor.name]);
       })();
       var variadicBool = function(op) {
         return function(identityVal) {
-          return bind5(traverse2(asBoolean)(args))(function(bools) {
+          return bind5(traverse12(asBoolean)(args))(function(bools) {
             return pure9(id(foldl2(op)(identityVal)(bools)));
           });
         };
       };
+      var asArray = function(j) {
+        return maybe(new Left(new TypeMismatch2(name15 + " expects an array argument")))(Right.create)(toArray(j));
+      };
+      var concatImpl = bind5(traverse12(asArray)(args))(function(arrs) {
+        return pure9(id(concat(arrs)));
+      });
       var arrayIndex = function(j) {
         return bind15(toNumber(j))(function(n) {
           var i2 = round2(n);
-          var $149 = toNumber2(i2) === n && i2 >= 0;
-          if ($149) {
+          var $208 = toNumber2(i2) === n && i2 >= 0;
+          if ($208) {
             return new Just(i2);
           }
           ;
@@ -9292,10 +9848,17 @@
         })(j);
       });
       var unaryBool = arity1(function(j) {
-        return map24(function($264) {
-          return id(!$264);
+        return map24(function($407) {
+          return id(!$407);
         })(asBoolean(j));
       });
+      var appendImpl = function(arr) {
+        return function(item) {
+          return bind5(asArray(arr))(function(a2) {
+            return pure9(id(snoc(a2)(item)));
+          });
+        };
+      };
       if (name15 === "cardinality") {
         return cardinality;
       }
@@ -9352,331 +9915,647 @@
         return branchImpl;
       }
       ;
+      if (name15 === "concat") {
+        return concatImpl;
+      }
+      ;
+      if (name15 === "append") {
+        return binary(appendImpl);
+      }
+      ;
       return new Left(new UnknownFunction(name15));
     };
   };
-  var evalStringParts = function(env) {
-    return function(parts) {
-      var resolvePart = function(v) {
-        if (v instanceof Lit) {
-          return pure9(v.value0);
+  var actionPayloadFromJson = function(j) {
+    var fieldAsString = function(obj) {
+      return function(field) {
+        var v = bind15(lookup(field)(obj))(toString);
+        if (v instanceof Just) {
+          return new Right(v.value0);
         }
         ;
-        if (v instanceof Interp) {
-          return map24(jsonToDisplayString)(evalExprAsJson(env)(v.value0));
+        if (v instanceof Nothing) {
+          return new Left(new TypeMismatch2(`remap-actions: the function's result is missing a string "` + (field + '" field')));
         }
         ;
-        throw new Error("Failed pattern match at Templating.Eval (line 211, column 3 - line 211, column 55): " + [v.constructor.name]);
+        throw new Error("Failed pattern match at Templating.Eval (line 406, column 29 - line 408, column 122): " + [v.constructor.name]);
       };
-      return map24(fold3)(traverse2(resolvePart)(parts));
     };
+    return bind5(maybe(new Left(new TypeMismatch2("remap-actions: the function must return an object with eventType/key/payload fields")))(Right.create)(toObject(j)))(function(obj) {
+      return bind5(fieldAsString(obj)("eventType"))(function(eventType) {
+        return bind5(fieldAsString(obj)("key"))(function(key) {
+          var payload = fromMaybe(jsonNull)(lookup("payload")(obj));
+          return pure9({
+            eventType,
+            key,
+            payload
+          });
+        });
+      });
+    });
   };
-  var evalExprAsJson = function(env) {
-    return function(e) {
-      return bind5(evalExpr(env)(e))(requireJson);
-    };
-  };
-  var evalExpr = function(v) {
-    return function(v1) {
-      if (v1 instanceof Path) {
-        return resolvePath(v)(v1.value0);
-      }
-      ;
-      if (v1 instanceof Call) {
-        if (v1.value0.length === 1) {
-          var v2 = lookup5(v1["value0"][0])(v);
-          if (v2 instanceof Just && v2.value0 instanceof VClosure) {
-            return bind5(traverse2(evalExpr(v))(v1.value1))(function(argVals) {
-              return applyClosure(v2.value0.value0)(v2.value0.value1)(v2.value0.value2)(argVals);
-            });
+  var tryPartial = function(libs) {
+    return function(inProgress) {
+      return function(name15) {
+        return function(paramsJson) {
+          var v = runLibrary(libs)(inProgress)(name15)(paramsJson);
+          if (v instanceof Left && (v.value0 instanceof PathNotFound && eq4(head(v.value0.value0))(new Just("ctx")))) {
+            return new Right(new VPartial(name15, paramsJson));
           }
           ;
-          return bind5(traverse2(evalExprAsJson(v))(v1.value1))(function(argJsons) {
-            return map24(VJson.create)(evalBuiltin(v1["value0"][0])(argJsons));
-          });
-        }
-        ;
-        return new Left(new TypeMismatch2("cannot call " + (show12(v1.value0) + " \u2014 only a single bound/builtin name can be called, e.g. $cardinality(...), not a dotted path")));
-      }
-      ;
-      if (v1 instanceof StringLit) {
-        return map24(function($265) {
-          return VJson.create(id($265));
-        })(evalStringParts(v)(v1.value0));
-      }
-      ;
-      if (v1 instanceof NumberLit) {
-        return pure9(new VJson(id(v1.value0)));
-      }
-      ;
-      if (v1 instanceof BoolLit) {
-        return pure9(new VJson(id(v1.value0)));
-      }
-      ;
-      if (v1 instanceof ArrayLit) {
-        return map24(function($266) {
-          return VJson.create(id($266));
-        })(traverse2(evalExprAsJson(v))(v1.value0));
-      }
-      ;
-      if (v1 instanceof ObjectLit) {
-        return map24(function($267) {
-          return VJson.create(id(fromFoldable6($267)));
-        })(traverse2(function(v22) {
-          return map24(Tuple.create(v22.value0))(evalExprAsJson(v)(v22.value1));
-        })(v1.value0));
-      }
-      ;
-      if (v1 instanceof LambdaExpr) {
-        return pure9(new VClosure(v1.value0, v1.value1, v));
-      }
-      ;
-      if (v1 instanceof MapExpr) {
-        return bind5(evalArrayExpr("map")(v)(v1.value0))(function(items2) {
-          return bind5(evalExpr(v)(v1.value1))(function(fnVal) {
-            return bind5(traverse2(function(item) {
-              return bind5(applyFunctionValue("map")(fnVal)([new VJson(item)]))(requireJson);
-            })(items2))(function(results) {
-              return pure9(new VJson(id(results)));
-            });
-          });
-        });
-      }
-      ;
-      if (v1 instanceof FilterExpr) {
-        var keepIf = function(v22) {
-          return function(v3) {
-            if (v3) {
-              return new Just(v22);
-            }
-            ;
-            if (!v3) {
-              return Nothing.value;
-            }
-            ;
-            throw new Error("Failed pattern match at Templating.Eval (line 179, column 3 - line 179, column 42): " + [v22.constructor.name, v3.constructor.name]);
-          };
+          return v;
         };
-        return bind5(evalArrayExpr("filter")(v)(v1.value0))(function(items2) {
-          return bind5(evalExpr(v)(v1.value1))(function(fnVal) {
-            return bind5(traverse2(function(item) {
-              return map24(keepIf(item))(bind5(applyFunctionValue("filter")(fnVal)([new VJson(item)]))(requireBoolean));
-            })(items2))(function(kept) {
-              return pure9(new VJson(id(catMaybes(kept))));
-            });
-          });
-        });
-      }
-      ;
-      if (v1 instanceof ScanExpr) {
-        var scanSteps = function(fnVal) {
-          return function(acc) {
-            return function(items2) {
-              var v22 = uncons(items2);
-              if (v22 instanceof Nothing) {
-                return new Right([acc]);
-              }
-              ;
-              if (v22 instanceof Just) {
-                return bind5(bind5(applyFunctionValue("scan")(fnVal)([new VJson(acc), new VJson(v22.value0.head)]))(requireJson))(function(nextAcc) {
-                  return bind5(scanSteps(fnVal)(nextAcc)(v22.value0.tail))(function(restAccs) {
-                    return pure9(cons(acc)(restAccs));
+      };
+    };
+  };
+  var runLibrary = function(libs) {
+    return function(inProgress) {
+      return function(name15) {
+        return function(paramsJson) {
+          if (member4(name15)(inProgress)) {
+            return new Left(new ImportCycle(name15));
+          }
+          ;
+          if (otherwise) {
+            return bind5(maybe(new Left(new UnknownLibrary(name15)))(Right.create)(lookup5(name15)(libs)))(function(src9) {
+              var inProgress$prime = insert5(name15)(inProgress);
+              if (src9 instanceof ProgramSource) {
+                return bind5(evalBindings(libs)(inProgress$prime)(paramsJson)(src9.value0.bindings))(function(libEnv) {
+                  return bind5(evalTemplate(libs)(inProgress$prime)(libEnv)(src9.value0.root))(function(renderedNode) {
+                    return pure9(new VEnv(fromFoldable6([new Tuple("rendered", new VNode(renderedNode)), new Tuple("vals", new VEnv(libEnv))])));
                   });
                 });
               }
               ;
-              throw new Error("Failed pattern match at Templating.Eval (line 194, column 31 - line 199, column 37): " + [v22.constructor.name]);
-            };
+              if (src9 instanceof JsonSource) {
+                return bind5(evalBindings(libs)(inProgress$prime)(paramsJson)(src9.value0.bindings))(function(libEnv) {
+                  return bind5(evalExpr(libs)(inProgress$prime)(libEnv)(src9.value0.root))(function(renderedVal) {
+                    return pure9(new VEnv(fromFoldable6([new Tuple("rendered", renderedVal), new Tuple("vals", new VEnv(libEnv))])));
+                  });
+                });
+              }
+              ;
+              throw new Error("Failed pattern match at Templating.Eval (line 439, column 7 - line 447, column 102): " + [src9.constructor.name]);
+            });
+          }
+          ;
+          throw new Error("Failed pattern match at Templating.Eval (line 433, column 1 - line 433, column 85): " + [libs.constructor.name, inProgress.constructor.name, name15.constructor.name, paramsJson.constructor.name]);
+        };
+      };
+    };
+  };
+  var remapActionsInValue = function(v) {
+    return function(v1) {
+      return function(v2) {
+        return function(v3) {
+          if (v3 instanceof VNode) {
+            return map24(VNode.create)(remapActionsInNode(applyRemapFn(v)(v1)(v2))(v3.value0));
+          }
+          ;
+          if (v3 instanceof VEnv) {
+            return map24(VEnv.create)(traverse22(remapActionsInValue(v)(v1)(v2))(v3.value0));
+          }
+          ;
+          if (v3 instanceof VPartial) {
+            return new Right(new VRemapPartial(v3.value0, v3.value1, [v2]));
+          }
+          ;
+          if (v3 instanceof VRemapPartial) {
+            return new Right(new VRemapPartial(v3.value0, v3.value1, append12(v3.value2)([v2])));
+          }
+          ;
+          return new Right(v3);
+        };
+      };
+    };
+  };
+  var pickBranch = function(libs) {
+    return function(inProgress) {
+      return function(env) {
+        return function(fallback) {
+          return function(pairs) {
+            var v = uncons(pairs);
+            if (v instanceof Nothing) {
+              return new Right(fallback);
+            }
+            ;
+            if (v instanceof Just) {
+              return bind5(bind5(evalExprAsJson(libs)(inProgress)(env)(v.value0.head.value0))(function(j) {
+                return maybe(new Left(new TypeMismatch2("branch predicate must evaluate to a boolean")))(Right.create)(toBoolean(j));
+              }))(function(p2) {
+                if (p2) {
+                  return new Right(v.value0.head.value1);
+                }
+                ;
+                return pickBranch(libs)(inProgress)(env)(fallback)(v.value0.tail);
+              });
+            }
+            ;
+            throw new Error("Failed pattern match at Templating.Eval (line 745, column 49 - line 749, column 75): " + [v.constructor.name]);
           };
         };
-        return bind5(evalArrayExpr("scan")(v)(v1.value0))(function(items2) {
-          return bind5(evalExprAsJson(v)(v1.value1))(function(initAcc) {
-            return bind5(evalExpr(v)(v1.value2))(function(fnVal) {
-              return bind5(scanSteps(fnVal)(initAcc)(items2))(function(results) {
-                return pure9(new VJson(id(results)));
+      };
+    };
+  };
+  var evalTemplate = function(v) {
+    return function(v1) {
+      return function(v2) {
+        return function(v3) {
+          if (v3 instanceof TElement) {
+            return bind5(map24(fromFoldable6)(traverse12(function(v4) {
+              return map24((function() {
+                var $408 = Tuple.create(v4.value0);
+                return function($409) {
+                  return $408(jsonToDisplayString($409));
+                };
+              })())(evalExprAsJson(v)(v1)(v2)(v4.value1));
+            })(v3.value1)))(function(attrs) {
+              return bind5(traverse2(evalAction(v)(v1)(v2))(v3.value2))(function(action2) {
+                return bind5(evalChildren(v)(v1)(v2)(v3.value3))(function(childNodes2) {
+                  return pure9(new NElement({
+                    tag: v3.value0,
+                    attrs,
+                    action: action2,
+                    children: childNodes2
+                  }));
+                });
+              });
+            });
+          }
+          ;
+          if (v3 instanceof TValue) {
+            return bind5(evalExpr(v)(v1)(v2)(v3.value0))(function(v4) {
+              if (v4 instanceof VNode) {
+                return pure9(v4.value0);
+              }
+              ;
+              return map24(function($410) {
+                return NText.create(jsonToDisplayString($410));
+              })(requireJson(v4));
+            });
+          }
+          ;
+          if (v3 instanceof TMap) {
+            return new Left(new TypeMismatch2("a `map(...)` cannot be evaluated as a standalone node \u2014 it only ever appears as a parent's child, never as a template's root"));
+          }
+          ;
+          if (v3 instanceof TBranch) {
+            return bind5(pickBranch(v)(v1)(v2)(v3.value0)(v3.value1))(function(chosen) {
+              return evalTemplate(v)(v1)(v2)(chosen);
+            });
+          }
+          ;
+          throw new Error("Failed pattern match at Templating.Eval (line 717, column 1 - line 717, column 91): " + [v.constructor.name, v1.constructor.name, v2.constructor.name, v3.constructor.name]);
+        };
+      };
+    };
+  };
+  var evalStringParts = function(libs) {
+    return function(inProgress) {
+      return function(env) {
+        return function(parts) {
+          var resolvePart = function(v) {
+            if (v instanceof Lit) {
+              return pure9(v.value0);
+            }
+            ;
+            if (v instanceof Interp) {
+              return map24(jsonToDisplayString)(evalExprAsJson(libs)(inProgress)(env)(v.value0));
+            }
+            ;
+            throw new Error("Failed pattern match at Templating.Eval (line 488, column 3 - line 488, column 55): " + [v.constructor.name]);
+          };
+          return map24(fold3)(traverse12(resolvePart)(parts));
+        };
+      };
+    };
+  };
+  var evalExprAsJson = function(libs) {
+    return function(inProgress) {
+      return function(env) {
+        return function(e) {
+          return bind5(evalExpr(libs)(inProgress)(env)(e))(requireJson);
+        };
+      };
+    };
+  };
+  var evalExpr = function(v) {
+    return function(v1) {
+      return function(v2) {
+        return function(v3) {
+          if (v3 instanceof Path) {
+            return resolvePath(v2)(v3.value0);
+          }
+          ;
+          if (v3 instanceof Call) {
+            if (v3.value0.length === 1) {
+              var v4 = lookup5(v3["value0"][0])(v2);
+              if (v4 instanceof Just && v4.value0 instanceof VClosure) {
+                return bind5(traverse12(evalExpr(v)(v1)(v2))(v3.value1))(function(argVals) {
+                  return applyFunctionValue(v)(v1)(v3["value0"][0])(v4.value0)(argVals);
+                });
+              }
+              ;
+              if (v4 instanceof Just && v4.value0 instanceof VPartial) {
+                return bind5(traverse12(evalExpr(v)(v1)(v2))(v3.value1))(function(argVals) {
+                  return applyFunctionValue(v)(v1)(v3["value0"][0])(v4.value0)(argVals);
+                });
+              }
+              ;
+              if (v4 instanceof Just && v4.value0 instanceof VRemapPartial) {
+                return bind5(traverse12(evalExpr(v)(v1)(v2))(v3.value1))(function(argVals) {
+                  return applyFunctionValue(v)(v1)(v3["value0"][0])(v4.value0)(argVals);
+                });
+              }
+              ;
+              if (v4 instanceof Just && v4.value0 instanceof VNode) {
+                return new Left(new TypeMismatch2(v3["value0"][0] + " is bound to a rendered node, not a function"));
+              }
+              ;
+              if (v4 instanceof Just && v4.value0 instanceof VEnv) {
+                return new Left(new TypeMismatch2(v3["value0"][0] + " is bound to a library/env value, not a function \u2014 access a field first"));
+              }
+              ;
+              return bind5(traverse12(evalExprAsJson(v)(v1)(v2))(v3.value1))(function(argJsons) {
+                return map24(VJson.create)(evalBuiltin(v3["value0"][0])(argJsons));
+              });
+            }
+            ;
+            return new Left(new TypeMismatch2("cannot call " + (show3(v3.value0) + " \u2014 only a single bound/builtin name can be called, e.g. $cardinality(...), not a dotted path")));
+          }
+          ;
+          if (v3 instanceof StringLit) {
+            return map24(function($411) {
+              return VJson.create(id($411));
+            })(evalStringParts(v)(v1)(v2)(v3.value0));
+          }
+          ;
+          if (v3 instanceof NumberLit) {
+            return pure9(new VJson(id(v3.value0)));
+          }
+          ;
+          if (v3 instanceof BoolLit) {
+            return pure9(new VJson(id(v3.value0)));
+          }
+          ;
+          if (v3 instanceof ArrayLit) {
+            return map24(function($412) {
+              return VJson.create(id($412));
+            })(traverse12(evalExprAsJson(v)(v1)(v2))(v3.value0));
+          }
+          ;
+          if (v3 instanceof ObjectLit) {
+            return map24(function($413) {
+              return VJson.create(id(fromFoldable1($413)));
+            })(traverse12(function(v42) {
+              return map24(Tuple.create(v42.value0))(evalExprAsJson(v)(v1)(v2)(v42.value1));
+            })(v3.value0));
+          }
+          ;
+          if (v3 instanceof LambdaExpr) {
+            return pure9(new VClosure(v3.value0, v3.value1, v2));
+          }
+          ;
+          if (v3 instanceof MapExpr) {
+            return bind5(evalArrayExpr(v)(v1)("map")(v2)(v3.value0))(function(items2) {
+              return bind5(evalExpr(v)(v1)(v2)(v3.value1))(function(fnVal) {
+                return bind5(traverse12(function(item) {
+                  return bind5(applyFunctionValue(v)(v1)("map")(fnVal)([new VJson(item)]))(requireJson);
+                })(items2))(function(results) {
+                  return pure9(new VJson(id(results)));
+                });
+              });
+            });
+          }
+          ;
+          if (v3 instanceof FilterExpr) {
+            var keepIf = function(v42) {
+              return function(v5) {
+                if (v5) {
+                  return new Just(v42);
+                }
+                ;
+                if (!v5) {
+                  return Nothing.value;
+                }
+                ;
+                throw new Error("Failed pattern match at Templating.Eval (line 274, column 3 - line 274, column 42): " + [v42.constructor.name, v5.constructor.name]);
+              };
+            };
+            return bind5(evalArrayExpr(v)(v1)("filter")(v2)(v3.value0))(function(items2) {
+              return bind5(evalExpr(v)(v1)(v2)(v3.value1))(function(fnVal) {
+                return bind5(traverse12(function(item) {
+                  return map24(keepIf(item))(bind5(applyFunctionValue(v)(v1)("filter")(fnVal)([new VJson(item)]))(requireBoolean));
+                })(items2))(function(kept) {
+                  return pure9(new VJson(id(catMaybes(kept))));
+                });
+              });
+            });
+          }
+          ;
+          if (v3 instanceof ScanExpr) {
+            var scanSteps = function(fnVal) {
+              return function(acc) {
+                return function(items2) {
+                  var v42 = uncons(items2);
+                  if (v42 instanceof Nothing) {
+                    return new Right([acc]);
+                  }
+                  ;
+                  if (v42 instanceof Just) {
+                    return bind5(bind5(applyFunctionValue(v)(v1)("scan")(fnVal)([new VJson(acc), new VJson(v42.value0.head)]))(requireJson))(function(nextAcc) {
+                      return bind5(scanSteps(fnVal)(nextAcc)(v42.value0.tail))(function(restAccs) {
+                        return pure9(cons(acc)(restAccs));
+                      });
+                    });
+                  }
+                  ;
+                  throw new Error("Failed pattern match at Templating.Eval (line 289, column 31 - line 294, column 37): " + [v42.constructor.name]);
+                };
+              };
+            };
+            return bind5(evalArrayExpr(v)(v1)("scan")(v2)(v3.value0))(function(items2) {
+              return bind5(evalExprAsJson(v)(v1)(v2)(v3.value1))(function(initAcc) {
+                return bind5(evalExpr(v)(v1)(v2)(v3.value2))(function(fnVal) {
+                  return bind5(scanSteps(fnVal)(initAcc)(items2))(function(results) {
+                    return pure9(new VJson(id(results)));
+                  });
+                });
+              });
+            });
+          }
+          ;
+          if (v3 instanceof FoldExpr) {
+            var foldSteps = function(fnVal) {
+              return function(acc) {
+                return function(items2) {
+                  var v42 = uncons(items2);
+                  if (v42 instanceof Nothing) {
+                    return new Right(acc);
+                  }
+                  ;
+                  if (v42 instanceof Just) {
+                    return bind5(bind5(applyFunctionValue(v)(v1)("fold")(fnVal)([new VJson(acc), new VJson(v42.value0.head)]))(requireJson))(function(nextAcc) {
+                      return foldSteps(fnVal)(nextAcc)(v42.value0.tail);
+                    });
+                  }
+                  ;
+                  throw new Error("Failed pattern match at Templating.Eval (line 304, column 31 - line 308, column 35): " + [v42.constructor.name]);
+                };
+              };
+            };
+            return bind5(evalArrayExpr(v)(v1)("fold")(v2)(v3.value0))(function(items2) {
+              return bind5(evalExprAsJson(v)(v1)(v2)(v3.value1))(function(initAcc) {
+                return bind5(evalExpr(v)(v1)(v2)(v3.value2))(function(fnVal) {
+                  return map24(VJson.create)(foldSteps(fnVal)(initAcc)(items2));
+                });
+              });
+            });
+          }
+          ;
+          if (v3 instanceof ImportExpr) {
+            return bind5(bind5(evalExprAsJson(v)(v1)(v2)(v3.value0))(expectLibName))(function(name15) {
+              return bind5(evalExprAsJson(v)(v1)(v2)(v3.value1))(function(paramsJson) {
+                return runLibrary(v)(v1)(name15)(paramsJson);
+              });
+            });
+          }
+          ;
+          if (v3 instanceof PartialImportExpr) {
+            return bind5(bind5(evalExprAsJson(v)(v1)(v2)(v3.value0))(expectLibName))(function(name15) {
+              return bind5(evalExprAsJson(v)(v1)(v2)(v3.value1))(function(paramsJson) {
+                return tryPartial(v)(v1)(name15)(paramsJson);
+              });
+            });
+          }
+          ;
+          if (v3 instanceof FieldAccess) {
+            return bind5(evalExpr(v)(v1)(v2)(v3.value0))(function(v42) {
+              return walkFields(v3.value1)(v42)(v3.value1);
+            });
+          }
+          ;
+          if (v3 instanceof RemapActionsExpr) {
+            return bind5(evalExpr(v)(v1)(v2)(v3.value0))(function(v42) {
+              return bind5(evalExpr(v)(v1)(v2)(v3.value1))(function(fnVal) {
+                if (v42 instanceof VNode) {
+                  return remapActionsInValue(v)(v1)(fnVal)(v42);
+                }
+                ;
+                if (v42 instanceof VEnv) {
+                  return remapActionsInValue(v)(v1)(fnVal)(v42);
+                }
+                ;
+                if (v42 instanceof VPartial) {
+                  return remapActionsInValue(v)(v1)(fnVal)(v42);
+                }
+                ;
+                if (v42 instanceof VRemapPartial) {
+                  return remapActionsInValue(v)(v1)(fnVal)(v42);
+                }
+                ;
+                return new Left(new TypeMismatch2("remap-actions expects a rendered node, an import/partial-import result, or a still-suspended partial-import, e.g. $lib, $lib.rendered, or $partial"));
+              });
+            });
+          }
+          ;
+          throw new Error("Failed pattern match at Templating.Eval (line 237, column 1 - line 237, column 80): " + [v.constructor.name, v1.constructor.name, v2.constructor.name, v3.constructor.name]);
+        };
+      };
+    };
+  };
+  var evalChildren = function(libs) {
+    return function(inProgress) {
+      return function(env) {
+        return function(children2) {
+          var evalChild = function(v) {
+            return function(v1) {
+              if (v1 instanceof TMap) {
+                return bind5(evalArrayExpr(libs)(inProgress)("map")(v)(v1.value0))(function(items2) {
+                  return traverse12(function(item) {
+                    return evalTemplate(libs)(inProgress)(insert12(v1.value1)(new VJson(item))(v))(v1.value2);
+                  })(items2);
+                });
+              }
+              ;
+              return map24(singleton2)(evalTemplate(libs)(inProgress)(v)(v1));
+            };
+          };
+          return map24(concat)(traverse12(evalChild(env))(children2));
+        };
+      };
+    };
+  };
+  var evalBindings = function(libs) {
+    return function(inProgress) {
+      return function(input3) {
+        var step4 = function(env) {
+          return function(v) {
+            return bind5(evalExpr(libs)(inProgress)(env)(v.value1))(function(v1) {
+              return pure9(insert12(v.value0)(v1)(env));
+            });
+          };
+        };
+        return foldM4(step4)(singleton5("ctx")(new VJson(input3)));
+      };
+    };
+  };
+  var evalArrayExpr = function(libs) {
+    return function(inProgress) {
+      return function(who) {
+        return function(env) {
+          return function(arrExpr) {
+            return bind5(evalExprAsJson(libs)(inProgress)(env)(arrExpr))(function(j) {
+              return maybe(new Left(new TypeMismatch2(who + " expects an array as its first argument")))(Right.create)(toArray(j));
+            });
+          };
+        };
+      };
+    };
+  };
+  var evalAction = function(libs) {
+    return function(inProgress) {
+      return function(env) {
+        return function(v) {
+          return bind5(evalExprAsJson(libs)(inProgress)(env)(v.value0))(function(eventTypeJson) {
+            return bind5(maybe(new Left(new TypeMismatch2("action(...): the event type (1st argument) must be a string")))(Right.create)(toString(eventTypeJson)))(function(eventType) {
+              return bind5(evalExprAsJson(libs)(inProgress)(env)(v.value1))(function(keyJson) {
+                return bind5(maybe(new Left(new TypeMismatch2("action(...): the key (2nd argument) must be a string")))(Right.create)(toString(keyJson)))(function(key) {
+                  return bind5(evalExprAsJson(libs)(inProgress)(env)(v.value2))(function(payload) {
+                    return pure9({
+                      eventType,
+                      key,
+                      payload
+                    });
+                  });
+                });
               });
             });
           });
-        });
-      }
-      ;
-      throw new Error("Failed pattern match at Templating.Eval (line 150, column 1 - line 150, column 50): " + [v.constructor.name, v1.constructor.name]);
+        };
+      };
     };
   };
-  var evalArrayExpr = function(who) {
-    return function(env) {
-      return function(arrExpr) {
-        return bind5(evalExprAsJson(env)(arrExpr))(function(j) {
-          return maybe(new Left(new TypeMismatch2(who + " expects an array as its first argument")))(Right.create)(toArray(j));
-        });
+  var applyRemapFn = function(libs) {
+    return function(inProgress) {
+      return function(fnVal) {
+        return function(action2) {
+          return bind5(applyFunctionValue(libs)(inProgress)("remap-actions")(fnVal)([new VJson(actionPayloadToJson(action2))]))(function(resultVal) {
+            return bind5(requireJson(resultVal))(function(resultJson) {
+              return actionPayloadFromJson(resultJson);
+            });
+          });
+        };
+      };
+    };
+  };
+  var applyRemapChain = function(libs) {
+    return function(inProgress) {
+      return function(fns) {
+        return function(v) {
+          var step4 = function(acc) {
+            return function(fn) {
+              return bind5(acc)(remapActionsInValue(libs)(inProgress)(fn));
+            };
+          };
+          return foldl3(step4)(new Right(v))(fns);
+        };
       };
     };
   };
   var applyFunctionValue = function(v) {
     return function(v1) {
       return function(v2) {
-        if (v1 instanceof VClosure) {
-          return applyClosure(v1.value0)(v1.value1)(v1.value2)(v2);
-        }
-        ;
-        if (v1 instanceof VJson) {
-          return new Left(new TypeMismatch2(v + " expects a function value (a lambda, or a name bound to one)"));
-        }
-        ;
-        throw new Error("Failed pattern match at Templating.Eval (line 139, column 1 - line 139, column 79): " + [v.constructor.name, v1.constructor.name, v2.constructor.name]);
-      };
-    };
-  };
-  var applyClosure = function(params) {
-    return function(body2) {
-      return function(closureEnv) {
-        return function(argVals) {
-          var $224 = length(params) !== length(argVals);
-          if ($224) {
-            return new Left(new TypeMismatch2("closure expects " + (show22(length(params)) + (" argument(s), got " + show22(length(argVals))))));
-          }
-          ;
-          return evalExpr(foldl2(function(e) {
-            return function(v) {
-              return insert4(v.value0)(v.value1)(e);
-            };
-          })(closureEnv)(zip(params)(argVals)))(body2);
-        };
-      };
-    };
-  };
-  var evalBindings = function(input3) {
-    var step4 = function(env) {
-      return function(v) {
-        return bind5(evalExpr(env)(v.value1))(function(v1) {
-          return pure9(insert4(v.value0)(v1)(env));
-        });
-      };
-    };
-    return foldM3(step4)(singleton5("ctx")(new VJson(input3)));
-  };
-  var evalAction = function(env) {
-    return function(v) {
-      return bind5(evalExprAsJson(env)(v.value0))(function(eventTypeJson) {
-        return bind5(maybe(new Left(new TypeMismatch2("action(...): the event type (1st argument) must be a string")))(Right.create)(toString(eventTypeJson)))(function(eventType) {
-          return bind5(evalExprAsJson(env)(v.value1))(function(keyJson) {
-            return bind5(maybe(new Left(new TypeMismatch2("action(...): the key (2nd argument) must be a string")))(Right.create)(toString(keyJson)))(function(key) {
-              return bind5(evalExprAsJson(env)(v.value2))(function(payload) {
-                return pure9({
-                  eventType,
-                  key,
-                  payload
-                });
-              });
-            });
-          });
-        });
-      });
-    };
-  };
-  var evalJsonProgram = function(input3) {
-    return function(program2) {
-      return bind5(evalBindings(input3)(program2.bindings))(function(env) {
-        return evalExprAsJson(env)(program2.root);
-      });
-    };
-  };
-  var pickBranch = function(env) {
-    return function(fallback) {
-      return function(pairs) {
-        var v = uncons(pairs);
-        if (v instanceof Nothing) {
-          return new Right(fallback);
-        }
-        ;
-        if (v instanceof Just) {
-          return bind5(bind5(evalExprAsJson(env)(v.value0.head.value0))(function(j) {
-            return maybe(new Left(new TypeMismatch2("branch predicate must evaluate to a boolean")))(Right.create)(toBoolean(j));
-          }))(function(p2) {
-            if (p2) {
-              return new Right(v.value0.head.value1);
+        return function(v3) {
+          return function(v4) {
+            if (v3 instanceof VClosure) {
+              return applyClosure(v)(v1)(v3.value0)(v3.value1)(v3.value2)(v4);
             }
             ;
-            return pickBranch(env)(fallback)(v.value0.tail);
-          });
-        }
-        ;
-        throw new Error("Failed pattern match at Templating.Eval (line 420, column 33 - line 424, column 59): " + [v.constructor.name]);
-      };
-    };
-  };
-  var evalTemplate = function(v) {
-    return function(v1) {
-      if (v1 instanceof TElement) {
-        return bind5(map24(fromFoldable1)(traverse2(function(v2) {
-          return map24((function() {
-            var $268 = Tuple.create(v2.value0);
-            return function($269) {
-              return $268(jsonToDisplayString($269));
-            };
-          })())(evalExprAsJson(v)(v2.value1));
-        })(v1.value1)))(function(attrs) {
-          return bind5(traverse12(evalAction(v))(v1.value2))(function(action2) {
-            return bind5(evalChildren(v)(v1.value3))(function(childNodes2) {
-              return pure9(new NElement({
-                tag: v1.value0,
-                attrs,
-                action: action2,
-                children: childNodes2
-              }));
-            });
-          });
-        });
-      }
-      ;
-      if (v1 instanceof TValue) {
-        return map24(function($270) {
-          return NText.create(jsonToDisplayString($270));
-        })(evalExprAsJson(v)(v1.value0));
-      }
-      ;
-      if (v1 instanceof TMap) {
-        return new Left(new TypeMismatch2("a `map(...)` cannot be evaluated as a standalone node \u2014 it only ever appears as a parent's child, never as a template's root"));
-      }
-      ;
-      if (v1 instanceof TBranch) {
-        return bind5(pickBranch(v)(v1.value0)(v1.value1))(function(chosen) {
-          return evalTemplate(v)(chosen);
-        });
-      }
-      ;
-      throw new Error("Failed pattern match at Templating.Eval (line 401, column 1 - line 401, column 61): " + [v.constructor.name, v1.constructor.name]);
-    };
-  };
-  var evalChildren = function(env) {
-    return function(children2) {
-      var evalChild = function(v) {
-        return function(v1) {
-          if (v1 instanceof TMap) {
-            return bind5(evalArrayExpr("map")(v)(v1.value0))(function(items2) {
-              return traverse2(function(item) {
-                return evalTemplate(insert4(v1.value1)(new VJson(item))(v))(v1.value2);
-              })(items2);
-            });
-          }
-          ;
-          return map24(singleton2)(evalTemplate(v)(v1));
+            if (v3 instanceof VPartial) {
+              if (v4.length === 1 && v4[0] instanceof VJson) {
+                return bind5(mergeParamObjects(v2)(v3.value1)(v4[0].value0))(function(merged) {
+                  return tryPartial(v)(v1)(v3.value0)(merged);
+                });
+              }
+              ;
+              return new Left(new TypeMismatch2(v2 + ": completing a partial import expects exactly 1 object argument"));
+            }
+            ;
+            if (v3 instanceof VRemapPartial) {
+              if (v4.length === 1 && v4[0] instanceof VJson) {
+                return bind5(mergeParamObjects(v2)(v3.value1)(v4[0].value0))(function(merged) {
+                  return bind5(tryPartial(v)(v1)(v3.value0)(merged))(function(completed) {
+                    return applyRemapChain(v)(v1)(v3.value2)(completed);
+                  });
+                });
+              }
+              ;
+              return new Left(new TypeMismatch2(v2 + ": completing a partial import expects exactly 1 object argument"));
+            }
+            ;
+            if (v3 instanceof VJson) {
+              return new Left(new TypeMismatch2(v2 + " expects a function value (a lambda, or a name bound to one)"));
+            }
+            ;
+            if (v3 instanceof VNode) {
+              return new Left(new TypeMismatch2(v2 + " expects a function value, got a rendered node"));
+            }
+            ;
+            if (v3 instanceof VEnv) {
+              return new Left(new TypeMismatch2(v2 + " expects a function value, got a library/env value"));
+            }
+            ;
+            throw new Error("Failed pattern match at Templating.Eval (line 213, column 1 - line 213, column 109): " + [v.constructor.name, v1.constructor.name, v2.constructor.name, v3.constructor.name, v4.constructor.name]);
+          };
         };
       };
-      return map24(concat)(traverse2(evalChild(env))(children2));
     };
   };
-  var evalProgram = function(input3) {
-    return function(program2) {
-      return bind5(evalBindings(input3)(program2.bindings))(function(env) {
-        return evalTemplate(env)(program2.root);
-      });
+  var applyClosure = function(libs) {
+    return function(inProgress) {
+      return function(params) {
+        return function(body2) {
+          return function(closureEnv) {
+            return function(argVals) {
+              var $403 = length(params) !== length(argVals);
+              if ($403) {
+                return new Left(new TypeMismatch2("closure expects " + (show22(length(params)) + (" argument(s), got " + show22(length(argVals))))));
+              }
+              ;
+              return evalExpr(libs)(inProgress)(foldl2(function(e) {
+                return function(v) {
+                  return insert12(v.value0)(v.value1)(e);
+                };
+              })(closureEnv)(zip(params)(argVals)))(body2);
+            };
+          };
+        };
+      };
+    };
+  };
+  var evalJsonProgram = function(libs) {
+    return function(input3) {
+      return function(program2) {
+        return bind5(evalBindings(libs)(empty7)(input3)(program2.bindings))(function(env) {
+          return evalExprAsJson(libs)(empty7)(env)(program2.root);
+        });
+      };
+    };
+  };
+  var evalProgram = function(libs) {
+    return function(input3) {
+      return function(program2) {
+        return bind5(evalBindings(libs)(empty7)(input3)(program2.bindings))(function(env) {
+          return evalTemplate(libs)(empty7)(env)(program2.root);
+        });
+      };
     };
   };
 
   // output/Templating.Halogen/index.js
   var map25 = /* @__PURE__ */ map(functorArray);
-  var toUnfoldable4 = /* @__PURE__ */ toUnfoldable2(unfoldableArray);
+  var toUnfoldable5 = /* @__PURE__ */ toUnfoldable2(unfoldableArray);
   var nub3 = /* @__PURE__ */ nub(ordString);
   var append7 = /* @__PURE__ */ append(semigroupArray);
   var bind6 = /* @__PURE__ */ bind(bindMaybe);
@@ -9694,7 +10573,7 @@
     if (v instanceof NElement) {
       var invalidHere = filter(function($31) {
         return !isValidAttrName($31);
-      })(map25(fst)(toUnfoldable4(v.value0.attrs)));
+      })(map25(fst)(toUnfoldable5(v.value0.attrs)));
       return nub3(append7(invalidHere)(concatMap(validateAttrNames)(v.value0.children)));
     }
     ;
@@ -9710,7 +10589,7 @@
         var children2 = map25(foldToHalogen(v))(v1.value0.children);
         var attrProps = map25(function(v2) {
           return attr2(v2.value0)(v2.value1);
-        })(toUnfoldable4(v1.value0.attrs));
+        })(toUnfoldable5(v1.value0.attrs));
         var actionProp = (function() {
           var v2 = bind6(v1.value0.action)(v);
           if (v2 instanceof Just) {
@@ -12647,7 +13526,7 @@
   })();
   var bsearch = function(a2) {
     return function(array) {
-      return function(size4) {
+      return function(size5) {
         return function(compare3) {
           var go2 = function($copy_i) {
             return function($copy_k) {
@@ -12690,7 +13569,7 @@
               return $tco_result;
             };
           };
-          return go2(0)(size4);
+          return go2(0)(size5);
         };
       };
     };
@@ -12714,13 +13593,13 @@
   };
   var getRule = function(blocks) {
     return function(unichar) {
-      return function(size4) {
+      return function(size5) {
         var key = {
           start: unichar,
           length: 1,
           convRule: nullrule
         };
-        var maybeCharBlock = bsearch(key)(blocks)(size4)(blkCmp);
+        var maybeCharBlock = bsearch(key)(blocks)(size5)(blkCmp);
         if (maybeCharBlock instanceof Nothing) {
           return Nothing.value;
         }
@@ -26464,8 +27343,8 @@
   };
   var charsToString = fromCharArray;
   var many1Chars = function(p2) {
-    return map27(function($86) {
-      return charsToString(fromFoldable7($86));
+    return map27(function($97) {
+      return charsToString(fromFoldable7($97));
     })(many1(p2));
   };
   var numberLit = /* @__PURE__ */ lexeme(/* @__PURE__ */ bind8(/* @__PURE__ */ many1Chars(digit))(function(intPart) {
@@ -26479,7 +27358,7 @@
           return intPart + ("." + fracPart.value0.value1);
         }
         ;
-        throw new Error("Failed pattern match at Templating.Parser (line 113, column 15 - line 115, column 52): " + [fracPart.constructor.name]);
+        throw new Error("Failed pattern match at Templating.Parser (line 126, column 15 - line 128, column 52): " + [fracPart.constructor.name]);
       })();
       var v = fromString(fullStr);
       if (v instanceof Just) {
@@ -26490,12 +27369,12 @@
         return fail2("invalid number literal: " + fullStr);
       }
       ;
-      throw new Error("Failed pattern match at Templating.Parser (line 116, column 3 - line 118, column 60): " + [v.constructor.name]);
+      throw new Error("Failed pattern match at Templating.Parser (line 129, column 3 - line 131, column 60): " + [v.constructor.name]);
     });
   }));
   var manyChars = function(p2) {
-    return map27(function($87) {
-      return charsToString(fromFoldable12($87));
+    return map27(function($98) {
+      return charsToString(fromFoldable12($98));
     })(many(p2));
   };
   var quotedKey = /* @__PURE__ */ lexeme(/* @__PURE__ */ applyFirst2(/* @__PURE__ */ applySecond2(/* @__PURE__ */ $$char('"'))(/* @__PURE__ */ manyChars(/* @__PURE__ */ satisfy(function(c) {
@@ -26506,6 +27385,7 @@
       return pure11(singleton7(c0) + cs);
     });
   });
+  var fieldAccessSuffix = /* @__PURE__ */ map27(fromFoldable12)(/* @__PURE__ */ many(/* @__PURE__ */ applySecond2(/* @__PURE__ */ $$char("."))(rawIdent)));
   var identifier = /* @__PURE__ */ lexeme(rawIdent);
   var pathTail = /* @__PURE__ */ bind8(rawIdent)(function(first) {
     return bind8(many(applySecond2($$char("."))(rawIdent)))(function(rest) {
@@ -26527,10 +27407,20 @@
     return fail2("not a boolean literal");
   }));
   var attrKey = /* @__PURE__ */ alt6(identifier)(quotedKey);
+  var applyFieldAccess = function(base2) {
+    return function(segs) {
+      var $74 = $$null(segs);
+      if ($74) {
+        return base2;
+      }
+      ;
+      return new FieldAccess(base2, segs);
+    };
+  };
   var $lazy_arrayLit = /* @__PURE__ */ $runtime_lazy12("arrayLit", "Templating.Parser", function() {
     return lexeme(bind8(symbol("["))(function() {
       return bind8(sepEndBy(defer5(function(v) {
-        return $lazy_expr(183);
+        return $lazy_expr(198);
       }))(symbol(",")))(function(elems) {
         return bind8(symbol("]"))(function() {
           return pure11(new ArrayLit(fromFoldable12(elems)));
@@ -26543,10 +27433,14 @@
       return bind8(identifier)(function(name15) {
         return bind8(symbol("("))(function() {
           return bind8(sepEndBy(defer5(function(v) {
-            return $lazy_expr(176);
+            return $lazy_expr(189);
           }))(symbol(",")))(function(args) {
-            return bind8(symbol(")"))(function() {
-              return pure11(new Call([name15], fromFoldable12(args)));
+            return bind8($$char(")"))(function() {
+              return bind8(fieldAccessSuffix)(function(segs) {
+                return discard5(skipSpaces)(function() {
+                  return pure11(applyFieldAccess(new Call([name15], fromFoldable12(args)))(segs));
+                });
+              });
             });
           });
         });
@@ -26555,17 +27449,17 @@
   });
   var $lazy_expr = /* @__PURE__ */ $runtime_lazy12("expr", "Templating.Parser", function() {
     return alt6(boolLit)(alt6(defer5(function(v) {
-      return $lazy_lambdaExpr(286);
+      return $lazy_lambdaExpr(347);
     }))(alt6(defer5(function(v) {
-      return $lazy_specialFormExpr(287);
+      return $lazy_specialFormExpr(348);
     }))(alt6($$try3(defer5(function(v) {
-      return $lazy_call(288);
+      return $lazy_call(349);
     })))(alt6(pathExpr)(alt6(defer5(function(v) {
-      return $lazy_stringLit(290);
+      return $lazy_stringLit(351);
     }))(alt6(numberLit)(alt6(defer5(function(v) {
-      return $lazy_arrayLit(292);
+      return $lazy_arrayLit(353);
     }))(defer5(function(v) {
-      return $lazy_objectLit(293);
+      return $lazy_objectLit(354);
     })))))))));
   });
   var $lazy_lambdaExpr = /* @__PURE__ */ $runtime_lazy12("lambdaExpr", "Templating.Parser", function() {
@@ -26574,7 +27468,7 @@
         return bind8(symbol(")"))(function() {
           return bind8(symbol("=>"))(function() {
             return bind8(defer5(function(v) {
-              return $lazy_expr(213);
+              return $lazy_expr(228);
             }))(function(body2) {
               return pure11(new LambdaExpr(fromFoldable12(params), body2));
             });
@@ -26587,7 +27481,7 @@
     var objEntry = bind8(quotedKey)(function(k) {
       return bind8(symbol(":"))(function() {
         return bind8(defer5(function(v) {
-          return $lazy_expr(198);
+          return $lazy_expr(213);
         }))(function(v) {
           return pure11(new Tuple(k, v));
         });
@@ -26606,17 +27500,17 @@
   var $lazy_specialFormExpr = /* @__PURE__ */ $runtime_lazy12("specialFormExpr", "Templating.Parser", function() {
     var scanShape = bind8(symbol("("))(function() {
       return bind8(defer5(function(v) {
-        return $lazy_expr(261);
+        return $lazy_expr(284);
       }))(function(arr) {
         return bind8(symbol(","))(function() {
           return bind8(defer5(function(v) {
-            return $lazy_expr(263);
+            return $lazy_expr(286);
           }))(function(initE) {
             return bind8(symbol(","))(function() {
               return bind8(defer5(function(v) {
-                return $lazy_expr(265);
+                return $lazy_expr(288);
               }))(function(fn) {
-                return bind8(symbol(")"))(function() {
+                return bind8($$char(")"))(function() {
                   return pure11(new ScanExpr(arr, initE, fn));
                 });
               });
@@ -26625,16 +27519,82 @@
         });
       });
     });
+    var remapActionsShape = bind8(symbol("("))(function() {
+      return bind8(defer5(function(v) {
+        return $lazy_expr(315);
+      }))(function(nodeE) {
+        return bind8(symbol(","))(function() {
+          return bind8(defer5(function(v) {
+            return $lazy_expr(317);
+          }))(function(fnE) {
+            return bind8($$char(")"))(function() {
+              return pure11(new RemapActionsExpr(nodeE, fnE));
+            });
+          });
+        });
+      });
+    });
+    var partialImportShape = bind8(symbol("("))(function() {
+      return bind8(defer5(function(v) {
+        return $lazy_expr(324);
+      }))(function(nameE) {
+        return bind8(symbol(","))(function() {
+          return bind8(defer5(function(v) {
+            return $lazy_expr(326);
+          }))(function(paramsE) {
+            return bind8($$char(")"))(function() {
+              return pure11(new PartialImportExpr(nameE, paramsE));
+            });
+          });
+        });
+      });
+    });
     var mapShape = bind8(symbol("("))(function() {
       return bind8(defer5(function(v) {
-        return $lazy_expr(243);
+        return $lazy_expr(266);
       }))(function(arr) {
         return bind8(symbol(","))(function() {
           return bind8(defer5(function(v) {
-            return $lazy_expr(245);
+            return $lazy_expr(268);
           }))(function(fn) {
-            return bind8(symbol(")"))(function() {
+            return bind8($$char(")"))(function() {
               return pure11(new MapExpr(arr, fn));
+            });
+          });
+        });
+      });
+    });
+    var importShape = bind8(symbol("("))(function() {
+      return bind8(defer5(function(v) {
+        return $lazy_expr(306);
+      }))(function(nameE) {
+        return bind8(symbol(","))(function() {
+          return bind8(defer5(function(v) {
+            return $lazy_expr(308);
+          }))(function(paramsE) {
+            return bind8($$char(")"))(function() {
+              return pure11(new ImportExpr(nameE, paramsE));
+            });
+          });
+        });
+      });
+    });
+    var foldShape = bind8(symbol("("))(function() {
+      return bind8(defer5(function(v) {
+        return $lazy_expr(295);
+      }))(function(arr) {
+        return bind8(symbol(","))(function() {
+          return bind8(defer5(function(v) {
+            return $lazy_expr(297);
+          }))(function(initE) {
+            return bind8(symbol(","))(function() {
+              return bind8(defer5(function(v) {
+                return $lazy_expr(299);
+              }))(function(fn) {
+                return bind8($$char(")"))(function() {
+                  return pure11(new FoldExpr(arr, initE, fn));
+                });
+              });
             });
           });
         });
@@ -26642,13 +27602,13 @@
     });
     var filterShape = bind8(symbol("("))(function() {
       return bind8(defer5(function(v) {
-        return $lazy_expr(252);
+        return $lazy_expr(275);
       }))(function(arr) {
         return bind8(symbol(","))(function() {
           return bind8(defer5(function(v) {
-            return $lazy_expr(254);
+            return $lazy_expr(277);
           }))(function(fn) {
-            return bind8(symbol(")"))(function() {
+            return bind8($$char(")"))(function() {
               return pure11(new FilterExpr(arr, fn));
             });
           });
@@ -26657,19 +27617,43 @@
     });
     return $$try3(bind8(optionMaybe($$char("$")))(function() {
       return bind8(identifier)(function(name15) {
-        if (name15 === "map") {
-          return mapShape;
-        }
-        ;
-        if (name15 === "filter") {
-          return filterShape;
-        }
-        ;
-        if (name15 === "scan") {
-          return scanShape;
-        }
-        ;
-        return fail2("not a map/filter/scan special form");
+        return bind8((function() {
+          if (name15 === "map") {
+            return mapShape;
+          }
+          ;
+          if (name15 === "filter") {
+            return filterShape;
+          }
+          ;
+          if (name15 === "scan") {
+            return scanShape;
+          }
+          ;
+          if (name15 === "fold") {
+            return foldShape;
+          }
+          ;
+          if (name15 === "import") {
+            return importShape;
+          }
+          ;
+          if (name15 === "partial-import") {
+            return partialImportShape;
+          }
+          ;
+          if (name15 === "remap-actions") {
+            return remapActionsShape;
+          }
+          ;
+          return fail2("not a map/filter/scan/fold/import/partial-import/remap-actions special form");
+        })())(function(base2) {
+          return bind8(fieldAccessSuffix)(function(segs) {
+            return discard5(skipSpaces)(function() {
+              return pure11(applyFieldAccess(base2)(segs));
+            });
+          });
+        });
       });
     }));
   });
@@ -26679,7 +27663,7 @@
     })));
     var interpPart = $$try3(bind8($$char("`"))(function() {
       return bind8(defer5(function(v) {
-        return $lazy_expr(155);
+        return $lazy_expr(168);
       }))(function(e) {
         return bind8($$char("`"))(function() {
           return pure11(new Interp(e));
@@ -26695,8 +27679,9 @@
       });
     }));
   });
-  var expr = /* @__PURE__ */ $lazy_expr(284);
-  var stringLit = /* @__PURE__ */ $lazy_stringLit(142);
+  var expr = /* @__PURE__ */ $lazy_expr(345);
+  var specialFormExpr = /* @__PURE__ */ $lazy_specialFormExpr(246);
+  var stringLit = /* @__PURE__ */ $lazy_stringLit(155);
   var binding = /* @__PURE__ */ $$try3(/* @__PURE__ */ bind8(/* @__PURE__ */ $$char("@"))(function() {
     return bind8(identifier)(function(name15) {
       return bind8(symbol("="))(function() {
@@ -26741,18 +27726,20 @@
         return bind8(sepEndBy(defer5(function(v) {
           return expr;
         }))(symbol(",")))(function(args) {
-          return bind8(symbol(")"))(function() {
-            return pure11(new TValue(new Call(segs, fromFoldable12(args))));
+          return bind8($$char(")"))(function() {
+            return bind8(fieldAccessSuffix)(function(fieldSegs) {
+              return pure11(new TValue(applyFieldAccess(new Call(segs, fromFoldable12(args)))(fieldSegs)));
+            });
           });
         });
       }
       ;
-      throw new Error("Failed pattern match at Templating.Parser (line 357, column 3 - line 362, column 58): " + [hasParen.constructor.name]);
+      throw new Error("Failed pattern match at Templating.Parser (line 418, column 3 - line 424, column 87): " + [hasParen.constructor.name]);
     });
   }));
   var actionArg = /* @__PURE__ */ $$try3(/* @__PURE__ */ bind8(identifier)(function(name15) {
-    var $67 = name15 !== "action";
-    if ($67) {
+    var $78 = name15 !== "action";
+    if ($78) {
       return fail2("not an action(...) form");
     }
     ;
@@ -26780,12 +27767,14 @@
   }));
   var $lazy_childArg = /* @__PURE__ */ $runtime_lazy12("childArg", "Templating.Parser", function() {
     return alt6(defer5(function(v) {
-      return $lazy_node(423);
+      return $lazy_node(498);
     }))(alt6(defer5(function(v) {
-      return $lazy_templateSpecialForm(424);
-    }))(alt6(defer5(function(v) {
+      return $lazy_templateSpecialForm(499);
+    }))(alt6(map27(TValue.create)(defer5(function(v) {
+      return specialFormExpr;
+    })))(alt6(defer5(function(v) {
       return pathOrCallChild;
-    }))(map27(TValue.create)(stringLit))));
+    }))(map27(TValue.create)(stringLit)))));
   });
   var $lazy_node = /* @__PURE__ */ $runtime_lazy12("node", "Templating.Parser", function() {
     var ensureAttrsBeforeChildren = function(argsArr) {
@@ -26803,11 +27792,11 @@
             return new Tuple(v.value0, true);
           }
           ;
-          throw new Error("Failed pattern match at Templating.Parser (line 472, column 37 - line 475, column 35): " + [arg.constructor.name]);
+          throw new Error("Failed pattern match at Templating.Parser (line 548, column 37 - line 551, column 35): " + [arg.constructor.name]);
         };
       };
-      var $76 = fst(foldl2(step4)(new Tuple(true, false))(argsArr));
-      if ($76) {
+      var $87 = fst(foldl2(step4)(new Tuple(true, false))(argsArr));
+      if ($87) {
         return pure11(unit);
       }
       ;
@@ -26851,7 +27840,7 @@
         return discard5(skipSpaces)(function() {
           return bind8(symbol("("))(function() {
             return bind8(sepEndBy(defer5(function(v) {
-              return $lazy_nodeArg(437);
+              return $lazy_nodeArg(513);
             }))(symbol(",")))(function(args) {
               return bind8(symbol(")"))(function() {
                 var argsArr = fromFoldable12(args);
@@ -26871,7 +27860,7 @@
   });
   var $lazy_nodeArg = /* @__PURE__ */ $runtime_lazy12("nodeArg", "Templating.Parser", function() {
     return alt6(map27(NArgAction.create)($$try3(actionArg)))(alt6(map27(NArgNamed.create)($$try3(namedArg)))(map27(NArgChild.create)(defer5(function(v) {
-      return $lazy_childArg(429);
+      return $lazy_childArg(505);
     }))));
   });
   var $lazy_templateSpecialForm = /* @__PURE__ */ $runtime_lazy12("templateSpecialForm", "Templating.Parser", function() {
@@ -26880,7 +27869,7 @@
     }))(function(p2) {
       return bind8(symbol(","))(function() {
         return bind8(defer5(function(v) {
-          return $lazy_node(411);
+          return $lazy_node(473);
         }))(function(n) {
           return pure11(new Tuple(p2, n));
         });
@@ -26896,7 +27885,7 @@
               return bind8(symbol(")"))(function() {
                 return bind8(symbol("=>"))(function() {
                   return bind8(defer5(function(v) {
-                    return $lazy_node(394);
+                    return $lazy_node(456);
                   }))(function(body2) {
                     return bind8(symbol(")"))(function() {
                       return pure11(new TMap(arr, itemName, body2));
@@ -26911,7 +27900,7 @@
     });
     var branchNodeShape = bind8(symbol("("))(function() {
       return bind8(defer5(function(v) {
-        return $lazy_node(401);
+        return $lazy_node(463);
       }))(function(fallback) {
         return bind8(many($$try3(applySecond2(symbol(","))(pairP))))(function(pairs) {
           return bind8(optionMaybe(symbol(",")))(function() {
@@ -26936,7 +27925,7 @@
       });
     }));
   });
-  var node = /* @__PURE__ */ $lazy_node(431);
+  var node = /* @__PURE__ */ $lazy_node(507);
   var program = /* @__PURE__ */ discard5(skipSpaces)(function() {
     return bind8(compBlock)(function(bindings) {
       return bind8(node)(function(root) {
@@ -26956,12 +27945,16 @@
   };
 
   // output/Playground.Main/index.js
+  var value13 = /* @__PURE__ */ value12(isPropString);
+  var append13 = /* @__PURE__ */ append(semigroupArray);
   var map28 = /* @__PURE__ */ map(functorArray);
   var modify_3 = /* @__PURE__ */ modify_(monadStateHalogenM);
-  var append8 = /* @__PURE__ */ append(semigroupArray);
-  var show4 = /* @__PURE__ */ show(showParseError);
-  var show14 = /* @__PURE__ */ show(showEvalError);
-  var value13 = /* @__PURE__ */ value12(isPropString);
+  var max6 = /* @__PURE__ */ max(ordInt);
+  var min5 = /* @__PURE__ */ min(ordInt);
+  var show4 = /* @__PURE__ */ show(showInt);
+  var fromFoldable8 = /* @__PURE__ */ fromFoldable3(ordString)(foldableArray);
+  var show14 = /* @__PURE__ */ show(showParseError);
+  var show24 = /* @__PURE__ */ show(showEvalError);
   var TemplateMode = /* @__PURE__ */ (function() {
     function TemplateMode2() {
     }
@@ -26996,35 +27989,71 @@
     };
     return ResultJson2;
   })();
-  var SetMode = /* @__PURE__ */ (function() {
-    function SetMode2(value0) {
+  var SetActiveTab = /* @__PURE__ */ (function() {
+    function SetActiveTab2(value0) {
       this.value0 = value0;
     }
     ;
-    SetMode2.create = function(value0) {
-      return new SetMode2(value0);
+    SetActiveTab2.create = function(value0) {
+      return new SetActiveTab2(value0);
     };
-    return SetMode2;
+    return SetActiveTab2;
   })();
-  var SetTemplateInput = /* @__PURE__ */ (function() {
-    function SetTemplateInput2(value0) {
+  var SetTabMode = /* @__PURE__ */ (function() {
+    function SetTabMode2(value0, value1) {
       this.value0 = value0;
+      this.value1 = value1;
     }
     ;
-    SetTemplateInput2.create = function(value0) {
-      return new SetTemplateInput2(value0);
+    SetTabMode2.create = function(value0) {
+      return function(value1) {
+        return new SetTabMode2(value0, value1);
+      };
     };
-    return SetTemplateInput2;
+    return SetTabMode2;
   })();
-  var SetJsonProgramInput = /* @__PURE__ */ (function() {
-    function SetJsonProgramInput2(value0) {
+  var SetTabSource = /* @__PURE__ */ (function() {
+    function SetTabSource2(value0, value1) {
+      this.value0 = value0;
+      this.value1 = value1;
+    }
+    ;
+    SetTabSource2.create = function(value0) {
+      return function(value1) {
+        return new SetTabSource2(value0, value1);
+      };
+    };
+    return SetTabSource2;
+  })();
+  var SetTabName = /* @__PURE__ */ (function() {
+    function SetTabName2(value0, value1) {
+      this.value0 = value0;
+      this.value1 = value1;
+    }
+    ;
+    SetTabName2.create = function(value0) {
+      return function(value1) {
+        return new SetTabName2(value0, value1);
+      };
+    };
+    return SetTabName2;
+  })();
+  var AddTab = /* @__PURE__ */ (function() {
+    function AddTab2() {
+    }
+    ;
+    AddTab2.value = new AddTab2();
+    return AddTab2;
+  })();
+  var RemoveTab = /* @__PURE__ */ (function() {
+    function RemoveTab2(value0) {
       this.value0 = value0;
     }
     ;
-    SetJsonProgramInput2.create = function(value0) {
-      return new SetJsonProgramInput2(value0);
+    RemoveTab2.create = function(value0) {
+      return new RemoveTab2(value0);
     };
-    return SetJsonProgramInput2;
+    return RemoveTab2;
   })();
   var SetJsonInput = /* @__PURE__ */ (function() {
     function SetJsonInput2(value0) {
@@ -27056,6 +28085,56 @@
     ClearActionLog2.value = new ClearActionLog2();
     return ClearActionLog2;
   })();
+  var tabLibrarySource = function(tab) {
+    var bimapEither = function(dictShow) {
+      var show33 = show(dictShow);
+      return function(f) {
+        return either(function(e) {
+          return new Left(show33(e));
+        })(function($124) {
+          return Right.create(f($124));
+        });
+      };
+    };
+    var bimapEither1 = bimapEither(showParseError);
+    if (tab.mode instanceof TemplateMode) {
+      return bimapEither1(ProgramSource.create)(parseProgram(tab.source));
+    }
+    ;
+    if (tab.mode instanceof JsonMode) {
+      return bimapEither1(JsonSource.create)(parseJsonProgram(tab.source));
+    }
+    ;
+    throw new Error("Failed pattern match at Playground.Main (line 201, column 24 - line 203, column 67): " + [tab.mode.constructor.name]);
+  };
+  var renderTabBar = function(state3) {
+    var renderTab = function(i2) {
+      return function(tab) {
+        return div2([class_("tab" + ((function() {
+          var $51 = i2 === state3.activeTab;
+          if ($51) {
+            return " tab-active";
+          }
+          ;
+          return "";
+        })() + (function() {
+          var $52 = either($$const(true))($$const(false))(tabLibrarySource(tab));
+          if ($52) {
+            return " tab-error";
+          }
+          ;
+          return "";
+        })()))])([input2([class_("tab-name"), value13(tab.name), onClick(function(v) {
+          return new SetActiveTab(i2);
+        }), onValueInput(SetTabName.create(i2))]), button([class_("tab-close"), disabled10(length(state3.tabs) <= 1), onClick(function(v) {
+          return new RemoveTab(i2);
+        })])([text5("\xD7")])]);
+      };
+    };
+    return div2([class_("tabs")])(append13(mapWithIndex2(renderTab)(state3.tabs))([button([class_("btn"), onClick(function(v) {
+      return AddTab.value;
+    })])([text5("+ tab")])]));
+  };
   var renderLogEntry = function(entry) {
     return li_([span3([class_("log-key")])([text5(entry.key)]), span3([class_("log-payload")])([text5(stringify(entry.payload))])]);
   };
@@ -27071,9 +28150,9 @@
       return ul([class_("log")])(map28(renderLogEntry)(reverse(state3.actionLog)));
     }
     ;
-    throw new Error("Failed pattern match at Playground.Main (line 280, column 1 - line 280, column 58): " + [state3.constructor.name]);
+    throw new Error("Failed pattern match at Playground.Main (line 418, column 1 - line 418, column 58): " + [state3.constructor.name]);
   };
-  var referenceText = 'LEADER CHARACTERS \u2014 one job each\n  .    starts an element:            .tag(...)\n  $    reads a bound name/$ctx path:  $name, $name.field, $cardinality(x)\n  @    defines a binding (computation block only): @name=expr\n\nPRIMITIVES\n  $name              a bound name, or a `$ctx`-rooted JSON field path\n  $name.field.field2 dotted path \u2014 object field access, one segment per "."\n  "literal text"     a string literal; embed `$a.path` (or any expr,\n                     e.g. `$cardinality($nums)`) anywhere inside via\n                     backticks to interpolate it, e.g. "count: `$n`"\n  123 / 123.45       a number literal\n  true / false       a boolean literal\n  fn(arg, ...)       a call to a fixed builtin (see FUNCTIONS below) \u2014\n  $fn(arg, ...)      `$fn(...)` is an accepted alternative spelling of\n                     the same call, since `$` always means "look this\n                     up," and a builtin name resolves the same way\n  [expr, expr, ...]  a JSON-like array literal, e.g. [1, 2, 3]\n  {"key": expr, ...} a JSON-like object literal \u2014 keys are always\n                     quoted, e.g. {"items": $ctx.items}\n  (p1, p2, ...) => expr\n                     a lambda *value* \u2014 see LAMBDAS below\n  Names (binding names, path segments, tags, bare attribute keys,\n  builtin names) may contain internal hyphens: my-var, foo-bar.\n\nLAMBDAS \u2014 bindable, not just inline\n  (p1, p2, ...) => expr\n  A real value: write it inline as a call argument (map(arr, (x) =>\n  ...)) *or* bind it \u2014 @my-fn=(x) => $gt($x, 10) \u2014 and call it later\n  by name: $my-fn(5). A bound lambda can also be passed BY REFERENCE\n  instead of written inline: map($ctx.items, $my-fn). Closures capture\n  the environment where they were written (lexical scoping), so a\n  lambda\'s body can see outer bindings, not just its own parameters \u2014\n  and a closure can itself be passed as an argument to another\n  function (higher-order), e.g. @apply=(f, x) => $f($x). Two hard\n  limits: no recursion (a closure\'s captured environment is snapshot\n  *before* its own binding exists, so it can\'t call itself by name from\n  inside its own body), and a closure used where a plain value is\n  expected (interpolated into a string, stored in an array/object\n  literal, passed to a fixed builtin) is a clear error \u2014 call it first.\n\nCOMPUTATION BLOCK (optional, above the template)\n  @name=expr\n  One binding per line, evaluated once against $ctx before the template\n  runs. A binding may reference $ctx and any earlier binding, never a\n  later one. Read back later via `$name`, e.g.\n  @count=$cardinality($ctx.items) is later read via `$count`.\n\nTEMPLATE BLOCK\n  .tag(arg, arg, ...)\n  One element. Named attrs must all come before any child in the\n  argument list (a child before an attr is a parse error). Each\n  comma-separated arg is one of:\n    key: value          a named attribute \u2014 key is a bare identifier or\n    "key-or-str": value a quoted string; value is any expr (a string, a\n                        path, a call, a number, or an array/object\n                        literal)\n    "text" / $a.path    a bare value, rendered as a text child\n    .tag(...)           a nested element, as a child\n    map(arr, (item) => .tag(...))\n                        repeats the body once per array item; `item` is\n                        bound (read via `$item`) inside that body only.\n                        `arr` is any expr, not just a bare path \u2014 e.g.\n                        map(filter(...), (x) => ...) is fine\n    branch(fallbackNode, pred1, node1, pred2, node2, ...)\n                        picks exactly one node \u2014 "if pred1, node1; else\n                        if pred2, node2; ...; else fallbackNode" \u2014 as a\n                        child, not a value (see the expr-level branch(...)\n                        in FUNCTIONS below for picking a *value*\n                        conditionally instead). Only the chosen node is\n                        ever evaluated \u2014 unlike expr-level branch, an\n                        unreached node\'s own errors don\'t surface\n    action(eventTypeExpr, keyExpr, payloadExpr)\n                        wires a real DOM event to a host dispatcher \u2014\n                        see ACTIONS below. Counts as attr-like for\n                        ordering (must come before children); a node\n                        can have at most one.\n\nACTIONS \u2014 dispatched to a real Halogen handler\n  action(eventTypeExpr, keyExpr, payloadExpr)\n  All three are ordinary exprs, not keywords \u2014 eventTypeExpr/keyExpr\n  are each any expr that evaluates to a string (a literal like\n  "on-click", or something computed like $ctx.eventName);\n  payloadExpr is any expr, typically an object literal. This host\n  (the Halogen fold) currently only recognizes "on-click" as\n  eventType (an unrecognized one is an eval-time error) \u2014 other hosts\n  (e.g. a future email/static-site renderer) may recognize a\n  different vocabulary, since eventType is just a runtime string, not\n  a fixed keyword baked into the parser. When clicked, the host\'s\n  dispatcher function receives the whole { eventType, key, payload }\n  \u2014 structured, not a string to parse. THIS PLAYGROUND wires a real\n  dispatcher: every action click is appended to the "Action log"\n  panel below the rendered output below, showing exactly the\n  key/payload the click carried.\n\nFUNCTIONS (fixed set \u2014 no custom functions)\n  cardinality(x) / count(x)   number of elements in an array, or number\n                              of keys in an object (the two names are\n                              aliases for the same function)\n  not(a)                      boolean negation\n  and(a, b, ...)              conjunction over any number of arguments\n  or(a, b, ...)               disjunction over any number of arguments\n  eq(a, b)                    deep equality between two values\n  lt(a, b) / lte(a, b)        numeric comparison (both arguments must\n  gt(a, b) / gte(a, b)        be numbers)\n  has(container, key)         presence/absence \u2014 never errors; a missing\n                              field, out-of-range index, or wrong-shaped\n                              container/key just answers false\n  lookup(container, key,      dynamic object-field/array-index access by\n         fallback)            a computed key/index (the counterpart to a\n                              static $ctx.field path) \u2014 the 3rd argument\n                              is a mandatory fallback for a missing\n                              field/out-of-range index, so like has this\n                              never errors either\n  branch(fallback,            "if pred1, val1; else if pred2, val2; ...;\n         pred1, val1,         else fallback" as one *value* expression \u2014\n         pred2, val2, ...)    contrast the template-block branch(...)\n                              above, which picks a node instead. CAUTION:\n                              every argument here (every predicate and\n                              value, taken or not) is evaluated eagerly\n                              first \u2014 there is no short-circuiting, so\n                              every value must be safe to evaluate no\n                              matter which predicate wins\n  map(arr, fn)                 transforms each array element, producing\n                              a new array \u2014 the value-producing\n                              counterpart to the template-block map(...)\n                              above. `fn` is any expr that evaluates to\n                              a lambda \u2014 inline (item) => ... or a name\n                              bound to one, e.g. $my-fn (see LAMBDAS)\n  filter(arr, fn)               keeps only the elements where fn is true\n  scan(arr, init, fn)           an accumulative fold: [init, step(init,\n                              x1), step(step(init, x1), x2), ...] \u2014 the\n                              output array is always one longer than arr\n                              (the seed comes first). fn takes 2 args:\n                              (acc, item) => ...';
+  var referenceText = 'LEADER CHARACTERS \u2014 one job each\n  .    starts an element:            .tag(...)\n  $    reads a bound name/$ctx path:  $name, $name.field, $cardinality(x)\n  @    defines a binding (computation block only): @name=expr\n\nPRIMITIVES\n  $name              a bound name, or a `$ctx`-rooted JSON field path\n  $name.field.field2 dotted path \u2014 object field access, one segment per "."\n  "literal text"     a string literal; embed `$a.path` (or any expr,\n                     e.g. `$cardinality($nums)`) anywhere inside via\n                     backticks to interpolate it, e.g. "count: `$n`"\n  123 / 123.45       a number literal\n  true / false       a boolean literal\n  fn(arg, ...)       a call to a fixed builtin (see FUNCTIONS below) \u2014\n  $fn(arg, ...)      `$fn(...)` is an accepted alternative spelling of\n                     the same call, since `$` always means "look this\n                     up," and a builtin name resolves the same way\n  [expr, expr, ...]  a JSON-like array literal, e.g. [1, 2, 3]\n  {"key": expr, ...} a JSON-like object literal \u2014 keys are always\n                     quoted, e.g. {"items": $ctx.items}\n  (p1, p2, ...) => expr\n                     a lambda *value* \u2014 see LAMBDAS below\n  Names (binding names, path segments, tags, bare attribute keys,\n  builtin names) may contain internal hyphens: my-var, foo-bar.\n\nLAMBDAS \u2014 bindable, not just inline\n  (p1, p2, ...) => expr\n  A real value: write it inline as a call argument (map(arr, (x) =>\n  ...)) *or* bind it \u2014 @my-fn=(x) => $gt($x, 10) \u2014 and call it later\n  by name: $my-fn(5). A bound lambda can also be passed BY REFERENCE\n  instead of written inline: map($ctx.items, $my-fn). Closures capture\n  the environment where they were written (lexical scoping), so a\n  lambda\'s body can see outer bindings, not just its own parameters \u2014\n  and a closure can itself be passed as an argument to another\n  function (higher-order), e.g. @apply=(f, x) => $f($x). Two hard\n  limits: no recursion (a closure\'s captured environment is snapshot\n  *before* its own binding exists, so it can\'t call itself by name from\n  inside its own body), and a closure used where a plain value is\n  expected (interpolated into a string, stored in an array/object\n  literal, passed to a fixed builtin) is a clear error \u2014 call it first.\n\nCOMPUTATION BLOCK (optional, above the template)\n  @name=expr\n  One binding per line, evaluated once against $ctx before the template\n  runs. A binding may reference $ctx and any earlier binding, never a\n  later one. Read back later via `$name`, e.g.\n  @count=$cardinality($ctx.items) is later read via `$count`.\n\nTEMPLATE BLOCK\n  .tag(arg, arg, ...)\n  One element. Named attrs must all come before any child in the\n  argument list (a child before an attr is a parse error). Each\n  comma-separated arg is one of:\n    key: value          a named attribute \u2014 key is a bare identifier or\n    "key-or-str": value a quoted string; value is any expr (a string, a\n                        path, a call, a number, or an array/object\n                        literal)\n    "text" / $a.path    a bare value, rendered as a text child\n    .tag(...)           a nested element, as a child\n    map(arr, (item) => .tag(...))\n                        repeats the body once per array item; `item` is\n                        bound (read via `$item`) inside that body only.\n                        `arr` is any expr, not just a bare path \u2014 e.g.\n                        map(filter(...), (x) => ...) is fine\n    branch(fallbackNode, pred1, node1, pred2, node2, ...)\n                        picks exactly one node \u2014 "if pred1, node1; else\n                        if pred2, node2; ...; else fallbackNode" \u2014 as a\n                        child, not a value (see the expr-level branch(...)\n                        in FUNCTIONS below for picking a *value*\n                        conditionally instead). Only the chosen node is\n                        ever evaluated \u2014 unlike expr-level branch, an\n                        unreached node\'s own errors don\'t surface\n    action(eventTypeExpr, keyExpr, payloadExpr)\n                        wires a real DOM event to a host dispatcher \u2014\n                        see ACTIONS below. Counts as attr-like for\n                        ordering (must come before children); a node\n                        can have at most one.\n\nACTIONS \u2014 dispatched to a real Halogen handler\n  action(eventTypeExpr, keyExpr, payloadExpr)\n  All three are ordinary exprs, not keywords \u2014 eventTypeExpr/keyExpr\n  are each any expr that evaluates to a string (a literal like\n  "on-click", or something computed like $ctx.eventName);\n  payloadExpr is any expr, typically an object literal. This host\n  (the Halogen fold) currently only recognizes "on-click" as\n  eventType (an unrecognized one is an eval-time error) \u2014 other hosts\n  (e.g. a future email/static-site renderer) may recognize a\n  different vocabulary, since eventType is just a runtime string, not\n  a fixed keyword baked into the parser. When clicked, the host\'s\n  dispatcher function receives the whole { eventType, key, payload }\n  \u2014 structured, not a string to parse. THIS PLAYGROUND wires a real\n  dispatcher: every action click is appended to the "Action log"\n  panel below the rendered output below, showing exactly the\n  key/payload the click carried.\n\nIMPORTS \u2014 reusing another tab as a library\n  import(nameExpr, paramsExpr)\n  partial-import(nameExpr, paramsExpr)\n  `nameExpr` is any expr reducing to a string naming a tab in this\n  playground (every tab, including the active one, is available \u2014\n  see the tab bar above); `paramsExpr` is that tab\'s own `$ctx`.\n  The result exposes `.rendered` (whatever the library\'s root\n  evaluated to \u2014 an element-rooted tab\'s `Node`, spliced as a child\n  when used as one, or an expression-rooted tab\'s plain JSON value)\n  and `.vals` (its own top-level bindings, dotted-path accessible,\n  e.g. `$lib.vals.something`). `partial-import` tolerates an\n  incomplete `paramsExpr`: instead of erroring on a missing `$ctx`\n  field, it suspends into a value you can call with the rest of the\n  params later (`$partial({"more": "params"})`), completing to\n  exactly the same result a direct `import` with the merged params\n  would have produced \u2014 and since a call\'s result can itself be\n  field-accessed directly (`.field` chains after a closing `)`, not\n  just after a bound `$name`), that completion and reading `.rendered`\n  off it can be written in one expression with no intermediate\n  binding: `$partial({"more": "params"}).rendered`.\n\n  remap-actions(nodeExpr, fnExpr)\n  Contramaps every `action(...)` found anywhere in `nodeExpr`\'s\n  rendered `Node` (recursively through its children, not just its own\n  root) through `fn` \u2014 a closure taking and returning an object with\n  the same shape a node\'s own `action` field prints as:\n  `{"eventType": ..., "key": ..., "payload": ...}`. Lets a template\n  that imports a library rewrite what that library\'s own actions look\n  like before they reach the host\'s dispatcher \u2014 e.g. namespace a key\n  (plain string interpolation: `"ns-`$a.key`"`) or transform a payload\n  as a function of the original key/payload \u2014 without the library\n  itself knowing anything about who imported it. `nodeExpr` may be a\n  rendered node directly (e.g. `$lib.rendered`), an import/partial-import\n  result itself (`$lib`, or a just-completed `$partial({...})`), or a\n  still-*incomplete* `partial-import(...)` \u2014 in every case `remap-actions`\n  descends into *every* value reachable from it: a `.vals` binding can\n  itself be a sub-import with its own rendered node and actions (those get\n  remapped too, in case they\'re reached via `.vals...rendered` rather than\n  the outer `.rendered`), and wrapping a still-incomplete partial just\n  queues the remap to run once the partial is finally completed \u2014\n  including across currying it one param at a time \u2014 rather than requiring\n  it. That means `remap-actions(...)` can be attached once, in the\n  computation block, directly to a `partial-import(...)` before the value\n  that completes it is even in scope (e.g. a per-item value only available\n  inside a `map(...)` body):\n  `@btn2=remap-actions($btn, fn)` ... `map($ctx.items, (item) =>\n  $btn2({"title": $item.title}).rendered)` \u2014 no inline\n  `remap-actions(...)` wrapping needed at every call site. `fn`\'s result\n  must have string `eventType`/`key` fields, same as a literal\n  `action(...)`; anything with no actions anywhere (a node, or an import\n  result) is left unchanged (`fn` is never called).\n\nFUNCTIONS (fixed set \u2014 no custom functions)\n  cardinality(x) / count(x)   number of elements in an array, or number\n                              of keys in an object (the two names are\n                              aliases for the same function)\n  not(a)                      boolean negation\n  and(a, b, ...)              conjunction over any number of arguments\n  or(a, b, ...)               disjunction over any number of arguments\n  eq(a, b)                    deep equality between two values\n  lt(a, b) / lte(a, b)        numeric comparison (both arguments must\n  gt(a, b) / gte(a, b)        be numbers)\n  has(container, key)         presence/absence \u2014 never errors; a missing\n                              field, out-of-range index, or wrong-shaped\n                              container/key just answers false\n  lookup(container, key,      dynamic object-field/array-index access by\n         fallback)            a computed key/index (the counterpart to a\n                              static $ctx.field path) \u2014 the 3rd argument\n                              is a mandatory fallback for a missing\n                              field/out-of-range index, so like has this\n                              never errors either\n  branch(fallback,            "if pred1, val1; else if pred2, val2; ...;\n         pred1, val1,         else fallback" as one *value* expression \u2014\n         pred2, val2, ...)    contrast the template-block branch(...)\n                              above, which picks a node instead. CAUTION:\n                              every argument here (every predicate and\n                              value, taken or not) is evaluated eagerly\n                              first \u2014 there is no short-circuiting, so\n                              every value must be safe to evaluate no\n                              matter which predicate wins\n  map(arr, fn)                 transforms each array element, producing\n                              a new array \u2014 the value-producing\n                              counterpart to the template-block map(...)\n                              above. `fn` is any expr that evaluates to\n                              a lambda \u2014 inline (item) => ... or a name\n                              bound to one, e.g. $my-fn (see LAMBDAS)\n  filter(arr, fn)               keeps only the elements where fn is true\n  scan(arr, init, fn)           an accumulative fold: [init, step(init,\n                              x1), step(step(init, x1), x2), ...] \u2014 the\n                              output array is always one longer than arr\n                              (the seed comes first). fn takes 2 args:\n                              (acc, item) => ...\n  fold(arr, init, fn)           same (acc, item) step and seed-first order\n                              as scan, but returns only the final\n                              accumulator instead of the whole array \u2014\n                              init unchanged if arr is empty\n  concat(a, b, ...)             joins any number of arrays (0 or more)\n                              into one, preserving order \u2014 each argument\n                              must itself be an array\n  append(arr, item)             a new array with item added at the end;\n                              item can be anything, including an array/\n                              object (added as one element \u2014 use concat\n                              to splice arrays together instead)';
   var modeHint = function(mode) {
     return p([class_("hint")])([text5((function() {
       if (mode instanceof TemplateMode) {
@@ -27084,114 +28163,200 @@
         return "Rooted at an expression (parseJsonProgram/evalJsonProgram) \u2014 evaluates straight to a JSON value, no document tree involved.";
       }
       ;
-      throw new Error("Failed pattern match at Playground.Main (line 216, column 15 - line 218, column 146): " + [mode.constructor.name]);
+      throw new Error("Failed pattern match at Playground.Main (line 349, column 15 - line 351, column 146): " + [mode.constructor.name]);
     })())]);
   };
   var initialState = /* @__PURE__ */ (function() {
     return {
-      mode: TemplateMode.value,
-      templateInput: '@item-count=$cardinality($ctx.items)\n.div(\n  "data-count": $item-count,\n  .p("there are `$item-count` item(s)"),\n  .ul(map($ctx.items, (item) =>\n    .li(\n      .span($item.title),\n      .button(action("on-click", "select-item", {"title": $item.title}), "Select")\n    )\n  ))\n)',
-      jsonProgramInput: '@item-count=$cardinality($ctx.items)\n{"count": $item-count, "titles": map($ctx.items, (item) => $item.title)}',
+      tabs: [{
+        name: "main",
+        mode: TemplateMode.value,
+        source: '@item-count=$cardinality($ctx.items)\n@greeting=import("greeting", {"name": "World"})\n@fgreet=partial-import("greeting", {})\n@g=$fgreet({"name": "World"})\n@btn=partial-import("btn", {})\n@btn2=remap-actions($btn, (a) => {"eventType": $a.eventType, "key": "main-`$a.key`", "payload": $a.payload})\n.div(\n  "data-count": $item-count,\n  $greeting.rendered,\n  $g.rendered,\n  .p("there are `$item-count` `$g.vals.magic` item(s)"),\n  .ul(map($ctx.items, (item) =>\n    .li(\n      .span($item.title),\n      $btn2({"title": $item.title}).rendered\n    )\n  ))\n)'
+      }, {
+        name: "greeting",
+        mode: TemplateMode.value,
+        source: '@magic="magic"\n.p("hello, `$ctx.name`!")\n'
+      }, {
+        name: "btn",
+        mode: TemplateMode.value,
+        source: '.button(action("on-click", "select-item", {"title": $ctx.title}), "Select")\n'
+      }, {
+        name: "json-demo",
+        mode: JsonMode.value,
+        source: '@item-count=$cardinality($ctx.items)\n{"count": $item-count, "titles": map($ctx.items, (item) => $item.title)}'
+      }],
+      activeTab: 0,
       jsonInput: '{"items": [{"title": "Alpha"}, {"title": "Beta"}]}',
       actionLog: []
     };
   })();
-  var handleAction = function(v) {
-    if (v instanceof SetMode) {
-      return modify_3(function(v1) {
-        var $33 = {};
-        for (var $34 in v1) {
-          if ({}.hasOwnProperty.call(v1, $34)) {
-            $33[$34] = v1[$34];
+  var handleAction = /* @__PURE__ */ (function() {
+    var modifyTab = function(i2) {
+      return function(f) {
+        return modify_3(function(s) {
+          var $55 = {};
+          for (var $56 in s) {
+            if ({}.hasOwnProperty.call(s, $56)) {
+              $55[$56] = s[$56];
+            }
+            ;
           }
           ;
-        }
-        ;
-        $33.mode = v.value0;
-        return $33;
-      });
-    }
-    ;
-    if (v instanceof SetTemplateInput) {
-      return modify_3(function(v1) {
-        var $37 = {};
-        for (var $38 in v1) {
-          if ({}.hasOwnProperty.call(v1, $38)) {
-            $37[$38] = v1[$38];
+          $55.tabs = fromMaybe(s.tabs)(modifyAt(i2)(f)(s.tabs));
+          return $55;
+        });
+      };
+    };
+    var clampActive = function(maxIdx) {
+      return function(i2) {
+        return max6(0)(min5(maxIdx)(i2));
+      };
+    };
+    return function(v) {
+      if (v instanceof SetActiveTab) {
+        return modify_3(function(v1) {
+          var $59 = {};
+          for (var $60 in v1) {
+            if ({}.hasOwnProperty.call(v1, $60)) {
+              $59[$60] = v1[$60];
+            }
+            ;
           }
           ;
-        }
-        ;
-        $37.templateInput = v.value0;
-        return $37;
-      });
-    }
-    ;
-    if (v instanceof SetJsonProgramInput) {
-      return modify_3(function(v1) {
-        var $41 = {};
-        for (var $42 in v1) {
-          if ({}.hasOwnProperty.call(v1, $42)) {
-            $41[$42] = v1[$42];
+          $59.activeTab = v.value0;
+          return $59;
+        });
+      }
+      ;
+      if (v instanceof SetTabMode) {
+        return modifyTab(v.value0)(function(v1) {
+          return {
+            name: v1.name,
+            source: v1.source,
+            mode: v.value1
+          };
+        });
+      }
+      ;
+      if (v instanceof SetTabSource) {
+        return modifyTab(v.value0)(function(v1) {
+          return {
+            name: v1.name,
+            mode: v1.mode,
+            source: v.value1
+          };
+        });
+      }
+      ;
+      if (v instanceof SetTabName) {
+        return modifyTab(v.value0)(function(v1) {
+          return {
+            mode: v1.mode,
+            source: v1.source,
+            name: v.value1
+          };
+        });
+      }
+      ;
+      if (v instanceof AddTab) {
+        return modify_3(function(s) {
+          var $69 = {};
+          for (var $70 in s) {
+            if ({}.hasOwnProperty.call(s, $70)) {
+              $69[$70] = s[$70];
+            }
+            ;
           }
           ;
-        }
-        ;
-        $41.jsonProgramInput = v.value0;
-        return $41;
-      });
-    }
-    ;
-    if (v instanceof SetJsonInput) {
-      return modify_3(function(v1) {
-        var $45 = {};
-        for (var $46 in v1) {
-          if ({}.hasOwnProperty.call(v1, $46)) {
-            $45[$46] = v1[$46];
+          $69.tabs = snoc(s.tabs)({
+            name: "tab-" + show4(length(s.tabs) + 1 | 0),
+            mode: TemplateMode.value,
+            source: ""
+          });
+          $69.activeTab = length(s.tabs);
+          return $69;
+        });
+      }
+      ;
+      if (v instanceof RemoveTab) {
+        return modify_3(function(s) {
+          var $72 = length(s.tabs) <= 1;
+          if ($72) {
+            return s;
           }
           ;
-        }
-        ;
-        $45.jsonInput = v.value0;
-        return $45;
-      });
-    }
-    ;
-    if (v instanceof ActionFired) {
-      return modify_3(function(s) {
-        var $49 = {};
-        for (var $50 in s) {
-          if ({}.hasOwnProperty.call(s, $50)) {
-            $49[$50] = s[$50];
+          var $74 = {};
+          for (var $75 in s) {
+            if ({}.hasOwnProperty.call(s, $75)) {
+              $74[$75] = s[$75];
+            }
+            ;
           }
           ;
-        }
-        ;
-        $49.actionLog = append8(s.actionLog)([{
-          key: v.value0,
-          payload: v.value1
-        }]);
-        return $49;
-      });
-    }
-    ;
-    if (v instanceof ClearActionLog) {
-      return modify_3(function(v1) {
-        var $54 = {};
-        for (var $55 in v1) {
-          if ({}.hasOwnProperty.call(v1, $55)) {
-            $54[$55] = v1[$55];
+          $74.tabs = fromMaybe(s.tabs)(deleteAt(v.value0)(s.tabs));
+          $74.activeTab = clampActive(length(s.tabs) - 1 | 0)((function() {
+            var $73 = v.value0 <= s.activeTab;
+            if ($73) {
+              return s.activeTab - 1 | 0;
+            }
+            ;
+            return s.activeTab;
+          })());
+          return $74;
+        });
+      }
+      ;
+      if (v instanceof SetJsonInput) {
+        return modify_3(function(v1) {
+          var $78 = {};
+          for (var $79 in v1) {
+            if ({}.hasOwnProperty.call(v1, $79)) {
+              $78[$79] = v1[$79];
+            }
+            ;
           }
           ;
-        }
-        ;
-        $54.actionLog = [];
-        return $54;
-      });
-    }
-    ;
-    throw new Error("Failed pattern match at Playground.Main (line 107, column 16 - line 113, column 51): " + [v.constructor.name]);
-  };
+          $78.jsonInput = v.value0;
+          return $78;
+        });
+      }
+      ;
+      if (v instanceof ActionFired) {
+        return modify_3(function(s) {
+          var $82 = {};
+          for (var $83 in s) {
+            if ({}.hasOwnProperty.call(s, $83)) {
+              $82[$83] = s[$83];
+            }
+            ;
+          }
+          ;
+          $82.actionLog = append13(s.actionLog)([{
+            key: v.value0,
+            payload: v.value1
+          }]);
+          return $82;
+        });
+      }
+      ;
+      if (v instanceof ClearActionLog) {
+        return modify_3(function(v1) {
+          var $87 = {};
+          for (var $88 in v1) {
+            if ({}.hasOwnProperty.call(v1, $88)) {
+              $87[$88] = v1[$88];
+            }
+            ;
+          }
+          ;
+          $87.actionLog = [];
+          return $87;
+        });
+      }
+      ;
+      throw new Error("Failed pattern match at Playground.Main (line 160, column 16 - line 179, column 51): " + [v.constructor.name]);
+    };
+  })();
   var eqMode = {
     eq: function(x) {
       return function(y) {
@@ -27207,26 +28372,43 @@
       };
     }
   };
-  var eq4 = /* @__PURE__ */ eq(eqMode);
-  var renderModeToggle = function(mode) {
-    var modeButton = function(m) {
-      return function(label5) {
-        return button([class_((function() {
-          var $59 = eq4(mode)(m);
-          if ($59) {
-            return "btn btn-active";
-          }
-          ;
-          return "btn";
-        })()), onClick(function(v) {
-          return new SetMode(m);
-        })])([text5(label5)]);
+  var eq13 = /* @__PURE__ */ eq(eqMode);
+  var renderModeToggle = function(activeIdx) {
+    return function(mode) {
+      var modeButton = function(m) {
+        return function(label5) {
+          return button([class_((function() {
+            var $92 = eq13(mode)(m);
+            if ($92) {
+              return "btn btn-active";
+            }
+            ;
+            return "btn";
+          })()), onClick(function(v) {
+            return new SetTabMode(activeIdx, m);
+          })])([text5(label5)]);
+        };
       };
+      return div2([class_("mode-toggle")])([modeButton(TemplateMode.value)("Template"), modeButton(JsonMode.value)("JSON")]);
     };
-    return div2([class_("mode-toggle")])([modeButton(TemplateMode.value)("Template"), modeButton(JsonMode.value)("JSON")]);
   };
   var dispatchAction = function(ap2) {
     return new Just(new ActionFired(ap2.key, ap2.payload));
+  };
+  var buildLibraryTable = function(tabs) {
+    var entry = function(tab) {
+      return either($$const(Nothing.value))(function(src9) {
+        return new Just(new Tuple(tab.name, src9));
+      })(tabLibrarySource(tab));
+    };
+    return fromFoldable8(mapMaybe(entry)(tabs));
+  };
+  var activeTabOf = function(state3) {
+    return fromMaybe({
+      name: "",
+      mode: TemplateMode.value,
+      source: ""
+    })(index(state3.tabs)(state3.activeTab));
   };
   var computeResult = function(state3) {
     var v = jsonParser(state3.jsonInput);
@@ -27235,54 +28417,56 @@
     }
     ;
     if (v instanceof Right) {
-      if (state3.mode instanceof TemplateMode) {
-        var v1 = parseProgram(state3.templateInput);
+      var libs = buildLibraryTable(state3.tabs);
+      var activeTab = activeTabOf(state3);
+      if (activeTab.mode instanceof TemplateMode) {
+        var v1 = parseProgram(activeTab.source);
         if (v1 instanceof Left) {
-          return new Left("Template parse error: " + show4(v1.value0));
+          return new Left("Template parse error: " + show14(v1.value0));
         }
         ;
         if (v1 instanceof Right) {
-          var v2 = evalProgram(v.value0)(v1.value0);
+          var v2 = evalProgram(libs)(v.value0)(v1.value0);
           if (v2 instanceof Left) {
-            return new Left("Template eval error: " + show14(v2.value0));
+            return new Left("Template eval error: " + show24(v2.value0));
           }
           ;
           if (v2 instanceof Right) {
             return new Right(new ResultNode(v2.value0));
           }
           ;
-          throw new Error("Failed pattern match at Playground.Main (line 238, column 24 - line 240, column 46): " + [v2.constructor.name]);
+          throw new Error("Failed pattern match at Playground.Main (line 376, column 28 - line 378, column 50): " + [v2.constructor.name]);
         }
         ;
-        throw new Error("Failed pattern match at Playground.Main (line 236, column 21 - line 240, column 46): " + [v1.constructor.name]);
+        throw new Error("Failed pattern match at Playground.Main (line 374, column 25 - line 378, column 50): " + [v1.constructor.name]);
       }
       ;
-      if (state3.mode instanceof JsonMode) {
-        var v1 = parseJsonProgram(state3.jsonProgramInput);
+      if (activeTab.mode instanceof JsonMode) {
+        var v1 = parseJsonProgram(activeTab.source);
         if (v1 instanceof Left) {
-          return new Left("Template parse error: " + show4(v1.value0));
+          return new Left("Template parse error: " + show14(v1.value0));
         }
         ;
         if (v1 instanceof Right) {
-          var v2 = evalJsonProgram(v.value0)(v1.value0);
+          var v2 = evalJsonProgram(libs)(v.value0)(v1.value0);
           if (v2 instanceof Left) {
-            return new Left("Template eval error: " + show14(v2.value0));
+            return new Left("Template eval error: " + show24(v2.value0));
           }
           ;
           if (v2 instanceof Right) {
             return new Right(new ResultJson(v2.value0));
           }
           ;
-          throw new Error("Failed pattern match at Playground.Main (line 243, column 24 - line 245, column 46): " + [v2.constructor.name]);
+          throw new Error("Failed pattern match at Playground.Main (line 381, column 28 - line 383, column 50): " + [v2.constructor.name]);
         }
         ;
-        throw new Error("Failed pattern match at Playground.Main (line 241, column 17 - line 245, column 46): " + [v1.constructor.name]);
+        throw new Error("Failed pattern match at Playground.Main (line 379, column 21 - line 383, column 50): " + [v1.constructor.name]);
       }
       ;
-      throw new Error("Failed pattern match at Playground.Main (line 235, column 16 - line 245, column 46): " + [state3.mode.constructor.name]);
+      throw new Error("Failed pattern match at Playground.Main (line 373, column 7 - line 383, column 50): " + [activeTab.mode.constructor.name]);
     }
     ;
-    throw new Error("Failed pattern match at Playground.Main (line 233, column 23 - line 245, column 46): " + [v.constructor.name]);
+    throw new Error("Failed pattern match at Playground.Main (line 366, column 23 - line 383, column 50): " + [v.constructor.name]);
   };
   var renderAst = function(state3) {
     var v = computeResult(state3);
@@ -27298,7 +28482,7 @@
       return pre([class_("ref")])([text5(stringifyWithIndent(2)(v.value0.value0))]);
     }
     ;
-    throw new Error("Failed pattern match at Playground.Main (line 266, column 19 - line 269, column 112): " + [v.constructor.name]);
+    throw new Error("Failed pattern match at Playground.Main (line 404, column 19 - line 407, column 112): " + [v.constructor.name]);
   };
   var renderOutput = function(state3) {
     var v = computeResult(state3);
@@ -27319,41 +28503,32 @@
       return pre([class_("ref")])([code_([text5(stringifyWithIndent(2)(v.value0.value0))])]);
     }
     ;
-    throw new Error("Failed pattern match at Playground.Main (line 248, column 22 - line 263, column 60): " + [v.constructor.name]);
+    throw new Error("Failed pattern match at Playground.Main (line 386, column 22 - line 401, column 60): " + [v.constructor.name]);
   };
   var render = function(state3) {
-    return div2([class_("wrap")])([h1_([text5("Templating playground")]), p([class_("hint")])([text5("Renders a templating-language template against a JSON context, entirely in the browser. See specs/templating-language.md for the full grammar; the reference below is the short version.")]), details([class_("card")])([summary_([text5("Language reference")]), pre([class_("ref")])([text5(referenceText)])]), div2([class_("cols")])([div2([class_("card")])([div2([class_("row")])([h2_([text5("Template")]), renderModeToggle(state3.mode)]), modeHint(state3.mode), (function() {
-      if (state3.mode instanceof TemplateMode) {
-        return textarea([class_("input"), rows4(16), spellcheck2(false), value13(state3.templateInput), onValueInput(SetTemplateInput.create)]);
-      }
-      ;
-      if (state3.mode instanceof JsonMode) {
-        return textarea([class_("input"), rows4(16), spellcheck2(false), value13(state3.jsonProgramInput), onValueInput(SetJsonProgramInput.create)]);
-      }
-      ;
-      throw new Error("Failed pattern match at Playground.Main (line 132, column 15 - line 148, column 22): " + [state3.mode.constructor.name]);
-    })()]), div2([class_("card")])([h2_([text5("JSON context")]), textarea([class_("input"), rows4(16), spellcheck2(false), value13(state3.jsonInput), onValueInput(SetJsonInput.create)])])]), div2([class_("cols")])([div2([class_("card")])([h2_([text5("AST")]), p([class_("hint")])([text5((function() {
-      if (state3.mode instanceof TemplateMode) {
+    var activeTab = activeTabOf(state3);
+    return div2([class_("wrap")])([h1_([text5("Templating playground")]), p([class_("hint")])([text5("Renders a templating-language template against a JSON context, entirely in the browser. See specs/templating-language.md for the full grammar; the reference below is the short version.")]), details([class_("card")])([summary_([text5("Language reference")]), pre([class_("ref")])([text5(referenceText)])]), div2([class_("cols")])([div2([class_("card")])([div2([class_("row")])([h2_([text5("Template")]), renderModeToggle(state3.activeTab)(activeTab.mode)]), renderTabBar(state3), p([class_("hint")])([text5("Every tab is available to import(...)/partial-import(...) by its name, including the active one \u2014 switch tabs above to edit a library.")]), modeHint(activeTab.mode), textarea([class_("input"), rows4(16), spellcheck2(false), value13(activeTab.source), onValueInput(SetTabSource.create(state3.activeTab))])]), div2([class_("card")])([h2_([text5("JSON context")]), textarea([class_("input"), rows4(16), spellcheck2(false), value13(state3.jsonInput), onValueInput(SetJsonInput.create)])])]), div2([class_("cols")])([div2([class_("card")])([h2_([text5("AST")]), p([class_("hint")])([text5((function() {
+      if (activeTab.mode instanceof TemplateMode) {
         return "The evaluated Templating.Ast.Node tree \u2014 the same value foldToHalogen is folding on the right, shown as plain JSON before that fold happens.";
       }
       ;
-      if (state3.mode instanceof JsonMode) {
+      if (activeTab.mode instanceof JsonMode) {
         return "The evaluated JSON value, before it's pretty-printed on the right \u2014 for JSON mode this is the same value, just stringified with no indentation.";
       }
       ;
-      throw new Error("Failed pattern match at Playground.Main (line 165, column 27 - line 167, column 178): " + [state3.mode.constructor.name]);
+      throw new Error("Failed pattern match at Playground.Main (line 254, column 27 - line 256, column 178): " + [activeTab.mode.constructor.name]);
     })())]), renderAst(state3)]), div2([class_("card")])([h2_([text5("Rendered")]), div2([class_("rendered")])([renderOutput(state3)])])]), div2([class_("card")])([div2([class_("row")])([h2_([text5("Action log")]), button([class_("btn"), disabled10($$null(state3.actionLog)), onClick(function(v) {
       return ClearActionLog.value;
     })])([text5("Clear")])]), p([class_("hint")])([text5((function() {
-      if (state3.mode instanceof TemplateMode) {
+      if (activeTab.mode instanceof TemplateMode) {
         return "Every action(...) click in the rendered output is dispatched here \u2014 real Halogen actions, appended by the demo handler passed to foldToHalogen.";
       }
       ;
-      if (state3.mode instanceof JsonMode) {
+      if (activeTab.mode instanceof JsonMode) {
         return "JSON mode has no Node tree to fold to Halogen HTML, so nothing here can dispatch an action(...) click \u2014 switch to Template mode to try that.";
       }
       ;
-      throw new Error("Failed pattern match at Playground.Main (line 187, column 23 - line 189, column 171): " + [state3.mode.constructor.name]);
+      throw new Error("Failed pattern match at Playground.Main (line 276, column 23 - line 278, column 171): " + [activeTab.mode.constructor.name]);
     })())]), renderActionLog(state3)])]);
   };
   var component = /* @__PURE__ */ (function() {
