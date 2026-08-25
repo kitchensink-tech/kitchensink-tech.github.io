@@ -12,5 +12,12 @@
 
 - hide zero-counts of links etc.
 
+- new layouts: landing/marketing page (hero + feature grid + CTA), documentation layout with a persistent sidebar TOC, changelog/release-notes (grouped by version), portfolio/case-study, redirect/short-link page
+
+- new sections: ~~callout/admonition~~, ~~FAQ/accordion~~, auto-derived table of contents, ~~pricing/comparison table~~, series/related-articles cross-linking
+
+
+
+Main-content and callout sections render in the order they appear in the source file, so authors can interleave prose and admonitions freely. Two more section types landed alongside callouts:
 
 

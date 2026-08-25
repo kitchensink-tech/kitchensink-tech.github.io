@@ -1,0 +1,225 @@
+<!DOCTYPE HTML><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="robots" content="index, follow"><title>The Kitchen Sink Blog Generator - Templating-lang sections</title><link rel="icon" type="image/x-icon" href="/images/favicon.png"><link rel="canonical" href="https://kitchensink-tech.github.io/sections-templating.html"><link rel="alternate" type="application/atom+xml" title="Atom Feed" href="https://kitchensink-tech.github.io/atom.xml"><meta name="author" content="Lucas DiCioccio"><meta name="keywords" content="sections, static-site generators, design, templating"><meta name="description" content="Pre-processing sections with templating-lang, the lighter-weight alternative to Dhall-sections."><meta name="twitter:card" content="summary"><meta name="twitter:title" content="The Kitchen Sink Blog Generator - Templating-lang sections"><meta name="twitter:site" content="@lucasdicioccio"><meta name="twitter:creator" content="@lucasdicioccio"><meta property="twitter:description" content="Pre-processing sections with templating-lang, the lighter-weight alternative to Dhall-sections."><meta name="type" property="og:type" content="article"><meta name="title" property="og:title" content="The Kitchen Sink Blog Generator - Templating-lang sections"><meta property="og:site_name" content="The Kitchen Sink Blog Generator"><meta name="url" property="og:url" content="https://kitchensink-tech.github.io/sections-templating.html"><meta property="og:description" content="Pre-processing sections with templating-lang, the lighter-weight alternative to Dhall-sections."><meta name="ks:article_json" content="/json/sections-templating.cmark.json"><meta name="ks:article_text" content="/text/sections-templating.cmark.text"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Lucas DiCioccio"},"description":"Pre-processing sections with templating-lang, the lighter-weight alternative to Dhall-sections.","headline":"Templating-lang sections","mainEntityOfPage":{"@id":"https://kitchensink-tech.github.io/sections-templating.html","@type":"WebPage"},"publisher":{"@type":"Organization","name":"The Kitchen Sink Blog Generator"}}</script><meta name="article:tag" content="sections"><meta name="article:tag" content="static-site generators"><meta name="article:tag" content="design"><meta name="article:tag" content="templating"><style>@import "/css/dev.css";@import "/css/colors.css";@import "/css/article.css";@import "/css/navigation.css";pre {  border-left: 4px double coral;  margin-left: 1em;  padding-left: 1em;}.output {  color: gray;  margin-left: 2em;  padding-left: 1em;  border-left: 4px solid gray;}</style></head><body><nav id="site-navigation" class="nav"><a href="/">home</a><div id="search-box"><script type="text/javascript" src="/js/search-box.js" async></script></div></nav><div class="main"><article><header class="heading"><h1>Templating-lang sections</h1><p>By <a href="https://twitter.com/lucasdicioccio">@lucasdicioccio</a>, 1231 words, 10 code snippets, 3 links, 0images.</p><div class="topiclist"><div class="topic"><span class="topic-nav topic-prev-link"><span class="topic-nav-boundary">|</span></span><a class="topic-link" href="/topics/sections.html"><span class="topic-name">sections</span><span class="topic-count">1/4</span></a><span class="topic-nav topic-next-link"><a class="topic-nav-link" href="/sections.html">›</a></span></div></div></header><div class="main-article"><section class="main-section"><p><a href="https://github.com/lucasdicioccio/templating-lang">templating-lang</a> is a small
+template language: a <code>jq</code>-flavoured expression language for the data half, a
+HAML-like block syntax for structure, and a deliberately tiny set of builtins.
+KitchenSink embeds its Haskell implementation, <code>templating-hs</code>, as a second
+section pre-processor next to <a href="/sections-dhall.html">Dhall-sections</a>. A
+<a href="/playground.html">playground</a> hosted on this site lets you try the language
+itself, outside of any KitchenSink section.</p>
+<p>Both backends do the same job and both remain supported. Templating-lang is,
+however, the direction of travel: <code>dhall</code> and <code>dhall-json</code> are notoriously
+awkward to build and they have repeatedly held KitchenSink back from moving to
+newer GHC versions, whereas <code>templating-hs</code> needs nothing beyond <code>megaparsec</code>
+and <code>aeson</code>. Expect Dhall-sections to be deprecated eventually; nothing is
+being removed today.</p>
+<h2 id="two-section-formats">Two section formats</h2>
+<p>Where Dhall has one format, templating-lang has two, because the language
+distinguishes producing <em>data</em> from producing a <em>document</em>.</p>
+<p><code>.templating</code> sections are rooted at an expression and evaluate to a JSON
+value. That value is the same <code>{format, contents}</code> contract Dhall-sections
+answer with, so the section can rewrite itself to <code>json</code>, <code>cmark</code> or <code>html</code>.
+This is the format to reach for as a drop-in replacement for a Dhall section.</p>
+<p><code>.templating-doc</code> sections are rooted at an element — <code>.div(...)</code>, <code>.ul(...)</code> —
+and evaluate to a document tree, which KitchenSink renders to HTML. There is no
+<code>{format, contents}</code> envelope here: the result is always HTML.</p>
+<p>The two roots can never be confused: an element root always starts with <code>.</code> and
+no expression form does. The format token in the section header nevertheless
+says which mode you meant, so a mistake is a parse error rather than a
+surprise.</p>
+<h2 id="the-ctx-object">The <code>$ctx</code> object</h2>
+<p>Templating-lang always has the input context in scope as <code>$ctx</code>. KitchenSink
+fills it with the very same information the <code>kitchensink</code> object carries in
+Dhall-sections:</p>
+<pre><code>{ file : Text        -- the source file path of this cmark file
+, sectionNum : Integer  -- this section's number in the file, from zero
+, datasets : object  -- dataset cells declared *earlier* in this file
+, vars : object      -- the --var name=value pairs given on the command line
+}
+</code></pre>
+<p>So <code>kitchensink.datasets.my-name</code> becomes <code>$ctx.datasets.my-name</code>, and
+<code>kitchensink.file</code> becomes <code>$ctx.file</code>.</p>
+<p>Like Dhall-sections, templating sections are <em>pre-processors</em>: they are
+evaluated once, at load time, and only see datasets declared before them in the
+file. Unlike Dhall, there are no imports — local or networked — so a template
+cannot pull in a shared library of helpers. That is a real gap against Dhall,
+and the reason the two coexist.</p>
+</section><section class="main-section"><h2 id="examples">Examples</h2>
+<p>The rest of this page is its own fixture: every output below is produced by a
+templating section in this very file.</p>
+<h3 id="a-dataset-to-work-from">A dataset to work from</h3>
+<pre><code>=base:dataset.json crew
+{&quot;members&quot;: [{&quot;name&quot;: &quot;Alice&quot;, &quot;posts&quot;: 22}
+            ,{&quot;name&quot;: &quot;Bob&quot;, &quot;posts&quot;: 7}
+            ]
+}
+</code></pre>
+</section><section class="main-section"><h3 id="generating-a-dataset">Generating a dataset</h3>
+<p>A <code>.templating</code> section returning <code>format = &quot;json&quot;</code> in a dataset cell declares a
+<em>new</em> dataset, visible to every later section — the same way a hand-written
+<code>=base:dataset.json</code> cell is.</p>
+<pre><code>=base:dataset.templating crew-summary
+@members=$ctx.datasets.crew.members
+@n=cardinality($members)
+{ &quot;format&quot;: &quot;json&quot;
+, &quot;contents&quot;: { &quot;count&quot;: $n
+              , &quot;names&quot;: map($members, (m) =&gt; $m.name)
+              }
+}
+</code></pre>
+<p>Note that <code>$n</code> stays a JSON number and <code>names</code> stays a JSON array: expression
+mode never stringifies its result.</p>
+</section><section class="main-section"><h3 id="rendering-a-section-in-commonmark">Rendering a section in CommonMark</h3>
+<p>Reading back the dataset the previous section generated:</p>
+<pre><code>=base:main-content.templating
+@summary=$ctx.datasets.crew-summary
+{ &quot;format&quot;: &quot;cmark&quot;
+, &quot;contents&quot;: [ &quot;::: output&quot;
+              , &quot;__generated from a templating section__&quot;
+              , &quot;&quot;
+              , &quot;file=`$ctx.file`, section=`$ctx.sectionNum`&quot;
+              , &quot;&quot;
+              , &quot;`$summary.count` crew member(s)&quot;
+              , &quot;:::&quot;
+              ]
+}
+</code></pre>
+<p>Each element of <code>contents</code> is one line. <code>format</code> may also be <code>&quot;html&quot;</code>, in which
+case the lines are used verbatim, or <code>&quot;json&quot;</code>, in which case <code>contents</code> is an
+arbitrary JSON value rather than a list of lines.</p>
+</section><section class="main-section"><div class="output">
+<p><strong>generated from a templating section</strong></p>
+<p>file=./website-src/sections-templating.cmark, section=12</p>
+<p>2 crew member(s)</p>
+</div>
+</section><section class="main-section"><h3 id="rendering-a-document-tree">Rendering a document tree</h3>
+<p>The same data, but built structurally rather than as CommonMark lines:</p>
+<pre><code>=base:main-content.templating-doc
+@members=$ctx.datasets.crew.members
+.div(class: &quot;output&quot;,
+  .h3(&quot;Crew&quot;),
+  .ul(map($members, (m) =&gt; .li(&quot;`$m.name` wrote `$m.posts` post(s)&quot;))))
+</code></pre>
+<p>Attributes come first in an element’s argument list, then children;
+<code>map(collection, (item) =&gt; node)</code> expands to one child per item.</p>
+</section><section class="main-section"><div class="output"><h3>Crew</h3><ul><li>Alice wrote 22 post(s)</li><li>Bob wrote 7 post(s)</li></ul></div>
+</section><section class="main-section"><h3 id="wiring-action-to-javascript">Wiring <code>action(...)</code> to JavaScript</h3>
+<p><code>action(eventType, key, payload)</code> is the language’s interactivity hook. In a
+browser host it binds to a real event handler; in a statically-produced page
+there is no dispatcher to bind to, so KitchenSink writes the <em>evaluated</em> action
+onto the element as three data attributes and leaves the dispatching to you.</p>
+<pre><code>=base:main-content.templating-doc
+@members=$ctx.datasets.crew.members
+.div(class: &quot;output&quot;,
+  .p(id: &quot;action-log&quot;, &quot;no action yet — click a name&quot;),
+  .ul(map($members, (m) =&gt;
+    .li(.button(action(&quot;on-click&quot;, &quot;select-member&quot;, {&quot;name&quot;: $m.name, &quot;posts&quot;: $m.posts}),
+                $m.name)))))
+</code></pre>
+<p>Each button comes out carrying its own payload:</p>
+<pre><code>&lt;button data-ks-action-event=&quot;on-click&quot;
+        data-ks-action-key=&quot;select-member&quot;
+        data-ks-action-payload=&quot;{&amp;quot;name&amp;quot;:&amp;quot;Alice&amp;quot;,&amp;quot;posts&amp;quot;:22}&quot;
+        &gt;Alice&lt;/button&gt;
+</code></pre>
+<p>The payload is escaped on the way out, as any attribute value is, so
+<code>el.dataset.ksActionPayload</code> hands back the original JSON text and <code>JSON.parse</code>
+is all that is needed. Note that <code>posts</code> is still the number <code>22</code> there: the
+payload goes through the <em>expression</em> half of the language, which does not
+stringify, unlike the <code>class</code> attribute next to it.</p>
+</section><section class="main-section"><div class="output"><p id="action-log">no action yet — click a name</p><ul><li><button data-ks-action-event="on-click" data-ks-action-key="select-member" data-ks-action-payload="{&quot;name&quot;:&quot;Alice&quot;,&quot;posts&quot;:22}">Alice</button></li><li><button data-ks-action-event="on-click" data-ks-action-key="select-member" data-ks-action-payload="{&quot;name&quot;:&quot;Bob&quot;,&quot;posts&quot;:7}">Bob</button></li></ul></div>
+</section><section class="main-section"><p>A dispatcher is then one query and one <code>switch</code>: look up elements by
+<code>data-ks-action-event</code>, and branch on <code>data-ks-action-key</code> — the key is the
+contract between the template and the page, and an unrecognised one should be
+ignored rather than crash the page.</p>
+<div class="code code--highlighted"><div class="sourceCode"><pre class="sourceCode"><code class="sourceCode"><span id="1"><a href="#1" aria-hidden="true" tabindex="-1"></a>(<span class="kw">function</span> () {</span>
+<span id="2"><a href="#2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">function</span> <span class="fu">dispatch</span>(key<span class="op">,</span> payload) {</span>
+<span id="3"><a href="#3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> log <span class="op">=</span> <span class="bu">document</span><span class="op">.</span><span class="fu">getElementById</span>(<span class="st">&#39;action-log&#39;</span>)<span class="op">;</span></span>
+<span id="4"><a href="#4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">switch</span> (key) {</span>
+<span id="5"><a href="#5" aria-hidden="true" tabindex="-1"></a>      <span class="cf">case</span> <span class="st">&#39;select-member&#39;</span><span class="op">:</span></span>
+<span id="6"><a href="#6" aria-hidden="true" tabindex="-1"></a>        log<span class="op">.</span><span class="at">textContent</span> <span class="op">=</span> payload<span class="op">.</span><span class="at">name</span> <span class="op">+</span> <span class="st">&#39; wrote &#39;</span> <span class="op">+</span> payload<span class="op">.</span><span class="at">posts</span> <span class="op">+</span> <span class="st">&#39; post(s)&#39;</span><span class="op">;</span></span>
+<span id="7"><a href="#7" aria-hidden="true" tabindex="-1"></a>        <span class="cf">break</span><span class="op">;</span></span>
+<span id="8"><a href="#8" aria-hidden="true" tabindex="-1"></a>      <span class="cf">default</span><span class="op">:</span></span>
+<span id="9"><a href="#9" aria-hidden="true" tabindex="-1"></a>        log<span class="op">.</span><span class="at">textContent</span> <span class="op">=</span> <span class="st">&#39;unhandled action: &#39;</span> <span class="op">+</span> key<span class="op">;</span></span>
+<span id="10"><a href="#10" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="11"><a href="#11" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="12"><a href="#12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="13"><a href="#13" aria-hidden="true" tabindex="-1"></a>  <span class="bu">document</span><span class="op">.</span><span class="fu">querySelectorAll</span>(<span class="st">&#39;[data-ks-action-event=&quot;on-click&quot;]&#39;</span>)<span class="op">.</span><span class="fu">forEach</span>(<span class="kw">function</span> (el) {</span>
+<span id="14"><a href="#14" aria-hidden="true" tabindex="-1"></a>    el<span class="op">.</span><span class="fu">addEventListener</span>(<span class="st">&#39;click&#39;</span><span class="op">,</span> <span class="kw">function</span> () {</span>
+<span id="15"><a href="#15" aria-hidden="true" tabindex="-1"></a>      <span class="fu">dispatch</span>(el<span class="op">.</span><span class="at">dataset</span><span class="op">.</span><span class="at">ksActionKey</span><span class="op">,</span> <span class="bu">JSON</span><span class="op">.</span><span class="fu">parse</span>(el<span class="op">.</span><span class="at">dataset</span><span class="op">.</span><span class="at">ksActionPayload</span>))<span class="op">;</span></span>
+<span id="16"><a href="#16" aria-hidden="true" tabindex="-1"></a>    })<span class="op">;</span></span>
+<span id="17"><a href="#17" aria-hidden="true" tabindex="-1"></a>  })<span class="op">;</span></span>
+<span id="18"><a href="#18" aria-hidden="true" tabindex="-1"></a>})()<span class="op">;</span></span></code></pre></div></div><p>That snippet is live on this page: the buttons above are wired by it, in a plain
+<code>&lt;script&gt;</code> block in a <code>=base:main-content.cmark</code> section. A real page would
+rather serve it as a <code>.js</code> file next to the article and reference it with
+<code>&lt;script src&gt;</code>; inline here only so that one file shows the whole loop.</p>
+<p>Neither the event type nor the key is a fixed vocabulary: the language requires
+both to evaluate to a string and passes them through untouched, so
+<code>action(&quot;on-hover&quot;, …)</code> or a computed <code>action($ctx.eventName, …)</code> reach the page
+just as well. That makes the two attributes a pair of dispatch dimensions —
+which browser event to bind, and what to do when it fires — and both are yours
+to define. The selector above happens to bind clicks only.</p>
+<script>
+(function () {
+  function dispatch(key, payload) {
+    var log = document.getElementById('action-log');
+    switch (key) {
+      case 'select-member':
+        log.textContent = payload.name + ' wrote ' + payload.posts + ' post(s)';
+        break;
+      default:
+        log.textContent = 'unhandled action: ' + key;
+    }
+  }
+
+  document.querySelectorAll('[data-ks-action-event="on-click"]').forEach(function (el) {
+    el.addEventListener('click', function () {
+      dispatch(el.dataset.ksActionKey, JSON.parse(el.dataset.ksActionPayload));
+    });
+  });
+})();
+</script>
+</section><section class="main-section"><h3 id="using-partial-templates">Using partial templates</h3>
+<p>Templating-lang support partial templates and KitchenSink exposes them using a specific section close to datasets.</p>
+<p>The <code>icon</code> tag next to <code>library.templating-lib</code> correspond to the name given to
+the library in further imports.</p>
+<p>The context passed to imported libraries is entirely determined by the caller, KitchenSink does not add all the fancy datasets, they have to be passed from the call site.</p>
+<p>A limitation today is that import must refer to a library defined above the
+evaluated section. In future release we will support libraries defined in other files.</p>
+<pre><code>=base:library.templating-lib icon
+.span(class: &quot;icon&quot;,
+  .a(href: $ctx.href,
+     title: $ctx.title,
+    .img(height:16, width:16, src:$ctx.src)
+))
+</code></pre>
+<p>We can then import this <code>icon</code> template and apply it.</p>
+<pre><code>=base:main-content.templating-doc
+@icon=partial-import(&quot;icon&quot;,{&quot;href&quot;:&quot;&quot;, &quot;title&quot;: &quot;demo-templated-icon&quot;})
+@icon1=$icon({&quot;src&quot;: &quot;/images/favicon.png&quot;})
+@icon2=$icon({&quot;src&quot;: &quot;/images/features-001-targetsizes-timeseries.png&quot;})
+@icon3=$icon({&quot;src&quot;: &quot;/images/features-002-dot-demo.dot.png&quot;})
+.div(class: &quot;output&quot;,
+  .p(&quot;Below are multiple &quot;, .em(&quot;icons&quot;), &quot;.&quot;),
+  $icon1.rendered,
+  $icon2.rendered,
+  $icon3.rendered
+)
+</code></pre>
+</section><section class="main-section"><div class="output"><p>Below are multiple <em>icons</em>.</p><span class="icon"><a href title="demo-templated-icon"><img height="16" src="/images/favicon.png" width="16"></a></span><span class="icon"><a href title="demo-templated-icon"><img height="16" src="/images/features-001-targetsizes-timeseries.png" width="16"></a></span><span class="icon"><a href title="demo-templated-icon"><img height="16" src="/gen/images/features-002-dot-demo.dot.png" width="16"></a></span></div>
+</section><section class="main-section"><h2 id="notes-and-limitations">Notes and limitations</h2>
+<p>Text interpolation goes through the language’s display rules: a string
+interpolates raw, an integral number drops its <code>.0</code>, and anything else falls
+back to a compact JSON encoding. In <code>.templating-doc</code> mode attribute values are
+display strings too — that mode produces a document, not data — which is
+exactly why expression mode exists for JSON payloads.</p>
+<p>String literals have no escape sequences: a <code>&quot;</code> or a backtick simply cannot
+appear inside one, since the backtick is the interpolation delimiter. So a
+template can emit a <code>&lt;script&gt;</code> or an HTML attribute containing quotes only
+awkwardly — prefer single quotes in generated JavaScript, or keep such content
+out of the template entirely, as the section above does.</p>
+<p>Attribute names are validated before rendering: the language permits keys the
+DOM rejects, and those are reported as an error rather than written out as
+malformed markup.</p>
+<p>The JSON (expression-rooted) mode exists only in <code>templating-hs</code>, not in the
+PureScript implementation of the language, so templates using it are not
+portable to a browser host.</p>
+</section></div><footer class="footing"><div class="social-links"><a href="https://twitter.com/lucasdicioccio">twitter</a><a href="https://github.com/lucasdicioccio">github</a><a href="https://linkedin.com/in/lucasdicioccio">linkedin</a></div></footer></article></div></body></html>

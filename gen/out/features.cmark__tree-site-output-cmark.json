@@ -12,6 +12,7 @@
       {"type":"file","name":"index.css"},
       {"type":"file","name":"navigation.css"},
       {"type":"file","name":"tags.css"},
+      {"type":"file","name":"templating-playground.css"},
       {"type":"file","name":"topics.css"}
     ]},
     {"type":"file","name":"design-points.html"},
@@ -36,8 +37,10 @@
         {"type":"file","name":"index.cmark__gen-git-head-sha.txt"},
         {"type":"file","name":"index.cmark__trivia"},
         {"type":"file","name":"philosophy.cmark__roast-me"},
+        {"type":"file","name":"philosophy.cmark__roast-me-templating"},
         {"type":"file","name":"sections.cmark__jqified-datasets"},
-        {"type":"file","name":"sections-dhall.cmark__cat-this-file"}
+        {"type":"file","name":"sections-dhall.cmark__cat-this-file"},
+        {"type":"file","name":"sections-dhall.cmark__cat-this-file-templating"}
       ]}
     ]},
     {"type":"file","name":"getting-started.html"},
@@ -63,6 +66,7 @@
       {"type":"file","name":"explorer.js"},
       {"type":"file","name":"search-box.js"},
       {"type":"file","name":"site-graph.js"},
+      {"type":"file","name":"templating-playground-app.js"},
       {"type":"file","name":"topicgraph.js"}
     ]},
     {"type":"directory","name":"json","contents":[
@@ -80,8 +84,10 @@
       {"type":"file","name":"other-formats.cmark.json"},
       {"type":"file","name":"paths.json"},
       {"type":"file","name":"philosophy.cmark.json"},
+      {"type":"file","name":"playground.cmark.json"},
       {"type":"file","name":"sections.cmark.json"},
       {"type":"file","name":"sections-dhall.cmark.json"},
+      {"type":"file","name":"sections-templating.cmark.json"},
       {"type":"file","name":"tags.cmark.json"},
       {"type":"file","name":"topics.cmark.json"},
       {"type":"file","name":"topicsgraph.json"},
@@ -91,6 +97,7 @@
     {"type":"file","name":"layouts.html"},
     {"type":"file","name":"other-formats.html"},
     {"type":"file","name":"philosophy.html"},
+    {"type":"file","name":"playground.html"},
     {"type":"directory","name":"raw","contents":[
       {"type":"directory","name":"data","contents":[
         {"type":"file","name":"sections.cmark__1.csv"},
@@ -105,14 +112,38 @@
         {"type":"file","name":"sections.cmark__users5.json"},
         {"type":"file","name":"sections-dhall.cmark__1.json"},
         {"type":"file","name":"sections-dhall.cmark__alice-bob2.json"},
-        {"type":"file","name":"sections-dhall.cmark__example1.json"}
+        {"type":"file","name":"sections-dhall.cmark__alice-bob-templating3.json"},
+        {"type":"file","name":"sections-dhall.cmark__example1.json"},
+        {"type":"file","name":"sections-templating.cmark__crew1.json"},
+        {"type":"file","name":"sections-templating.cmark__crew-summary2.json"}
       ]}
     ]},
     {"type":"file","name":"robots.txt"},
     {"type":"file","name":"sections-dhall.html"},
     {"type":"file","name":"sections.html"},
+    {"type":"file","name":"sections-templating.html"},
     {"type":"file","name":"sitemap.txt"},
-    {"type":"directory","name":"text"},
+    {"type":"file","name":"templating-playground.html"},
+    {"type":"directory","name":"text","contents":[
+      {"type":"file","name":"design-points.cmark.text"},
+      {"type":"file","name":"development.cmark.text"},
+      {"type":"file","name":"engine.cmark.text"},
+      {"type":"file","name":"features.cmark.text"},
+      {"type":"file","name":"getting-started.cmark.text"},
+      {"type":"file","name":"glossary.cmark.text"},
+      {"type":"file","name":"hashtags.cmark.text"},
+      {"type":"file","name":"index.cmark.text"},
+      {"type":"file","name":"kitchen-sink-dot-json.cmark.text"},
+      {"type":"file","name":"layouts.cmark.text"},
+      {"type":"file","name":"other-formats.cmark.text"},
+      {"type":"file","name":"philosophy.cmark.text"},
+      {"type":"file","name":"playground.cmark.text"},
+      {"type":"file","name":"sections.cmark.text"},
+      {"type":"file","name":"sections-dhall.cmark.text"},
+      {"type":"file","name":"sections-templating.cmark.text"},
+      {"type":"file","name":"topics.cmark.text"},
+      {"type":"file","name":"wishlist.cmark.text"}
+    ]},
     {"type":"directory","name":"topics","contents":[
       {"type":"file","name":"authoring-articles.atom"},
       {"type":"file","name":"authoring-articles.html"},
@@ -144,5 +175,5 @@
     {"type":"file","name":"wishlist.html"}
   ]}
 ,
-  {"type":"report","directories":15,"files":115}
+  {"type":"report","directories":15,"files":145}
 ]

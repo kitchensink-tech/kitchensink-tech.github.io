@@ -22,7 +22,7 @@ illustrate the rather uninteresting life of a static-site generator:&lt;/p&gt;
 &lt;li&gt;&lt;em&gt;produce&lt;/em&gt;: generate output files in the proper location
 &lt;/li&gt;
 &lt;/ul&gt;
-&lt;h1 id="in-depth"&gt;In depth&lt;/h1&gt;
+&lt;h2 id="in-depth"&gt;In depth&lt;/h2&gt;
 &lt;p&gt;Most of what I want to write here is already covered partially in my &lt;a href="https://dicioccio.fr/how-this-blog-works.html#implementation"&gt;original
 article&lt;/a&gt;
 but I’ll come back to this page often to build some reference of the key
@@ -30,7 +30,7 @@ data-types and functions.&lt;/p&gt;
 &lt;div class="figure"&gt;
 &lt;p&gt;&lt;img src="/gen/images/architecture-03-in-depth-engine-pipeline.dot.png" alt="pipeline" /&gt;&lt;/p&gt;
 &lt;/div&gt;
-&lt;h1 id="server-mode-specifics"&gt;Server-mode specifics&lt;/h1&gt;
+&lt;h2 id="server-mode-specifics"&gt;Server-mode specifics&lt;/h2&gt;
 &lt;p&gt;Generating files from pipelines is mundane, and I wrote KitchenSink to support
 some advanced features that help me stay “in the flow” while writing article
 contents.&lt;/p&gt;
@@ -38,7 +38,7 @@ contents.&lt;/p&gt;
 exist only for the support of the live-server: &lt;code&gt;autoreload.js&lt;/code&gt; and
 &lt;code&gt;add-dev-route.js&lt;/code&gt;.  Their respective name may change in future versions but
 the feature will be maintained.&lt;/p&gt;
-&lt;h2 id="the-autoreloadjs-script"&gt;The &lt;code&gt;autoreload.js&lt;/code&gt; script&lt;/h2&gt;
+&lt;h3 id="the-autoreloadjs-script"&gt;The &lt;code&gt;autoreload.js&lt;/code&gt; script&lt;/h3&gt;
 &lt;p&gt;The auto-reload script is a small loop that tries to make sure that at any given time,
 the page shown on the web-browser is up-to-date.
 Since we are focused.&lt;/p&gt;
@@ -51,7 +51,7 @@ clients to know the server has new content.  The client remembers what is the
 &lt;p&gt;For now the server-id information is passed in a query parameter as we cannot
 pass a bunch of informations in a HTTP-get at reload times (alternatives are
 some form of storage on the client-side – we’ll eventually get there).&lt;/p&gt;
-&lt;h2 id="the-add-dev-routejs-script"&gt;The &lt;code&gt;add-dev-route.js&lt;/code&gt; script&lt;/h2&gt;
+&lt;h3 id="the-add-dev-routejs-script"&gt;The &lt;code&gt;add-dev-route.js&lt;/code&gt; script&lt;/h3&gt;
 &lt;p&gt;Another nicety is that we can trigger a full-rebuild of the website without
 leaving one’s preview browser. The gain is little but there is some
 satisfaction to press a button on an interface and see your website being
@@ -59,7 +59,7 @@ generated or published.&lt;/p&gt;
 &lt;p&gt;Upon loading, the &lt;code&gt;add-dev-route.js&lt;/code&gt; script creates a few buttons in the
 &lt;code&gt;#navigation&lt;/code&gt; bar (i.e., the layout has to cooperate a bit, we’ll change that a
 bit later).  Buttons then trigger actions handled by the server.&lt;/p&gt;
-&lt;h2 id="metrics-because-why-not"&gt;Metrics because why not&lt;/h2&gt;
+&lt;h3 id="metrics-because-why-not"&gt;Metrics because why not&lt;/h3&gt;
 &lt;p&gt;The server exposes Prometheus metrics.
 There are some use to it:&lt;/p&gt;
 &lt;ul&gt;

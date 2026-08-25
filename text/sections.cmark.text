@@ -137,6 +137,55 @@ some commonmark
 ```
 
 
+## callout [good-to-know]
+
+    An inline admonition/callout box (note, tip, warning, important/danger, or any other free-form `kind` string, which falls back to a default style). `callout` sections are rendered in the same position, relative to `main-content` sections, as they appear in the source file — so you can interleave prose and admonitions freely by writing several `main-content` and `callout` sections one after another.
+
+    `title` is optional and defaults to a capitalized version of `kind`. `body` is plain text (no markdown rendering, for now).
+
+    **example**
+
+    ```
+=base:callout.json
+{"kind": "warning"
+,"title": "Heads up"
+,"body": "This behavior may change in a future release."
+}
+```
+
+
+## faq [good-to-know]
+
+    A list of question/answer pairs, rendered as an accordion (`<details>` elements, no JavaScript needed). Like `callout`, `faq` sections render in file order relative to `main-content` and `callout` sections, and you can have several of them in one article.
+
+    **example**
+
+    ```
+=base:faq.json
+{"items":
+  [ {"question": "Is this a FAQ?", "answer": "Yes."}
+  ]
+}
+```
+
+
+## pricing [good-to-know]
+
+    A comparison table: one column per plan, one row per feature. Each plan's `values` line up positionally with `pricingFeatures`; mismatched lengths degrade to a ragged table rather than erroring.
+
+    **example**
+
+    ```
+=base:pricing.json
+{"pricingFeatures": ["Sites", "Support"]
+,"pricingPlans":
+  [ {"name": "Free", "price": "$0", "values": ["1", "Community"]}
+  , {"name": "Pro", "price": "$9/mo", "values": ["10", "Priority"]}
+  ]
+}
+```
+
+
 ## taken-off cmark [good-to-know]
 
     Sometimes you really are taking notes along the way and you want to leave out some paragraph out of the generated output. For instance you wrote some paragraph but realized it's better to keep it around for future articles only.
@@ -248,6 +297,8 @@ h1 {
 ```
 
     Where `format` is either `cmark` or `html` and `contents` is formatted in the appropriate format. The return type is currently rather primitive and will likely change in the future. Changes and specifications are tracked in a [WIP-page](/sections-dhall.html ).
+
+    The same `{format, contents}` contract is also answered by `templating` sections, which pre-process sections with [templating-lang](/sections-templating.html ) rather than Dhall. Both backends are supported; templating-lang is the lighter-weight one and the one likely to outlive the other, since `dhall-json` is a recurring obstacle to upgrading GHC.
 
     **example**
 

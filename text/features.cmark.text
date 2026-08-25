@@ -57,7 +57,7 @@ Rather than generating all the website once, Kitchen-Sink can run an HTTP server
 
 Example usage with the default executable:
 
-`$ kitchen-sink serve --srcDir website-src --outDir website-www --servMode SERVE --httpPort 7654`
+`$ kitchen-sink serve --srcDir website-src --outDir website-www --servMode SERVE --httpPort 7655`
 
 ```console
 [...]
@@ -97,7 +97,7 @@ The executable server has a special API route with a mechanism to wait for chang
 
 To use the dev-server mode, use `--servMode DEV`. That is, the full-command to run with the default executable is:
 
-`kitchen-sink serve --srcDir website-src --outDir website-www --servMode DEV --port 7654`
+`kitchen-sink serve --srcDir website-src --outDir website-www --servMode DEV --port 7655`
 
 ### one-time commands
 
@@ -249,16 +249,19 @@ Less typical usage is for "personal" features like taking a selfie on demand: ye
 
 ![selfie](https://lucasdicioccio.github.io/gen/out/about-me.cmark__latest-selfie.jpg )
 
-Another fun usage is to roast your articles, provided a script I made called `ollama.sh`, the following uses an LLM to roast an article (example at [a generated-file path](/gen/out/philosophy.cmark__roast-me )). Here I've used the Dhall section (see below) so that the source-path is accessible to the generator command.
+Another fun usage is to roast your articles, provided agents-exe is installed, the following uses an LLM to roast an article (example at [a generated-file path](/gen/out/philosophy.cmark__roast-me )). Here I've used the Dhall section (see below) so that the source-path is accessible to the generator command.
 
 ```
 =generator:cmd.dhall
 
 let cmdcontent =
-  { cmd = "ollama.sh"
+  { cmd = "agents-exe"
   , args =
-    [ "task-file", "you are given a source file of a blog post, the content resides below a =base:main-content.cmark marker. comment on the article by giving honest feedback in a sarcastic manner"
-    , kitchensink.file
+    [ "--agent-file" , "agents/critique.json"
+    , "run"
+    , "-p" , "you are given a source file of a blog post, the content resides below a =base:main-content.cmark marker. comment on the article by giving honest feedback in a sarcastic manner"
+    , "-S" , "-"
+    , "-f" , kitchensink.file
     ]
   , target = "roast-me"
   }
@@ -347,6 +350,16 @@ Kitchen-Sink processes all of the above information (topics, links between pages
 
 ```html
 <script src="js/topicgraph.js"></script>
+```
+
+```html
+<script>
+window.addEventListener('resize', () => {
+  const dom = document.querySelector('#echartzone .echarts-ref');
+  const chart = dom && echarts.getInstanceByDom(dom);
+  if (chart) chart.resize();
+});
+</script>
 ```
 
 A special config in [kitchen-sink.json](/kitchen-sink-dot-json.html ) allows to give extra importance to a _subset of_ externally linked sites.  For instance a connection between this page and [a random WikiPedia article](https://en.wikipedia.org/wiki/Special:Random ) exists because we defined an entry for WikiPedia. Think of this feature like a revisit of the good-old webrings.

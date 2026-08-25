@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><feed xmlns="http://www.w3.org/2005/Atom"><title type="text">The Kitchen Sink Blog Generator</title><id>https://kitchensink-tech.github.io/atom.xml</id><updated>1970-01-01T00:00:00Z</updated><entry><id>https://kitchensink-tech.github.io/layouts.html</id><title type="text">Layouts and extensions</title><updated>1970-01-01T00:00:00Z</updated><author><name>Lucas DiCioccio</name></author><content type="html">&lt;div class="main-article"&gt;&lt;section class="main-section"&gt;&lt;p&gt;There are two notions of layouts in KitchenSink: &lt;em&gt;article layouts&lt;/em&gt; and &lt;em&gt;website
 layouts&lt;/em&gt;. This article first discusses how they differ, then we deep-dive in
 Website Layouts.&lt;/p&gt;
-&lt;h2 id="article-vs-website-layouts"&gt;Article vs. Website layouts&lt;/h2&gt;
+&lt;h3 id="article-vs-website-layouts"&gt;Article vs. Website layouts&lt;/h3&gt;
 &lt;p&gt;Article Layouts are per-article configurations which allow to tune what a
 rendered-article looks like. This configuration is set in the
 &lt;code&gt;base:build-info.json&lt;/code&gt; &lt;a href="/sections.html"&gt;section&lt;/a&gt;. For instance, while writing
@@ -42,12 +42,12 @@ directory structure, the HTML contents, CSS files, videos, what have you.&lt;/p&
 &lt;p&gt;Layouts in KitchenSink are implemented in the &lt;a href="https://haskell.org/"&gt;Haskell&lt;/a&gt;
 programming language and require some firm understanding of Haskell if you want
 to modify a layout, let-alone build a layout from scratch.&lt;/p&gt;
-&lt;h2 id="article-layouts"&gt;Article layouts&lt;/h2&gt;
+&lt;h3 id="article-layouts"&gt;Article layouts&lt;/h3&gt;
 &lt;p&gt;Website layouts define the behaviour of Article layouts. Kitchen-Sink currently
 supports a single website-layout (the one for this website).  For now, I’ll
 refer you to &lt;a href="/sections.html#build-info-mandatory"&gt;the build-info section
 documentation&lt;/a&gt;.&lt;/p&gt;
-&lt;h2 id="writing-website-layouts"&gt;Writing website layouts&lt;/h2&gt;
+&lt;h3 id="writing-website-layouts"&gt;Writing website layouts&lt;/h3&gt;
 &lt;p&gt;The Website Layout is so important that the KichenSink code merely speak about
 Layout.  This section describes KitchenSink’s Layout type in depth.&lt;/p&gt;
 &lt;p&gt;Previous paragraphs introduced Website Layouts as the way to customize the
@@ -78,7 +78,7 @@ above, we could write Layout as:&lt;/p&gt;
 required to let the Haskell compiler ensure that everything is consistent
 (e.g., you can only build Targets in &lt;code&gt;siteTargets&lt;/code&gt; for an extension if the
 extension is declared in &lt;code&gt;extraSectiontypes&lt;/code&gt;).&lt;/p&gt;
-&lt;h3 id="understanding-sitetargets"&gt;understanding &lt;code&gt;siteTargets&lt;/code&gt;&lt;/h3&gt;
+&lt;h4 id="understanding-sitetargets"&gt;understanding &lt;code&gt;siteTargets&lt;/code&gt;&lt;/h4&gt;
 &lt;p&gt;A Layout gets to decide how to translate the in-memory represention of a whole
 Site into files, including their content-generation logic.&lt;/p&gt;
 &lt;p&gt;Thus what is important is to get some example of &lt;code&gt;siteTargets&lt;/code&gt; function.
@@ -130,7 +130,7 @@ why we recommend to start contacting me before jumping into such an endeavor.
 Longer-term I’d like to have support for templated-targets, much like Dhall,
 but with a mini language better-suited for markup (like Mustache or ERB for
 instance).&lt;/p&gt;
-&lt;h3 id="some-words-on-extrasectiontypes"&gt;some words on &lt;code&gt;extraSectiontypes&lt;/code&gt;&lt;/h3&gt;
+&lt;h4 id="some-words-on-extrasectiontypes"&gt;some words on &lt;code&gt;extraSectiontypes&lt;/code&gt;&lt;/h4&gt;
 &lt;p&gt;The way KitchenSink divides work operates in two phases:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;load the &lt;code&gt;Site&lt;/code&gt; object
@@ -164,7 +164,7 @@ KitchenSink in both phases:&lt;/p&gt;
 &lt;p&gt;Following the type-machinery should be enough. One remark though: there is one
 single “extension” parameter, so if you want to support multiple ones, you
 should build a sum-type of the extensions you support.&lt;/p&gt;
-&lt;h2 id="extending-kitchensink-in-other-forms"&gt;Extending KitchenSink in other forms&lt;/h2&gt;
+&lt;h3 id="extending-kitchensink-in-other-forms"&gt;Extending KitchenSink in other forms&lt;/h3&gt;
 &lt;p&gt;You may want to modify KitchenSink in ways we have not discussed yet. For
 intance, you may want to support new filetypes (e.g., &lt;code&gt;docx&lt;/code&gt; documents) in an
 existing family of filetypes, or new families of file types altogether (e.g.,
@@ -172,7 +172,7 @@ source code of some form).&lt;/p&gt;
 &lt;p&gt;Such changes are feasible but not &lt;em&gt;that easily&lt;/em&gt;. Your best chance likely is to
 &lt;a href="https://dicioccio.fr/about-me.html"&gt;contact me&lt;/a&gt; or by opening an issue on the
 &lt;a href="https://github.com/kitchensink-tech/kitchensink"&gt;GitHub page&lt;/a&gt;.&lt;/p&gt;
-&lt;h2 id="summary"&gt;Summary&lt;/h2&gt;
+&lt;h3 id="summary"&gt;Summary&lt;/h3&gt;
 &lt;p&gt;You want to modify how a given article is rendered using an existing Article layout:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;a) modify &lt;code&gt;=base:build-info.json&lt;/code&gt; section

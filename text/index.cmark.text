@@ -8,4 +8,14 @@ We don't claim to be the best organized nor the fastest nor the prettiest. We ju
 <script src="js/topicgraph.js"></script>
 ```
 
+```html
+<script>
+window.addEventListener('resize', () => {
+  const dom = document.querySelector('#echartzone .echarts-ref');
+  const chart = dom && echarts.getInstanceByDom(dom);
+  if (chart) chart.resize();
+});
+</script>
+```
+
 

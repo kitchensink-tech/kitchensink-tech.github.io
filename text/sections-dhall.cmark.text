@@ -52,7 +52,7 @@ rendered in HTML (via CommonMark)
 
     **this code block is defined in some Dhall**
 
-    file= website-src/sections-dhall.cmark
+    file= ./website-src/sections-dhall.cmark
 
     section= +9
 
@@ -65,6 +65,23 @@ rendered in HTML (via CommonMark)
 - bar
 
 - baz
+
+
+
+
+The same section ported to [templating-lang](/sections-templating.html ). The list has to be built structurally here, in `.templating-doc` mode: the expression mode has no way to append the mapped item lines to the header lines, because the language has no `concat` builtin and a `contents` array must be flat.
+
+```
+=base:main-content.templating-doc
+@d=$ctx.datasets.example
+.div(class: "output",
+  .p(.strong("this code block is defined in some templating-lang")),
+  .p("file=`$ctx.file`"),
+  .p("section=`$ctx.sectionNum`"),
+  .p("some number from a dataset:`$d.answer`"),
+  .p("some list from a dataset:"),
+  .ul(map($d.items, (i) => .li($i))))
+```
 
 
 
@@ -131,6 +148,21 @@ in
 [once the generated section is evaluated](/gen/out/sections-dhall.cmark__cat-this-file )
 
 
+The same generator in templating-lang. This one is a straight port: the result is a JSON value rather than lines of text, so it stays in expression mode, and `kitchensink.file` becomes `$ctx.file`.
+
+```
+=generator:cmd.templating
+{ "format": "json"
+, "contents": { "cmd": "cat"
+              , "args": [$ctx.file]
+              , "target": "cat-this-file-templating"
+              }
+}
+```
+
+[once the generated section is evaluated](/gen/out/sections-dhall.cmark__cat-this-file-templating )
+
+
 **example 3**
 
 You could write the content in `./social.dhall` once and import the content.
@@ -157,7 +189,21 @@ You can also generate JSON datasets if for some reason writing them in JSON is n
 }
 ```
 
-[rendered](/raw/data/sections-dhall.cmark__1.json )
+[rendered](/raw/data/sections-dhall.cmark__alice-bob2.json )
+
+
+And the same dataset in templating-lang. A `.templating` cell returning `format = "json"` registers a dataset exactly the way the Dhall one does, so every later section can read it back from `$ctx.datasets`.
+
+```
+=base:dataset.templating alice-bob-templating
+{ "format": "json"
+, "contents": [ {"name": "Alice", "posts": 22}
+              , {"name": "Bob", "posts": 7}
+              ]
+}
+```
+
+[rendered](/raw/data/sections-dhall.cmark__alice-bob-templating3.json )
 
 
 # Implementation notes

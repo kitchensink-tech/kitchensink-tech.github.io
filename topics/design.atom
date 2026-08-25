@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><feed xmlns="http://www.w3.org/2005/Atom"><title type="text">The Kitchen Sink Blog Generator</title><id>https://kitchensink-tech.github.io/atom.xml</id><updated>1970-01-01T00:00:00Z</updated><entry><id>https://kitchensink-tech.github.io/design-points.html</id><title type="text">Design points</title><updated>1970-01-01T00:00:00Z</updated><author><name>Lucas DiCioccio</name></author><content type="html">&lt;div class="main-article"&gt;&lt;section class="main-section"&gt;&lt;h1 id="the-default-site-loader-is-a-kitchen-sink"&gt;The default site-loader is a kitchen-sink&lt;/h1&gt;
+<?xml version="1.0" encoding="UTF-8"?><feed xmlns="http://www.w3.org/2005/Atom"><title type="text">The Kitchen Sink Blog Generator</title><id>https://kitchensink-tech.github.io/atom.xml</id><updated>1970-01-01T00:00:00Z</updated><entry><id>https://kitchensink-tech.github.io/design-points.html</id><title type="text">Design points</title><updated>1970-01-01T00:00:00Z</updated><author><name>Lucas DiCioccio</name></author><content type="html">&lt;div class="main-article"&gt;&lt;section class="main-section"&gt;&lt;h2 id="the-default-site-loader-is-a-kitchen-sink"&gt;The default site-loader is a kitchen-sink&lt;/h2&gt;
 &lt;p&gt;This tradeoff gave name to the whole tool. In short, KitchenSink loads site
 contents in a directory which has no organization whatsoever.  All files must
 be in a same directory and map to a target based on filenames and filetypes.&lt;/p&gt;
@@ -21,7 +21,7 @@ someone who took all the time to setup a static-site generator.&lt;/p&gt;
 &lt;li&gt;if someones grows out of the limitation of the single-directory approach, they met success and will be ready to allocate some time to either adapt KitchenSink to load the site from different place or to switch to another static-site generator
 &lt;/li&gt;
 &lt;/ul&gt;
-&lt;h1 id="layouts-are-hard-to-change"&gt;Layouts are hard to change&lt;/h1&gt;
+&lt;h2 id="layouts-are-hard-to-change"&gt;Layouts are hard to change&lt;/h2&gt;
 &lt;ul&gt;
 &lt;li&gt;Wordpress, Blogspot online services are a testimonial that tuning layouts may not be that much important for people; tuning layouts for people who really want to do it is feasible because the code is open-source, and corporations or professionals should afford to pay something more “hand-tuned” (they may even consider KitchenSink is not a good solution to their needs)
 &lt;/li&gt;
@@ -35,7 +35,7 @@ someone who took all the time to setup a static-site generator.&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;&lt;span class="emoji" data-emoji="point_right"&gt;👉&lt;/span&gt; note that some re-engineering is going on in KitchenSink to separate the layout engine more cleanly from the rest of the engine. We could soon support some form of templates, however it is clearly not a direction I need personally at this point.&lt;/p&gt;
-&lt;h1 id="generator-sections-dont-take-input-data"&gt;Generator sections don’t take input data&lt;/h1&gt;
+&lt;h2 id="generator-sections-dont-take-input-data"&gt;Generator sections don’t take input data&lt;/h2&gt;
 &lt;ul&gt;
 &lt;li&gt;design is still unclear to me (static-website with dynamic envy)
 &lt;/li&gt;
@@ -44,7 +44,7 @@ someone who took all the time to setup a static-site generator.&lt;/p&gt;
 &lt;li&gt;definitely a security risk that prevent some ‘hosting scenarios’
 &lt;/li&gt;
 &lt;/ul&gt;
-&lt;h1 id="lack-of-overloading-repeating-many-things-across-articles"&gt;Lack of overloading (repeating many things across articles)&lt;/h1&gt;
+&lt;h2 id="lack-of-overloading-repeating-many-things-across-articles"&gt;Lack of overloading (repeating many things across articles)&lt;/h2&gt;
 &lt;p&gt;&lt;span class="emoji" data-emoji="bulb"&gt;💡&lt;/span&gt; Much of this concerned is now addressable using &lt;a href="/sections-dhall.html"&gt;Dhall-sections&lt;/a&gt; sections because Dhall has local (and even remote) imports. However we keep the discussion below for archival reasons.&lt;/p&gt;
 &lt;p&gt;Oftentimes you would like one parameter to take effect on multiple pages (e.g., the social links).
 KitchenSink edges on the side of caution where we prefer to repeat the same small bit of information many times rather than forcing an overloading hierarchy:&lt;/p&gt;
@@ -82,5 +82,10 @@ to modify articles in batch with some shell scripting and &lt;code&gt;sed -i&lt;
 &lt;/li&gt;
 &lt;li&gt;hide zero-counts of links etc.
 &lt;/li&gt;
+&lt;li&gt;new layouts: landing/marketing page (hero + feature grid + CTA), documentation layout with a persistent sidebar TOC, changelog/release-notes (grouped by version), portfolio/case-study, redirect/short-link page
+&lt;/li&gt;
+&lt;li&gt;new sections: ~~callout/admonition~~, ~~FAQ/accordion~~, auto-derived table of contents, ~~pricing/comparison table~~, series/related-articles cross-linking
+&lt;/li&gt;
 &lt;/ul&gt;
-&lt;/section&gt;&lt;/div&gt;</content><link href="https://kitchensink-tech.github.io/wishlist.html" rel="alternate"/><summary type="text">A whishlist, which actually is a todolist.</summary></entry></feed>
+&lt;/section&gt;&lt;div class="callout callout-tip"&gt;&lt;p class="callout-title"&gt;New!&lt;/p&gt;&lt;p class="callout-body"&gt;Callout/admonition sections just landed. This box is one, authored via a callout.json section interleaved with main-content sections; kind can be note, tip, warning, important/danger, or anything else (unstyled fallback). The body is plain text for now, no markdown rendering yet.&lt;/p&gt;&lt;/div&gt;&lt;section class="main-section"&gt;&lt;p&gt;Main-content and callout sections render in the order they appear in the source file, so authors can interleave prose and admonitions freely. Two more section types landed alongside callouts:&lt;/p&gt;
+&lt;/section&gt;&lt;div class="faq"&gt;&lt;details class="faq-item"&gt;&lt;summary class="faq-question"&gt;Does a faq section support markdown in answers?&lt;/summary&gt;&lt;p class="faq-answer"&gt;Not yet, same plain-text limitation as callout bodies.&lt;/p&gt;&lt;/details&gt;&lt;details class="faq-item"&gt;&lt;summary class="faq-question"&gt;Can I have more than one faq section per article?&lt;/summary&gt;&lt;p class="faq-answer"&gt;Yes, they render in file order just like callouts and main-content.&lt;/p&gt;&lt;/details&gt;&lt;/div&gt;&lt;table class="pricing-table"&gt;&lt;thead&gt;&lt;tr&gt;&lt;th class="pricing-feature-header"&gt;&lt;/th&gt;&lt;th class="pricing-plan-header"&gt;&lt;div class="pricing-plan-name"&gt;Free&lt;/div&gt;&lt;div class="pricing-plan-price"&gt;$0&lt;/div&gt;&lt;/th&gt;&lt;th class="pricing-plan-header"&gt;&lt;div class="pricing-plan-name"&gt;Pro&lt;/div&gt;&lt;div class="pricing-plan-price"&gt;$9/mo&lt;/div&gt;&lt;/th&gt;&lt;th class="pricing-plan-header"&gt;&lt;div class="pricing-plan-name"&gt;Team&lt;/div&gt;&lt;div class="pricing-plan-price"&gt;$29/mo&lt;/div&gt;&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="pricing-feature-name"&gt;Sites&lt;/td&gt;&lt;td class="pricing-value"&gt;1&lt;/td&gt;&lt;td class="pricing-value"&gt;10&lt;/td&gt;&lt;td class="pricing-value"&gt;Unlimited&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td class="pricing-feature-name"&gt;Support&lt;/td&gt;&lt;td class="pricing-value"&gt;Community&lt;/td&gt;&lt;td class="pricing-value"&gt;Priority&lt;/td&gt;&lt;td class="pricing-value"&gt;Priority&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td class="pricing-feature-name"&gt;Custom domain&lt;/td&gt;&lt;td class="pricing-value"&gt;No&lt;/td&gt;&lt;td class="pricing-value"&gt;Yes&lt;/td&gt;&lt;td class="pricing-value"&gt;Yes&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;</content><link href="https://kitchensink-tech.github.io/wishlist.html" rel="alternate"/><summary type="text">A whishlist, which actually is a todolist.</summary></entry></feed>

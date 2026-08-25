@@ -13,7 +13,6 @@
     {"type":"file","name":"auto-reload-002-liveedit.webm"},
     {"type":"file","name":"autoreload.js"},
     {"type":"file","name":"colors.css"},
-    {"type":"file","name":"complicated-demo.cmark.unused"},
     {"type":"file","name":"copy-snippets.js"},
     {"type":"file","name":"design-points.cmark"},
     {"type":"file","name":"dev.css"},
@@ -39,15 +38,20 @@
     {"type":"file","name":"one-time-commands-001-produce.webm"},
     {"type":"file","name":"other-formats.cmark"},
     {"type":"file","name":"philosophy.cmark"},
+    {"type":"file","name":"playground.cmark"},
     {"type":"file","name":"robots.txt"},
     {"type":"file","name":"search-box.js"},
     {"type":"file","name":"sections.cmark"},
     {"type":"file","name":"sections-dhall.cmark"},
+    {"type":"file","name":"sections-templating.cmark"},
+    {"type":"file","name":"templating-playground-app.js"},
+    {"type":"file","name":"templating-playground.css"},
+    {"type":"file","name":"templating-playground.html"},
     {"type":"file","name":"topicgraph.js"},
     {"type":"file","name":"topics.cmark"},
     {"type":"file","name":"topics.css"},
     {"type":"file","name":"wishlist.cmark"}
   ]}
 ,
-  {"type":"report","directories":1,"files":47}
+  {"type":"report","directories":1,"files":51}
 ]

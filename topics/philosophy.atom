@@ -1,97 +1,29 @@
-<?xml version="1.0" encoding="UTF-8"?><feed xmlns="http://www.w3.org/2005/Atom"><title type="text">The Kitchen Sink Blog Generator</title><id>https://kitchensink-tech.github.io/atom.xml</id><updated>1970-01-01T00:00:00Z</updated><entry><id>https://kitchensink-tech.github.io/design-points.html</id><title type="text">Design points</title><updated>1970-01-01T00:00:00Z</updated><author><name>Lucas DiCioccio</name></author><content type="html">&lt;div class="main-article"&gt;&lt;section class="main-section"&gt;&lt;h1 id="the-default-site-loader-is-a-kitchen-sink"&gt;The default site-loader is a kitchen-sink&lt;/h1&gt;
-&lt;p&gt;This tradeoff gave name to the whole tool. In short, KitchenSink loads site
-contents in a directory which has no organization whatsoever.  All files must
-be in a same directory and map to a target based on filenames and filetypes.&lt;/p&gt;
-&lt;p&gt;It is often the case that in static-site generators like Jekyll you need to
-organize your posts, categories and so on in a given directory structure,
-sometimes by year etc. Other ones, like Hakyll, requires you to configure
-globbing patterns.  KitchenSink takes the opposite approach because what wrench
-my heart is when I see a personal blog with as few as two posts in them for
-someone who took all the time to setup a static-site generator.&lt;/p&gt;
-&lt;p&gt;Besides convenience, having a large kitchen sink means:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;we prevents the annoyance of conflicts in names, prefixing by year and so on can go in filenames
-&lt;/li&gt;
-&lt;li&gt;we reduce the URL churn because we often move and shake hierarchies around but the content of leaves remains unchanged (I’ve no data for this but it’s a feeling)
-&lt;/li&gt;
-&lt;li&gt;when you look for some file you know where it is
-&lt;/li&gt;
-&lt;li&gt;when you need to add some file you know where to put it
-&lt;/li&gt;
-&lt;li&gt;if someones grows out of the limitation of the single-directory approach, they met success and will be ready to allocate some time to either adapt KitchenSink to load the site from different place or to switch to another static-site generator
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h1 id="layouts-are-hard-to-change"&gt;Layouts are hard to change&lt;/h1&gt;
-&lt;ul&gt;
-&lt;li&gt;Wordpress, Blogspot online services are a testimonial that tuning layouts may not be that much important for people; tuning layouts for people who really want to do it is feasible because the code is open-source, and corporations or professionals should afford to pay something more “hand-tuned” (they may even consider KitchenSink is not a good solution to their needs)
-&lt;/li&gt;
-&lt;li&gt;nowadays we can significantly alter the look and even some UX-interactivity with CSS only
-&lt;/li&gt;
-&lt;li&gt;you can even do JavaScript in KitchenSink pages to add even more “interactivity
-&lt;/li&gt;
-&lt;li&gt;you can even provide control of all the page to a single-page application if you want
-&lt;/li&gt;
-&lt;li&gt;I believe people should focus more time on the content rather than on the wrapping, thus having fewer knobs makes it a liberating constraint
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;span class="emoji" data-emoji="point_right"&gt;👉&lt;/span&gt; note that some re-engineering is going on in KitchenSink to separate the layout engine more cleanly from the rest of the engine. We could soon support some form of templates, however it is clearly not a direction I need personally at this point.&lt;/p&gt;
-&lt;h1 id="generator-sections-dont-take-input-data"&gt;Generator sections don’t take input data&lt;/h1&gt;
-&lt;ul&gt;
-&lt;li&gt;design is still unclear to me (static-website with dynamic envy)
-&lt;/li&gt;
-&lt;li&gt;sequence of steps may be better handled outside the generator
-&lt;/li&gt;
-&lt;li&gt;definitely a security risk that prevent some ‘hosting scenarios’
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h1 id="lack-of-overloading-repeating-many-things-across-articles"&gt;Lack of overloading (repeating many things across articles)&lt;/h1&gt;
-&lt;p&gt;&lt;span class="emoji" data-emoji="bulb"&gt;💡&lt;/span&gt; Much of this concerned is now addressable using &lt;a href="/sections-dhall.html"&gt;Dhall-sections&lt;/a&gt; sections because Dhall has local (and even remote) imports. However we keep the discussion below for archival reasons.&lt;/p&gt;
-&lt;p&gt;Oftentimes you would like one parameter to take effect on multiple pages (e.g., the social links).
-KitchenSink edges on the side of caution where we prefer to repeat the same small bit of information many times rather than forcing an overloading hierarchy:&lt;/p&gt;
-&lt;p&gt;Often you end up requiring to overload some “global parameter”, which means you
-need special documentation, special handling for overloading the parameter,
-which in turn means you need strictly more code just than just assuming the
-global parameter is empty. I call that &lt;em&gt;adding code to remove features&lt;/em&gt;.&lt;/p&gt;
-&lt;p&gt;For a blog-like page, I think it would be infrequent to add new pages. Adding
-one substential article per week means only around 50 articles a year. I’m
-pretty sure only few blog-like pages have that many articles and the effort to
-write them is diluted over long periods of time. Thus, overall, I prefer to
-force having a ‘social links’ session in every page.
-CSS is the only case I can think of where you’d need substential copy-pasting
-across articles. And for this use case, CSS supports &lt;code&gt;@import&lt;/code&gt; directives.&lt;/p&gt;
-&lt;p&gt;In the end, by repeating things across articles: the edge case where you want
-to tune a parameter on a single article is already supported with less code.
-The associated overhead is rather small and easy to circumvent with a low-tech
-solution (e.g., you’d copy section-based files from a template you keep around
-for yourself – much like the scaffolding in the &lt;a href="/getting-started.html"&gt;getting started
-article&lt;/a&gt;). In the eventual case where one needs to
-change values (e.g., they changed their Twitter handle), it is still possible
-to modify articles in batch with some shell scripting and &lt;code&gt;sed -i&lt;/code&gt;.&lt;/p&gt;
-&lt;/section&gt;&lt;/div&gt;</content><link href="https://kitchensink-tech.github.io/design-points.html" rel="alternate"/><summary type="text">This article gives a number of design points and architecture tradeoffs.</summary></entry><entry><id>https://kitchensink-tech.github.io/other-formats.html</id><title type="text">Other types of files</title><updated>1970-01-01T00:00:00Z</updated><author><name>Lucas DiCioccio</name></author><content type="html">&lt;div class="main-article"&gt;&lt;section class="main-section"&gt;&lt;p&gt;Besides generating content from &lt;code&gt;.cmark&lt;/code&gt; &lt;a href="/sections.html"&gt;section-based&lt;/a&gt; files,
+<?xml version="1.0" encoding="UTF-8"?><feed xmlns="http://www.w3.org/2005/Atom"><title type="text">The Kitchen Sink Blog Generator</title><id>https://kitchensink-tech.github.io/atom.xml</id><updated>1970-01-01T00:00:00Z</updated><entry><id>https://kitchensink-tech.github.io/other-formats.html</id><title type="text">Other types of files</title><updated>1970-01-01T00:00:00Z</updated><author><name>Lucas DiCioccio</name></author><content type="html">&lt;div class="main-article"&gt;&lt;section class="main-section"&gt;&lt;p&gt;Besides generating content from &lt;code&gt;.cmark&lt;/code&gt; &lt;a href="/sections.html"&gt;section-based&lt;/a&gt; files,
 KitchenSink also copies some video and images, and knows how to call in some
 generators for very specific formats.&lt;/p&gt;
-&lt;h2 id="videos"&gt;videos&lt;/h2&gt;
+&lt;h3 id="videos"&gt;videos&lt;/h3&gt;
 &lt;p&gt;KitchenSink copies &lt;code&gt;.webm&lt;/code&gt; and &lt;code&gt;.mp4&lt;/code&gt; files under &lt;code&gt;/videos&lt;/code&gt;.&lt;/p&gt;
-&lt;h2 id="sounds"&gt;sounds&lt;/h2&gt;
+&lt;h3 id="sounds"&gt;sounds&lt;/h3&gt;
 &lt;p&gt;KitchenSink copies &lt;code&gt;.ogg&lt;/code&gt;, &lt;code&gt;flac&lt;/code&gt;, &lt;code&gt;.wav&lt;/code&gt;, &lt;code&gt;.midi&lt;/code&gt;, and &lt;code&gt;.mp3&lt;/code&gt; files under &lt;code&gt;/videos&lt;/code&gt;.&lt;/p&gt;
-&lt;h2 id="images"&gt;images&lt;/h2&gt;
+&lt;h3 id="images"&gt;images&lt;/h3&gt;
 &lt;p&gt;KitchenSink copies &lt;code&gt;.jpg&lt;/code&gt;, &lt;code&gt;.jpeg&lt;/code&gt;, and &lt;code&gt;.png&lt;/code&gt; files under &lt;code&gt;/images&lt;/code&gt;.&lt;/p&gt;
-&lt;h2 id="documents"&gt;documents&lt;/h2&gt;
+&lt;h3 id="documents"&gt;documents&lt;/h3&gt;
 &lt;p&gt;KitchenSink copies &lt;code&gt;.pdf&lt;/code&gt; files under &lt;code&gt;/docs&lt;/code&gt;.&lt;/p&gt;
-&lt;h2 id="html"&gt;HTML&lt;/h2&gt;
+&lt;h3 id="html"&gt;HTML&lt;/h3&gt;
 &lt;p&gt;KitchenSink copies &lt;code&gt;.html&lt;/code&gt; files under &lt;code&gt;/&lt;/code&gt; that is, with no prefix.&lt;/p&gt;
 &lt;p&gt;The main use-case is to allow porting some other website to KitchenSink, starting from some imported &lt;code&gt;.html&lt;/code&gt;
 Other usages could be to support things like webmaster-verification tools on Google.&lt;/p&gt;
 &lt;p&gt;&lt;span class="emoji" data-emoji="warning"&gt;⚠️&lt;/span&gt; there is no conflict detection yet so avoid having a &lt;code&gt;.cmark&lt;/code&gt; matching a &lt;code&gt;.html&lt;/code&gt; file or you risk inconsistencies.&lt;/p&gt;
-&lt;h2 id="javascript"&gt;javascript&lt;/h2&gt;
+&lt;h3 id="javascript"&gt;javascript&lt;/h3&gt;
 &lt;p&gt;KitchenSink copies &lt;code&gt;.js&lt;/code&gt; files under &lt;code&gt;/js&lt;/code&gt;.&lt;/p&gt;
-&lt;h2 id="webfonts"&gt;webfonts&lt;/h2&gt;
+&lt;h3 id="webfonts"&gt;webfonts&lt;/h3&gt;
 &lt;p&gt;KitchenSink copies &lt;code&gt;.ttf&lt;/code&gt; and &lt;code&gt;.woff2&lt;/code&gt; files under &lt;code&gt;/webfonts&lt;/code&gt;.&lt;/p&gt;
-&lt;h2 id="so-called-raw-files"&gt;So-called raw files&lt;/h2&gt;
-&lt;p&gt;KitchenSink copies &lt;code&gt;.txt&lt;/code&gt;, &lt;code&gt;.json&lt;/code&gt;, &lt;code&gt;.csv&lt;/code&gt;, and &lt;code&gt;.dhall&lt;/code&gt; files under &lt;code&gt;/raw&lt;/code&gt; &lt;strong&gt;excepts for robots.txt and kitchen-sink.json&lt;/strong&gt;. I use this feature for attaching datasets or showing a long
+&lt;h3 id="so-called-raw-files"&gt;So-called raw files&lt;/h3&gt;
+&lt;p&gt;KitchenSink copies &lt;code&gt;.txt&lt;/code&gt;, &lt;code&gt;.json&lt;/code&gt;, &lt;code&gt;.csv&lt;/code&gt;, and &lt;code&gt;.dhall&lt;/code&gt; files under &lt;code&gt;/raw&lt;/code&gt; &lt;strong&gt;excepts for robots.txt, webfinger.json, and kitchen-sink.json&lt;/strong&gt;. I use this feature for attaching datasets or showing a long
 text result (e.g., a long output of a command that is too slow to generate).&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;exception&lt;/strong&gt;. The file &lt;code&gt;robots.txt&lt;/code&gt; stays at the root of the output dir to meet the &lt;a href="https://en.wikipedia.org/wiki/Robots_exclusion_standard"&gt;robots exclusion standard&lt;/a&gt;.&lt;/p&gt;
-&lt;h2 id="graphviz-dot-files"&gt;GraphViz dot files&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;exception&lt;/strong&gt;. The file &lt;code&gt;webfinger.json&lt;/code&gt; is served at &lt;code&gt;/.well-known/webfinger&lt;/code&gt; (no &lt;code&gt;.json&lt;/code&gt; extension, per &lt;a href="https://www.rfc-editor.org/rfc/rfc7033"&gt;RFC 7033&lt;/a&gt;) with content-type &lt;code&gt;application/jrd+json&lt;/code&gt;, instead of &lt;code&gt;/raw/webfinger.json&lt;/code&gt;.&lt;/p&gt;
+&lt;h3 id="graphviz-dot-files"&gt;GraphViz dot files&lt;/h3&gt;
 &lt;p&gt;KitchenSink calls &lt;code&gt;dot&lt;/code&gt; to generate under &lt;code&gt;/gen/images/&amp;lt;filename&amp;gt;.png&lt;/code&gt;. There
 is little support to control the command that KitchenSink handles. If you need
 more control, generate pictures aside or use a command-section.&lt;/p&gt;
@@ -100,7 +32,7 @@ apologetic or unapologetic statements regarding the lack of sophistication of
 Kitchen-Sink. I lament when something is suboptimal but ought to be improved. I
 duck out when something is suboptimal but ought to be left out scope. Let me
 explain the three Kitchen-Sink tenets.&lt;/p&gt;
-&lt;h1 id="the-kitchen-sink-tenets"&gt;The Kitchen-Sink tenets&lt;/h1&gt;
+&lt;h2 id="the-kitchen-sink-tenets"&gt;The Kitchen-Sink tenets&lt;/h2&gt;
 &lt;p&gt;The name of the blog-engine is not just a pun about where just dumping files in
 a directory to make a blog. There’s some philosophy behind the name, a
 philosophy that I grew out of experience: a mix of frivolity, defeatism, and
@@ -129,7 +61,7 @@ frivolous mindset, a tool that only works for the easy-mode will feel awesome
 because these easy problems will be the ones you’ll encounter most of the time.
 Regarding blogging this tenet means that the world improves when articles are
 written, even if these articles lack perfection.&lt;/p&gt;
-&lt;h1 id="implications-of-the-kitchen-sink-tenets-regarding-the-blog-engine"&gt;Implications of the Kitchen Sink tenets regarding the blog engine&lt;/h1&gt;
+&lt;h2 id="implications-of-the-kitchen-sink-tenets-regarding-the-blog-engine"&gt;Implications of the Kitchen Sink tenets regarding the blog engine&lt;/h2&gt;
 &lt;p&gt;There are a few implications and many possible misunderstanding regarding the
 tenets. In particular being &lt;em&gt;frivolous&lt;/em&gt; and in &lt;em&gt;awe&lt;/em&gt; of scrapy solutions looks
 like being in opposition with “professional”.&lt;/p&gt;
@@ -164,4 +96,73 @@ section-based format would not exist. Correctness may suffer a bit when things
 lack a good definition or inconsequential (e.g., the word-count not taking
 into account titles in the sections they start – feature or bug, I cannot
 tell, but definitely not a huge deal).&lt;/p&gt;
-&lt;/section&gt;&lt;/div&gt;</content><link href="https://kitchensink-tech.github.io/philosophy.html" rel="alternate"/><summary type="text">In these pages, I sometimes use "__It's a kitchen-sink!__" as a placeholder for apologetic or unapologetic statements regarding the lack of sophistication of Kitchen-Sink. This article positions a few tenents for Kitchen-Sink, and hopefully helps you get a feel the experience we want to build around this software.</summary></entry></feed>
+&lt;/section&gt;&lt;/div&gt;</content><link href="https://kitchensink-tech.github.io/philosophy.html" rel="alternate"/><summary type="text">In these pages, I sometimes use "__It's a kitchen-sink!__" as a placeholder for apologetic or unapologetic statements regarding the lack of sophistication of Kitchen-Sink. This article positions a few tenents for Kitchen-Sink, and hopefully helps you get a feel the experience we want to build around this software.</summary></entry><entry><id>https://kitchensink-tech.github.io/design-points.html</id><title type="text">Design points</title><updated>1970-01-01T00:00:00Z</updated><author><name>Lucas DiCioccio</name></author><content type="html">&lt;div class="main-article"&gt;&lt;section class="main-section"&gt;&lt;h2 id="the-default-site-loader-is-a-kitchen-sink"&gt;The default site-loader is a kitchen-sink&lt;/h2&gt;
+&lt;p&gt;This tradeoff gave name to the whole tool. In short, KitchenSink loads site
+contents in a directory which has no organization whatsoever.  All files must
+be in a same directory and map to a target based on filenames and filetypes.&lt;/p&gt;
+&lt;p&gt;It is often the case that in static-site generators like Jekyll you need to
+organize your posts, categories and so on in a given directory structure,
+sometimes by year etc. Other ones, like Hakyll, requires you to configure
+globbing patterns.  KitchenSink takes the opposite approach because what wrench
+my heart is when I see a personal blog with as few as two posts in them for
+someone who took all the time to setup a static-site generator.&lt;/p&gt;
+&lt;p&gt;Besides convenience, having a large kitchen sink means:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;we prevents the annoyance of conflicts in names, prefixing by year and so on can go in filenames
+&lt;/li&gt;
+&lt;li&gt;we reduce the URL churn because we often move and shake hierarchies around but the content of leaves remains unchanged (I’ve no data for this but it’s a feeling)
+&lt;/li&gt;
+&lt;li&gt;when you look for some file you know where it is
+&lt;/li&gt;
+&lt;li&gt;when you need to add some file you know where to put it
+&lt;/li&gt;
+&lt;li&gt;if someones grows out of the limitation of the single-directory approach, they met success and will be ready to allocate some time to either adapt KitchenSink to load the site from different place or to switch to another static-site generator
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="layouts-are-hard-to-change"&gt;Layouts are hard to change&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Wordpress, Blogspot online services are a testimonial that tuning layouts may not be that much important for people; tuning layouts for people who really want to do it is feasible because the code is open-source, and corporations or professionals should afford to pay something more “hand-tuned” (they may even consider KitchenSink is not a good solution to their needs)
+&lt;/li&gt;
+&lt;li&gt;nowadays we can significantly alter the look and even some UX-interactivity with CSS only
+&lt;/li&gt;
+&lt;li&gt;you can even do JavaScript in KitchenSink pages to add even more “interactivity
+&lt;/li&gt;
+&lt;li&gt;you can even provide control of all the page to a single-page application if you want
+&lt;/li&gt;
+&lt;li&gt;I believe people should focus more time on the content rather than on the wrapping, thus having fewer knobs makes it a liberating constraint
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;span class="emoji" data-emoji="point_right"&gt;👉&lt;/span&gt; note that some re-engineering is going on in KitchenSink to separate the layout engine more cleanly from the rest of the engine. We could soon support some form of templates, however it is clearly not a direction I need personally at this point.&lt;/p&gt;
+&lt;h2 id="generator-sections-dont-take-input-data"&gt;Generator sections don’t take input data&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;design is still unclear to me (static-website with dynamic envy)
+&lt;/li&gt;
+&lt;li&gt;sequence of steps may be better handled outside the generator
+&lt;/li&gt;
+&lt;li&gt;definitely a security risk that prevent some ‘hosting scenarios’
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="lack-of-overloading-repeating-many-things-across-articles"&gt;Lack of overloading (repeating many things across articles)&lt;/h2&gt;
+&lt;p&gt;&lt;span class="emoji" data-emoji="bulb"&gt;💡&lt;/span&gt; Much of this concerned is now addressable using &lt;a href="/sections-dhall.html"&gt;Dhall-sections&lt;/a&gt; sections because Dhall has local (and even remote) imports. However we keep the discussion below for archival reasons.&lt;/p&gt;
+&lt;p&gt;Oftentimes you would like one parameter to take effect on multiple pages (e.g., the social links).
+KitchenSink edges on the side of caution where we prefer to repeat the same small bit of information many times rather than forcing an overloading hierarchy:&lt;/p&gt;
+&lt;p&gt;Often you end up requiring to overload some “global parameter”, which means you
+need special documentation, special handling for overloading the parameter,
+which in turn means you need strictly more code just than just assuming the
+global parameter is empty. I call that &lt;em&gt;adding code to remove features&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;For a blog-like page, I think it would be infrequent to add new pages. Adding
+one substential article per week means only around 50 articles a year. I’m
+pretty sure only few blog-like pages have that many articles and the effort to
+write them is diluted over long periods of time. Thus, overall, I prefer to
+force having a ‘social links’ session in every page.
+CSS is the only case I can think of where you’d need substential copy-pasting
+across articles. And for this use case, CSS supports &lt;code&gt;@import&lt;/code&gt; directives.&lt;/p&gt;
+&lt;p&gt;In the end, by repeating things across articles: the edge case where you want
+to tune a parameter on a single article is already supported with less code.
+The associated overhead is rather small and easy to circumvent with a low-tech
+solution (e.g., you’d copy section-based files from a template you keep around
+for yourself – much like the scaffolding in the &lt;a href="/getting-started.html"&gt;getting started
+article&lt;/a&gt;). In the eventual case where one needs to
+change values (e.g., they changed their Twitter handle), it is still possible
+to modify articles in batch with some shell scripting and &lt;code&gt;sed -i&lt;/code&gt;.&lt;/p&gt;
+&lt;/section&gt;&lt;/div&gt;</content><link href="https://kitchensink-tech.github.io/design-points.html" rel="alternate"/><summary type="text">This article gives a number of design points and architecture tradeoffs.</summary></entry></feed>

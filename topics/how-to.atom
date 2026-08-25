@@ -5,7 +5,7 @@ RSS, you are supposed to know, at the time of generating the HTML and before
 publishing the HTML, the URL of published URLs.
 Rather than polluting all articles with this concern, we do it once for all
 articles. Enters the &lt;code&gt;kitchen-sink.json&lt;/code&gt; configuration file.&lt;/p&gt;
-&lt;h1 id="contents-of-kitchen-sinkjson"&gt;contents of kitchen-sink.json&lt;/h1&gt;
+&lt;h2 id="contents-of-kitchen-sinkjson"&gt;contents of kitchen-sink.json&lt;/h2&gt;
 &lt;p&gt;As the time of writing this article, &lt;code&gt;kitchen-sink.json&lt;/code&gt; supports the following keys:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;code&gt;title&lt;/code&gt;: the title on the index page and the prefix of per-articles titles
@@ -67,11 +67,11 @@ articles. Enters the &lt;code&gt;kitchen-sink.json&lt;/code&gt; configuration fi
 &lt;span id="11"&gt;&lt;a href="#11" aria-hidden="true" tabindex="-1"&gt;&lt;/a&gt;  &lt;span class="ot"&gt;]&lt;/span&gt;&lt;/span&gt;
 &lt;span id="12"&gt;&lt;a href="#12" aria-hidden="true" tabindex="-1"&gt;&lt;/a&gt;&lt;span class="fu"&gt;}&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;&lt;p&gt;The &lt;code&gt;publishScript&lt;/code&gt; here is very simple (switches to the output dir, git-add
 and commit everything, git pushes).&lt;/p&gt;
-&lt;h1 id="specifying-a-special-location"&gt;specifying a special-location&lt;/h1&gt;
+&lt;h2 id="specifying-a-special-location"&gt;specifying a special-location&lt;/h2&gt;
 &lt;p&gt;The normal mode for KitchenSink is to locate &lt;code&gt;kitchen-sink.json&lt;/code&gt; in your site source directory.
 Thus, if your &lt;code&gt;--srcDir&lt;/code&gt; parameter is &lt;code&gt;foobar&lt;/code&gt;, KitchenSink will look for &lt;code&gt;foobar/kitchen-sink.json&lt;/code&gt;.&lt;/p&gt;
 &lt;p&gt;You can override where to locate this special file with the &lt;code&gt;--ksFile&lt;/code&gt; command line argument.&lt;/p&gt;
-&lt;/section&gt;&lt;/div&gt;</content><link href="https://kitchensink-tech.github.io/kitchen-sink-dot-json.html" rel="alternate"/><summary type="text">The `kitchen-sink.json` file is simpble but quite important as it configures things like the URL of your blog.</summary></entry><entry><id>https://kitchensink-tech.github.io/getting-started.html</id><title type="text">Getting started</title><updated>1970-01-01T00:00:00Z</updated><author><name>Lucas DiCioccio</name></author><content type="html">&lt;div class="main-article"&gt;&lt;section class="main-section"&gt;&lt;h2 id="expectations"&gt;expectations&lt;/h2&gt;
+&lt;/section&gt;&lt;/div&gt;</content><link href="https://kitchensink-tech.github.io/kitchen-sink-dot-json.html" rel="alternate"/><summary type="text">The `kitchen-sink.json` file is simpble but quite important as it configures things like the URL of your blog.</summary></entry><entry><id>https://kitchensink-tech.github.io/getting-started.html</id><title type="text">Getting started</title><updated>1970-01-01T00:00:00Z</updated><author><name>Lucas DiCioccio</name></author><content type="html">&lt;div class="main-article"&gt;&lt;section class="main-section"&gt;&lt;h3 id="expectations"&gt;expectations&lt;/h3&gt;
 &lt;p&gt;At its core, KitchenSink is a static-site generator &lt;em&gt;library&lt;/em&gt; with merely a
 &lt;em&gt;default theme&lt;/em&gt;. That is, you can have multiple integration modes to run
 a KitchenSink-generated blog.&lt;/p&gt;
@@ -80,7 +80,7 @@ a website that looks like this one – or at least has a similar HTML structure.
 As &lt;a href="http://www.csszengarden.com/"&gt;the CSS Zen Garden&lt;/a&gt; has demonstrated, one can
 do wonders with only styling. Future releases of KitchenSink may include
 layouts or websites that are not “showcased” on this documentation site.&lt;/p&gt;
-&lt;h2 id="pipeline"&gt;pipeline&lt;/h2&gt;
+&lt;h3 id="pipeline"&gt;pipeline&lt;/h3&gt;
 &lt;p&gt;Before you get a website to entertain your readers, a number of steps are
 required.  This guide navigates you through a subset of the complexity and
 assumes some familiarity with programming toolchains and workflows.&lt;/p&gt;
@@ -112,7 +112,7 @@ out of scope. Also, we skip the “publish website” part; you should find some
 help on “hosting a static website” elsewhere – at this point we believe
 KitchenSink is so niche that you will figure out this part. We also assume that
 you know how to install and run programming tools on your machine.&lt;/p&gt;
-&lt;h2 id="requirements"&gt;requirements&lt;/h2&gt;
+&lt;h3 id="requirements"&gt;requirements&lt;/h3&gt;
 &lt;p&gt;Requirements correspond to the “left leaves” tools in the dependency graph.&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;some &lt;code&gt;git&lt;/code&gt; installation
@@ -126,7 +126,7 @@ you know how to install and run programming tools on your machine.&lt;/p&gt;
 &lt;li&gt;(not covered) some publication script to host a directory of static-files online (e.g., GitHub pages, Netlify)
 &lt;/li&gt;
 &lt;/ul&gt;
-&lt;h2 id="build-and-install-from-source"&gt;build and install from source&lt;/h2&gt;
+&lt;h3 id="build-and-install-from-source"&gt;build and install from source&lt;/h3&gt;
 &lt;p&gt;The goal here is to build &lt;code&gt;kitchen-sink-exe&lt;/code&gt; in the dependency graph.
 Cabal’s install directory must be in your execution &lt;code&gt;PATH&lt;/code&gt; environment variable afterwards.&lt;/p&gt;
 &lt;pre&gt;&lt;code class="language-console"&gt;git clone https://github.com/kitchensink-tech/kitchensink.git
@@ -134,7 +134,7 @@ cd kitchensink/hs
 cabal build
 cabal install
 &lt;/code&gt;&lt;/pre&gt;
-&lt;h2 id="minimal-site-setup"&gt;minimal site setup&lt;/h2&gt;
+&lt;h3 id="minimal-site-setup"&gt;minimal site setup&lt;/h3&gt;
 &lt;p&gt;The goal here is to run KitchenSink in server-mode (i.e., we do not output
 &lt;code&gt;.html&lt;/code&gt; files directly as shown in the dependency graph but we edit them live).&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;prepare a directory structure&lt;/strong&gt;&lt;/p&gt;
@@ -142,9 +142,9 @@ cabal install
 bash scaffolding/sourcedir.sh site-source
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;&lt;strong&gt;start the live-edit server&lt;/strong&gt;&lt;/p&gt;
-&lt;pre&gt;&lt;code class="language-console"&gt;kitchen-sink serve --srcDir site-source/ --outDir www/ --servMode DEV --port 7654
+&lt;pre&gt;&lt;code class="language-console"&gt;kitchen-sink serve --srcDir site-source/ --outDir www/ --servMode DEV --port 7655
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Then navigate to &lt;code&gt;http://localhost:7654/&lt;/code&gt; you’ll notice there are a few things
+&lt;p&gt;Then navigate to &lt;code&gt;http://localhost:7655/&lt;/code&gt; you’ll notice there are a few things
 to tune.  Things like the page title must be changed in the
 &lt;a href="/kitchen-sink-dot-json"&gt;&lt;code&gt;kitchen-sink.json&lt;/code&gt;&lt;/a&gt; file (note: as of today when you
 edit this file, you need to restart the server for all parameters to be taken
@@ -153,7 +153,7 @@ into account).&lt;/p&gt;
 &lt;p&gt;In your editor then you can add or edit new &lt;code&gt;.cmark&lt;/code&gt; files, try adding some
 “hello world” first.  Then you can experiment with adding more involved
 &lt;a href="/sections.html"&gt;sections&lt;/a&gt; or various types of &lt;a href="/other-formats.html"&gt;contents&lt;/a&gt;&lt;/p&gt;
-&lt;h2 id="producing-html-contents"&gt;producing html contents&lt;/h2&gt;
+&lt;h3 id="producing-html-contents"&gt;producing html contents&lt;/h3&gt;
 &lt;p&gt;Before producing some HTML contents to upload, you should modify the
 &lt;a href="/kitchen-sink-dot-json"&gt;&lt;code&gt;kitchen-sink.json&lt;/code&gt;&lt;/a&gt; file to give some title to your
 website and prepare tell the URL that will host your website once it is
@@ -183,7 +183,7 @@ arises the need to separate big blocks of texts (markdown/commonmark) from
 structural information (json, CSS).  Here comes the section-based format: an
 article file consists of multiple sections separated with special line
 separators.&lt;/p&gt;
-&lt;h1 id="section-based-files"&gt;Section-based files&lt;/h1&gt;
+&lt;h2 id="section-based-files"&gt;Section-based files&lt;/h2&gt;
 &lt;p&gt;A Section starts with a &lt;code&gt;=&lt;/code&gt; followed by a section name (e.g.,
 &lt;code&gt;base:main-css.css&lt;/code&gt;) and ends with an empty line followed by another section
 (or the end of the file).&lt;/p&gt;
@@ -213,7 +213,7 @@ You’ll find plenty of section-based format examples by browsing the
 website&lt;/a&gt;,
 KitchenSink names section-based format with the &lt;code&gt;.cmark&lt;/code&gt; extension for
 convenience (because the meaty-content is written in CommonMark).&lt;/p&gt;
-&lt;h1 id="supported-sections"&gt;Supported sections&lt;/h1&gt;
+&lt;h2 id="supported-sections"&gt;Supported sections&lt;/h2&gt;
 &lt;p&gt;Recall that KitchenSink is both a library and an engine. We describe here
 sections when using KitchenSink without tuning. While using KitchenSink as a
 library, it should be easy enough to add new sections or new layouts or modify
@@ -222,7 +222,7 @@ subtly how Kitchen-Sink interprets some section data.&lt;/p&gt;
 engine works. It is not the case that this documentation is prescriptive (i.e.,
 you are free to modify any behavior – just avoid confusing your users that may
 end up reading this piece of documentation).&lt;/p&gt;
-&lt;h2 id="build-info-mandatory"&gt;build-info [mandatory]&lt;/h2&gt;
+&lt;h3 id="build-info-mandatory"&gt;build-info [mandatory]&lt;/h3&gt;
 &lt;div class="section-details"&gt;
 &lt;p&gt;An important section to let Kitchen-Sink know which &lt;strong&gt;layout&lt;/strong&gt; to apply.  Known
 layouts are &lt;code&gt;article&lt;/code&gt;, &lt;code&gt;index&lt;/code&gt; (for &lt;code&gt;index.cmark&lt;/code&gt;), &lt;code&gt;glossary&lt;/code&gt; (for
@@ -242,7 +242,7 @@ summary. A warning is also inserted on Upcoming and Archived articles.&lt;/p&gt;
 }
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
-&lt;h2 id="preamble-mandatory"&gt;preamble [mandatory]&lt;/h2&gt;
+&lt;h3 id="preamble-mandatory"&gt;preamble [mandatory]&lt;/h3&gt;
 &lt;div class="section-details"&gt;
 &lt;p&gt;Contains bibliographical information such as the title and author of the
 article. Optionally, you can add some link to a representative image.&lt;/p&gt;
@@ -257,7 +257,7 @@ using the &lt;code&gt;faviconUrl&lt;/code&gt; JSON key.&lt;/p&gt;
 }
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
-&lt;h2 id="summary-recommended"&gt;summary [recommended]&lt;/h2&gt;
+&lt;h3 id="summary-recommended"&gt;summary [recommended]&lt;/h3&gt;
 &lt;div class="section-details"&gt;
 &lt;p&gt;Some commonmark to generate a short summary about the article.&lt;/p&gt;
 &lt;p&gt;The summary is displayed in article listings but also in OpenGraph
@@ -271,7 +271,7 @@ too much (i.e., stick to emphasis, inlined code, and bold).&lt;/p&gt;
 A small article about _something_ interesting.
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
-&lt;h2 id="topics-recommended"&gt;topics [recommended]&lt;/h2&gt;
+&lt;h3 id="topics-recommended"&gt;topics [recommended]&lt;/h3&gt;
 &lt;div class="section-details"&gt;
 &lt;p&gt;Meta-information for contextualizing the article content.&lt;/p&gt;
 &lt;p&gt;The representative image is displayed in article listings but also in OpenGraph
@@ -290,7 +290,7 @@ and Twitter summaries when people share links on various media.&lt;/p&gt;
 }
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
-&lt;h2 id="social-recommended"&gt;social [recommended]&lt;/h2&gt;
+&lt;h3 id="social-recommended"&gt;social [recommended]&lt;/h3&gt;
 &lt;div class="section-details"&gt;
 &lt;p&gt;Listing of social-profiles on various sites, will drive the inclusion of links
 and some Twitter meta headers.&lt;/p&gt;
@@ -302,7 +302,7 @@ and some Twitter meta headers.&lt;/p&gt;
 }
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
-&lt;h2 id="main-content"&gt;main content&lt;/h2&gt;
+&lt;h3 id="main-content"&gt;main content&lt;/h3&gt;
 &lt;div class="section-details"&gt;
 &lt;p&gt;Well, sometimes you have good reason to not have some content. But these
 sections are where you should be spending most of your effort.&lt;/p&gt;
@@ -314,7 +314,54 @@ This fact is important when you are tuning the CSS of your articles (e.g., using
 some commonmark
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
-&lt;h2 id="taken-off-cmark-good-to-know"&gt;taken-off cmark [good-to-know]&lt;/h2&gt;
+&lt;h3 id="callout-good-to-know"&gt;callout [good-to-know]&lt;/h3&gt;
+&lt;div class="section-details"&gt;
+&lt;p&gt;An inline admonition/callout box (note, tip, warning, important/danger, or
+any other free-form &lt;code&gt;kind&lt;/code&gt; string, which falls back to a default style).
+&lt;code&gt;callout&lt;/code&gt; sections are rendered in the same position, relative to
+&lt;code&gt;main-content&lt;/code&gt; sections, as they appear in the source file — so you can
+interleave prose and admonitions freely by writing several &lt;code&gt;main-content&lt;/code&gt;
+and &lt;code&gt;callout&lt;/code&gt; sections one after another.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;title&lt;/code&gt; is optional and defaults to a capitalized version of &lt;code&gt;kind&lt;/code&gt;. &lt;code&gt;body&lt;/code&gt;
+is plain text (no markdown rendering, for now).&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;example&lt;/strong&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;=base:callout.json
+{&amp;quot;kind&amp;quot;: &amp;quot;warning&amp;quot;
+,&amp;quot;title&amp;quot;: &amp;quot;Heads up&amp;quot;
+,&amp;quot;body&amp;quot;: &amp;quot;This behavior may change in a future release.&amp;quot;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;h3 id="faq-good-to-know"&gt;faq [good-to-know]&lt;/h3&gt;
+&lt;div class="section-details"&gt;
+&lt;p&gt;A list of question/answer pairs, rendered as an accordion (&lt;code&gt;&amp;lt;details&amp;gt;&lt;/code&gt;
+elements, no JavaScript needed). Like &lt;code&gt;callout&lt;/code&gt;, &lt;code&gt;faq&lt;/code&gt; sections render in
+file order relative to &lt;code&gt;main-content&lt;/code&gt; and &lt;code&gt;callout&lt;/code&gt; sections, and you can
+have several of them in one article.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;example&lt;/strong&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;=base:faq.json
+{&amp;quot;items&amp;quot;:
+  [ {&amp;quot;question&amp;quot;: &amp;quot;Is this a FAQ?&amp;quot;, &amp;quot;answer&amp;quot;: &amp;quot;Yes.&amp;quot;}
+  ]
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;h3 id="pricing-good-to-know"&gt;pricing [good-to-know]&lt;/h3&gt;
+&lt;div class="section-details"&gt;
+&lt;p&gt;A comparison table: one column per plan, one row per feature. Each plan’s
+&lt;code&gt;values&lt;/code&gt; line up positionally with &lt;code&gt;pricingFeatures&lt;/code&gt;; mismatched lengths
+degrade to a ragged table rather than erroring.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;example&lt;/strong&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;=base:pricing.json
+{&amp;quot;pricingFeatures&amp;quot;: [&amp;quot;Sites&amp;quot;, &amp;quot;Support&amp;quot;]
+,&amp;quot;pricingPlans&amp;quot;:
+  [ {&amp;quot;name&amp;quot;: &amp;quot;Free&amp;quot;, &amp;quot;price&amp;quot;: &amp;quot;$0&amp;quot;, &amp;quot;values&amp;quot;: [&amp;quot;1&amp;quot;, &amp;quot;Community&amp;quot;]}
+  , {&amp;quot;name&amp;quot;: &amp;quot;Pro&amp;quot;, &amp;quot;price&amp;quot;: &amp;quot;$9/mo&amp;quot;, &amp;quot;values&amp;quot;: [&amp;quot;10&amp;quot;, &amp;quot;Priority&amp;quot;]}
+  ]
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;h3 id="taken-off-cmark-good-to-know"&gt;taken-off cmark [good-to-know]&lt;/h3&gt;
 &lt;div class="section-details"&gt;
 &lt;p&gt;Sometimes you really are taking notes along the way and you want to leave out
 some paragraph out of the generated output. For instance you wrote some
@@ -326,7 +373,7 @@ paragraph but realized it’s better to keep it around for future articles only.
 some content that will not show up in the article
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
-&lt;h2 id="css-recommended"&gt;CSS [recommended]&lt;/h2&gt;
+&lt;h3 id="css-recommended"&gt;CSS [recommended]&lt;/h3&gt;
 &lt;div class="section-details"&gt;
 &lt;p&gt;Some CSS block that is inlined in the HTML header. Includes are supported via
 the &lt;code&gt;@import&lt;/code&gt; CSS directive (note KitchenSink doesn’t interpret the CSS, it
@@ -344,7 +391,7 @@ h1 {
 }
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
-&lt;h2 id="commands-advanced"&gt;commands [advanced]&lt;/h2&gt;
+&lt;h3 id="commands-advanced"&gt;commands [advanced]&lt;/h3&gt;
 &lt;div class="section-details"&gt;
 &lt;p&gt;Sometimes you want to build content from an external command.  For instance,
 you could snapshot the agenda of your favorite music band each time you
@@ -409,7 +456,7 @@ At this point I assume that KitchenSink users are tech-savvy geeks.&lt;/p&gt;
 }
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
-&lt;/section&gt;&lt;section class="main-section"&gt;&lt;h2 id="dhall-advanced"&gt;dhall [advanced]&lt;/h2&gt;
+&lt;/section&gt;&lt;section class="main-section"&gt;&lt;h3 id="dhall-advanced"&gt;dhall [advanced]&lt;/h3&gt;
 &lt;div class="section-details"&gt;
 &lt;p&gt;There is one difficult design point when statically-generating website is when
 we have datasets of repeated structure (e.g., an image list with title, date,
@@ -427,6 +474,11 @@ content.&lt;/p&gt;
 appropriate format. The return type is currently rather primitive and will
 likely change in the future. Changes and specifications are tracked in a
 &lt;a href="/sections-dhall.html"&gt;WIP-page&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;The same &lt;code&gt;{format, contents}&lt;/code&gt; contract is also answered by &lt;code&gt;templating&lt;/code&gt;
+sections, which pre-process sections with
+&lt;a href="/sections-templating.html"&gt;templating-lang&lt;/a&gt; rather than Dhall. Both backends
+are supported; templating-lang is the lighter-weight one and the one likely to
+outlive the other, since &lt;code&gt;dhall-json&lt;/code&gt; is a recurring obstacle to upgrading GHC.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;example&lt;/strong&gt;&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;=base:main-content.dhall
 
@@ -451,7 +503,7 @@ in
 }
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
-&lt;h2 id="glossary-experimental"&gt;glossary [experimental]&lt;/h2&gt;
+&lt;h3 id="glossary-experimental"&gt;glossary [experimental]&lt;/h3&gt;
 &lt;div class="section-details"&gt;
 &lt;p&gt;Whether its a TLA or some other term, you sometimes want to introduce glossary
 terms. KitchenSink has some support for glossary in the form of parsing a
@@ -473,7 +525,7 @@ sitemap.&lt;/p&gt;
 }
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
-&lt;h2 id="embedded-datasets-experimental"&gt;embedded datasets [experimental]&lt;/h2&gt;
+&lt;h3 id="embedded-datasets-experimental"&gt;embedded datasets [experimental]&lt;/h3&gt;
 &lt;div class="section-details"&gt;
 &lt;p&gt;Sometimes you want to ship a dataset. An option is to create one file in the
 Kitchen-Sink directory. However you may not want to multiply files.  Rather,
@@ -506,7 +558,7 @@ b;51
 ]
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
-&lt;/section&gt;&lt;section class="main-section"&gt;&lt;h2 id="mustache-templates-experimental"&gt;Mustache templates [experimental]&lt;/h2&gt;
+&lt;/section&gt;&lt;section class="main-section"&gt;&lt;h3 id="mustache-templates-experimental"&gt;Mustache templates [experimental]&lt;/h3&gt;
 &lt;div class="section-details"&gt;
 &lt;p&gt;A well-known templating language for substituting a few variables in text
 objects is the &lt;a href="http://mustache.github.io/mustache.5.html"&gt;Mustache&lt;/a&gt; template language.&lt;/p&gt;
@@ -538,7 +590,7 @@ fully-form ideas about the details. In particular, I have some PHP-envy to turn 
 {{/ users }}
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
-&lt;/section&gt;&lt;section class="main-section"&gt;&lt;h3 id="hello-from-a-mustache-template"&gt;hello from a Mustache template&lt;/h3&gt;
+&lt;/section&gt;&lt;section class="main-section"&gt;&lt;h4 id="hello-from-a-mustache-template"&gt;hello from a Mustache template&lt;/h4&gt;
 &lt;ul&gt;
 &lt;li&gt;Albert : &lt;span style="color: darksalmon"&gt;Preferred Color&lt;/span&gt;
 &lt;/li&gt;

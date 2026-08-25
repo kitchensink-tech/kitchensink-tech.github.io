@@ -1,180 +1,228 @@
-<?xml version="1.0" encoding="UTF-8"?><feed xmlns="http://www.w3.org/2005/Atom"><title type="text">The Kitchen Sink Blog Generator</title><id>https://kitchensink-tech.github.io/atom.xml</id><updated>1970-01-01T00:00:00Z</updated><entry><id>https://kitchensink-tech.github.io/sections-dhall.html</id><title type="text">Dhall support in depth</title><updated>1970-01-01T00:00:00Z</updated><author><name>Lucas DiCioccio</name></author><content type="html">&lt;div class="main-article"&gt;&lt;section class="main-section"&gt;&lt;p&gt;The &lt;a href="https://dhall-lang.org/"&gt;Dhall&lt;/a&gt; support in KitchenSink provides a template
-engine unlike many static-site generators. In typical static-site generators,
-the template language serves two purposes: dictating the structure of the HTML
-files, and generating repetitive content of HTML files like for data tables. In
-KitchenSink, &lt;a href="/layouts.html"&gt;Layouts&lt;/a&gt; dictate the HTML structure and are hard
-to change. Dhall provides a pre-processor to apply some template on repetititve
-contents to render &lt;a href="/sections.html"&gt;Sections&lt;/a&gt;.&lt;/p&gt;
-&lt;h1 id="dhall-as-a-pre-processor"&gt;Dhall as a pre-processor&lt;/h1&gt;
-&lt;p&gt;Why Dhall rather than other languages? The short answer is that Dhall hits a
-sweet spot for pre-processing sections in static-blog generators. Dhall is at a
-same time: deterministic, easy to embed in Kitchen-Sink, and expressive.  Let’s
-develop these points.&lt;/p&gt;
-&lt;p&gt;First, Dhall is a deterministic language. A major benefit here is that Dhall is
-simple on a conceptual level: you can substitute a Dhall expression with its
-result and it will work as expected. Further, being deterministic, Dhall
-disallows user-defined side-effects. Albeit a constraint for people writing
-Dhall code, such determinism comes handy to write a pre-processor: a
-pre-processor turns &lt;code&gt;Sections&lt;/code&gt; into &lt;code&gt;Sections&lt;/code&gt;, since the pre-processor does
-not do more, for instance, by having no extra side-effects to track. We do not
-freeze KitchenSink development into a bad-architecture as the &lt;code&gt;Section -&amp;gt; Section&lt;/code&gt; function can be moved without surprises.&lt;/p&gt;
-&lt;p&gt;Second, Dhall is embeddable in Haskell, the programming language in which
-KitchenSink is written. The immediate benefit is that no external setup is
-required: KitchenSink embeds the same Dhall interpreter as the official Dhall
-binary and that’s it. Compare this simplicity (no setup required) to generator
-sections, whose result vary depending on which tools are available on each
-setups.&lt;/p&gt;
-&lt;p&gt;Third, Dhall is expressive enough to have libraries of functions that you
-import over the network or on the file-system. Such imports open the door to
-avoiding redundant code (e.g., to re-use the same &lt;code&gt;base:social&lt;/code&gt; content in
-every article). Networked imports open the door to community-based sharing.&lt;/p&gt;
-&lt;p&gt;Summarizing, the choice of Dhall is not that surprising after analyzis. Dhall
-fits the problem of pre-processing article sections pretty well, without
-costing much to implement and without freezing the design of KitchenSink
-engine.&lt;/p&gt;
-&lt;h1 id="examples"&gt;Examples&lt;/h1&gt;
-&lt;p&gt;Let’s now give some examples.&lt;/p&gt;
-&lt;/section&gt;&lt;section class="main-section"&gt;&lt;h2 id="rendering-a-section-in-commonmark"&gt;Rendering a section in CommonMark&lt;/h2&gt;
-&lt;p&gt;&lt;strong&gt;example 1&lt;/strong&gt;&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;=base:main-content.dhalL
-
-{ contents = [&amp;quot;__generated from dhall__&amp;quot;, &amp;quot;\n&amp;quot;, kitchensink.file ], format = &amp;quot;cmark&amp;quot; }
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;strong&gt;example 2&lt;/strong&gt;&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;=base:main-content.dhall
-    
-{ contents = [
-    &amp;quot;::: output&amp;quot;
-  , &amp;quot;\n&amp;quot;
-  , &amp;quot;__this code block is defined in some Dhall__&amp;quot;
-  , &amp;quot;\n&amp;quot;
-  , &amp;quot;file=&amp;quot;, kitchensink.file
-  , &amp;quot;\n&amp;quot;, &amp;quot;section=&amp;quot;
-  , Integer/show kitchensink.sectionNum
-  , &amp;quot;\n&amp;quot;
-  , &amp;quot;:::&amp;quot;
-  ]
-, format = &amp;quot;cmark&amp;quot;
+<?xml version="1.0" encoding="UTF-8"?><feed xmlns="http://www.w3.org/2005/Atom"><title type="text">The Kitchen Sink Blog Generator</title><id>https://kitchensink-tech.github.io/atom.xml</id><updated>1970-01-01T00:00:00Z</updated><entry><id>https://kitchensink-tech.github.io/sections-templating.html</id><title type="text">Templating-lang sections</title><updated>1970-01-01T00:00:00Z</updated><author><name>Lucas DiCioccio</name></author><content type="html">&lt;div class="main-article"&gt;&lt;section class="main-section"&gt;&lt;p&gt;&lt;a href="https://github.com/lucasdicioccio/templating-lang"&gt;templating-lang&lt;/a&gt; is a small
+template language: a &lt;code&gt;jq&lt;/code&gt;-flavoured expression language for the data half, a
+HAML-like block syntax for structure, and a deliberately tiny set of builtins.
+KitchenSink embeds its Haskell implementation, &lt;code&gt;templating-hs&lt;/code&gt;, as a second
+section pre-processor next to &lt;a href="/sections-dhall.html"&gt;Dhall-sections&lt;/a&gt;. A
+&lt;a href="/playground.html"&gt;playground&lt;/a&gt; hosted on this site lets you try the language
+itself, outside of any KitchenSink section.&lt;/p&gt;
+&lt;p&gt;Both backends do the same job and both remain supported. Templating-lang is,
+however, the direction of travel: &lt;code&gt;dhall&lt;/code&gt; and &lt;code&gt;dhall-json&lt;/code&gt; are notoriously
+awkward to build and they have repeatedly held KitchenSink back from moving to
+newer GHC versions, whereas &lt;code&gt;templating-hs&lt;/code&gt; needs nothing beyond &lt;code&gt;megaparsec&lt;/code&gt;
+and &lt;code&gt;aeson&lt;/code&gt;. Expect Dhall-sections to be deprecated eventually; nothing is
+being removed today.&lt;/p&gt;
+&lt;h2 id="two-section-formats"&gt;Two section formats&lt;/h2&gt;
+&lt;p&gt;Where Dhall has one format, templating-lang has two, because the language
+distinguishes producing &lt;em&gt;data&lt;/em&gt; from producing a &lt;em&gt;document&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;.templating&lt;/code&gt; sections are rooted at an expression and evaluate to a JSON
+value. That value is the same &lt;code&gt;{format, contents}&lt;/code&gt; contract Dhall-sections
+answer with, so the section can rewrite itself to &lt;code&gt;json&lt;/code&gt;, &lt;code&gt;cmark&lt;/code&gt; or &lt;code&gt;html&lt;/code&gt;.
+This is the format to reach for as a drop-in replacement for a Dhall section.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;.templating-doc&lt;/code&gt; sections are rooted at an element — &lt;code&gt;.div(...)&lt;/code&gt;, &lt;code&gt;.ul(...)&lt;/code&gt; —
+and evaluate to a document tree, which KitchenSink renders to HTML. There is no
+&lt;code&gt;{format, contents}&lt;/code&gt; envelope here: the result is always HTML.&lt;/p&gt;
+&lt;p&gt;The two roots can never be confused: an element root always starts with &lt;code&gt;.&lt;/code&gt; and
+no expression form does. The format token in the section header nevertheless
+says which mode you meant, so a mistake is a parse error rather than a
+surprise.&lt;/p&gt;
+&lt;h2 id="the-ctx-object"&gt;The &lt;code&gt;$ctx&lt;/code&gt; object&lt;/h2&gt;
+&lt;p&gt;Templating-lang always has the input context in scope as &lt;code&gt;$ctx&lt;/code&gt;. KitchenSink
+fills it with the very same information the &lt;code&gt;kitchensink&lt;/code&gt; object carries in
+Dhall-sections:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;{ file : Text        -- the source file path of this cmark file
+, sectionNum : Integer  -- this section's number in the file, from zero
+, datasets : object  -- dataset cells declared *earlier* in this file
+, vars : object      -- the --var name=value pairs given on the command line
 }
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;rendered in HTML (via CommonMark)&lt;/p&gt;
+&lt;p&gt;So &lt;code&gt;kitchensink.datasets.my-name&lt;/code&gt; becomes &lt;code&gt;$ctx.datasets.my-name&lt;/code&gt;, and
+&lt;code&gt;kitchensink.file&lt;/code&gt; becomes &lt;code&gt;$ctx.file&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Like Dhall-sections, templating sections are &lt;em&gt;pre-processors&lt;/em&gt;: they are
+evaluated once, at load time, and only see datasets declared before them in the
+file. Unlike Dhall, there are no imports — local or networked — so a template
+cannot pull in a shared library of helpers. That is a real gap against Dhall,
+and the reason the two coexist.&lt;/p&gt;
+&lt;/section&gt;&lt;section class="main-section"&gt;&lt;h2 id="examples"&gt;Examples&lt;/h2&gt;
+&lt;p&gt;The rest of this page is its own fixture: every output below is produced by a
+templating section in this very file.&lt;/p&gt;
+&lt;h3 id="a-dataset-to-work-from"&gt;A dataset to work from&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;=base:dataset.json crew
+{&amp;quot;members&amp;quot;: [{&amp;quot;name&amp;quot;: &amp;quot;Alice&amp;quot;, &amp;quot;posts&amp;quot;: 22}
+            ,{&amp;quot;name&amp;quot;: &amp;quot;Bob&amp;quot;, &amp;quot;posts&amp;quot;: 7}
+            ]
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/section&gt;&lt;section class="main-section"&gt;&lt;h3 id="generating-a-dataset"&gt;Generating a dataset&lt;/h3&gt;
+&lt;p&gt;A &lt;code&gt;.templating&lt;/code&gt; section returning &lt;code&gt;format = &amp;quot;json&amp;quot;&lt;/code&gt; in a dataset cell declares a
+&lt;em&gt;new&lt;/em&gt; dataset, visible to every later section — the same way a hand-written
+&lt;code&gt;=base:dataset.json&lt;/code&gt; cell is.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;=base:dataset.templating crew-summary
+@members=$ctx.datasets.crew.members
+@n=cardinality($members)
+{ &amp;quot;format&amp;quot;: &amp;quot;json&amp;quot;
+, &amp;quot;contents&amp;quot;: { &amp;quot;count&amp;quot;: $n
+              , &amp;quot;names&amp;quot;: map($members, (m) =&amp;gt; $m.name)
+              }
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Note that &lt;code&gt;$n&lt;/code&gt; stays a JSON number and &lt;code&gt;names&lt;/code&gt; stays a JSON array: expression
+mode never stringifies its result.&lt;/p&gt;
+&lt;/section&gt;&lt;section class="main-section"&gt;&lt;h3 id="rendering-a-section-in-commonmark"&gt;Rendering a section in CommonMark&lt;/h3&gt;
+&lt;p&gt;Reading back the dataset the previous section generated:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;=base:main-content.templating
+@summary=$ctx.datasets.crew-summary
+{ &amp;quot;format&amp;quot;: &amp;quot;cmark&amp;quot;
+, &amp;quot;contents&amp;quot;: [ &amp;quot;::: output&amp;quot;
+              , &amp;quot;__generated from a templating section__&amp;quot;
+              , &amp;quot;&amp;quot;
+              , &amp;quot;file=`$ctx.file`, section=`$ctx.sectionNum`&amp;quot;
+              , &amp;quot;&amp;quot;
+              , &amp;quot;`$summary.count` crew member(s)&amp;quot;
+              , &amp;quot;:::&amp;quot;
+              ]
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Each element of &lt;code&gt;contents&lt;/code&gt; is one line. &lt;code&gt;format&lt;/code&gt; may also be &lt;code&gt;&amp;quot;html&amp;quot;&lt;/code&gt;, in which
+case the lines are used verbatim, or &lt;code&gt;&amp;quot;json&amp;quot;&lt;/code&gt;, in which case &lt;code&gt;contents&lt;/code&gt; is an
+arbitrary JSON value rather than a list of lines.&lt;/p&gt;
 &lt;/section&gt;&lt;section class="main-section"&gt;&lt;div class="output"&gt;
-&lt;p&gt;&lt;strong&gt;this code block is defined in some Dhall&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;file=
-website-src/sections-dhall.cmark&lt;/p&gt;
-&lt;p&gt;section=
-+9&lt;/p&gt;
-&lt;p&gt;some number from a dataset:
-42&lt;/p&gt;
-&lt;p&gt;some list from a dataset:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;foo
-&lt;/li&gt;
-&lt;li&gt;bar
-&lt;/li&gt;
-&lt;li&gt;baz
-&lt;/li&gt;
-&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;generated from a templating section&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;file=./website-src/sections-templating.cmark, section=12&lt;/p&gt;
+&lt;p&gt;2 crew member(s)&lt;/p&gt;
 &lt;/div&gt;
-&lt;/section&gt;&lt;section class="main-section"&gt;&lt;h2 id="rendering-a-section-in-html"&gt;Rendering a section in HTML&lt;/h2&gt;
-&lt;p&gt;You can return HTML directly-formatted.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;example&lt;/strong&gt;&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;=base:main-content.dhall
+&lt;/section&gt;&lt;section class="main-section"&gt;&lt;h3 id="rendering-a-document-tree"&gt;Rendering a document tree&lt;/h3&gt;
+&lt;p&gt;The same data, but built structurally rather than as CommonMark lines:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;=base:main-content.templating-doc
+@members=$ctx.datasets.crew.members
+.div(class: &amp;quot;output&amp;quot;,
+  .h3(&amp;quot;Crew&amp;quot;),
+  .ul(map($members, (m) =&amp;gt; .li(&amp;quot;`$m.name` wrote `$m.posts` post(s)&amp;quot;))))
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Attributes come first in an element’s argument list, then children;
+&lt;code&gt;map(collection, (item) =&amp;gt; node)&lt;/code&gt; expands to one child per item.&lt;/p&gt;
+&lt;/section&gt;&lt;section class="main-section"&gt;&lt;div class="output"&gt;&lt;h3&gt;Crew&lt;/h3&gt;&lt;ul&gt;&lt;li&gt;Alice wrote 22 post(s)&lt;/li&gt;&lt;li&gt;Bob wrote 7 post(s)&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;
+&lt;/section&gt;&lt;section class="main-section"&gt;&lt;h3 id="wiring-action-to-javascript"&gt;Wiring &lt;code&gt;action(...)&lt;/code&gt; to JavaScript&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;action(eventType, key, payload)&lt;/code&gt; is the language’s interactivity hook. In a
+browser host it binds to a real event handler; in a statically-produced page
+there is no dispatcher to bind to, so KitchenSink writes the &lt;em&gt;evaluated&lt;/em&gt; action
+onto the element as three data attributes and leaves the dispatching to you.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;=base:main-content.templating-doc
+@members=$ctx.datasets.crew.members
+.div(class: &amp;quot;output&amp;quot;,
+  .p(id: &amp;quot;action-log&amp;quot;, &amp;quot;no action yet — click a name&amp;quot;),
+  .ul(map($members, (m) =&amp;gt;
+    .li(.button(action(&amp;quot;on-click&amp;quot;, &amp;quot;select-member&amp;quot;, {&amp;quot;name&amp;quot;: $m.name, &amp;quot;posts&amp;quot;: $m.posts}),
+                $m.name)))))
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Each button comes out carrying its own payload:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;button data-ks-action-event=&amp;quot;on-click&amp;quot;
+        data-ks-action-key=&amp;quot;select-member&amp;quot;
+        data-ks-action-payload=&amp;quot;{&amp;amp;quot;name&amp;amp;quot;:&amp;amp;quot;Alice&amp;amp;quot;,&amp;amp;quot;posts&amp;amp;quot;:22}&amp;quot;
+        &amp;gt;Alice&amp;lt;/button&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The payload is escaped on the way out, as any attribute value is, so
+&lt;code&gt;el.dataset.ksActionPayload&lt;/code&gt; hands back the original JSON text and &lt;code&gt;JSON.parse&lt;/code&gt;
+is all that is needed. Note that &lt;code&gt;posts&lt;/code&gt; is still the number &lt;code&gt;22&lt;/code&gt; there: the
+payload goes through the &lt;em&gt;expression&lt;/em&gt; half of the language, which does not
+stringify, unlike the &lt;code&gt;class&lt;/code&gt; attribute next to it.&lt;/p&gt;
+&lt;/section&gt;&lt;section class="main-section"&gt;&lt;div class="output"&gt;&lt;p id="action-log"&gt;no action yet — click a name&lt;/p&gt;&lt;ul&gt;&lt;li&gt;&lt;button data-ks-action-event="on-click" data-ks-action-key="select-member" data-ks-action-payload="{&amp;quot;name&amp;quot;:&amp;quot;Alice&amp;quot;,&amp;quot;posts&amp;quot;:22}"&gt;Alice&lt;/button&gt;&lt;/li&gt;&lt;li&gt;&lt;button data-ks-action-event="on-click" data-ks-action-key="select-member" data-ks-action-payload="{&amp;quot;name&amp;quot;:&amp;quot;Bob&amp;quot;,&amp;quot;posts&amp;quot;:7}"&gt;Bob&lt;/button&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;
+&lt;/section&gt;&lt;section class="main-section"&gt;&lt;p&gt;A dispatcher is then one query and one &lt;code&gt;switch&lt;/code&gt;: look up elements by
+&lt;code&gt;data-ks-action-event&lt;/code&gt;, and branch on &lt;code&gt;data-ks-action-key&lt;/code&gt; — the key is the
+contract between the template and the page, and an unrecognised one should be
+ignored rather than crash the page.&lt;/p&gt;
+&lt;div class="code code--highlighted"&gt;&lt;div class="sourceCode"&gt;&lt;pre class="sourceCode"&gt;&lt;code class="sourceCode"&gt;&lt;span id="1"&gt;&lt;a href="#1" aria-hidden="true" tabindex="-1"&gt;&lt;/a&gt;(&lt;span class="kw"&gt;function&lt;/span&gt; () {&lt;/span&gt;
+&lt;span id="2"&gt;&lt;a href="#2" aria-hidden="true" tabindex="-1"&gt;&lt;/a&gt;  &lt;span class="kw"&gt;function&lt;/span&gt; &lt;span class="fu"&gt;dispatch&lt;/span&gt;(key&lt;span class="op"&gt;,&lt;/span&gt; payload) {&lt;/span&gt;
+&lt;span id="3"&gt;&lt;a href="#3" aria-hidden="true" tabindex="-1"&gt;&lt;/a&gt;    &lt;span class="kw"&gt;var&lt;/span&gt; log &lt;span class="op"&gt;=&lt;/span&gt; &lt;span class="bu"&gt;document&lt;/span&gt;&lt;span class="op"&gt;.&lt;/span&gt;&lt;span class="fu"&gt;getElementById&lt;/span&gt;(&lt;span class="st"&gt;&amp;#39;action-log&amp;#39;&lt;/span&gt;)&lt;span class="op"&gt;;&lt;/span&gt;&lt;/span&gt;
+&lt;span id="4"&gt;&lt;a href="#4" aria-hidden="true" tabindex="-1"&gt;&lt;/a&gt;    &lt;span class="cf"&gt;switch&lt;/span&gt; (key) {&lt;/span&gt;
+&lt;span id="5"&gt;&lt;a href="#5" aria-hidden="true" tabindex="-1"&gt;&lt;/a&gt;      &lt;span class="cf"&gt;case&lt;/span&gt; &lt;span class="st"&gt;&amp;#39;select-member&amp;#39;&lt;/span&gt;&lt;span class="op"&gt;:&lt;/span&gt;&lt;/span&gt;
+&lt;span id="6"&gt;&lt;a href="#6" aria-hidden="true" tabindex="-1"&gt;&lt;/a&gt;        log&lt;span class="op"&gt;.&lt;/span&gt;&lt;span class="at"&gt;textContent&lt;/span&gt; &lt;span class="op"&gt;=&lt;/span&gt; payload&lt;span class="op"&gt;.&lt;/span&gt;&lt;span class="at"&gt;name&lt;/span&gt; &lt;span class="op"&gt;+&lt;/span&gt; &lt;span class="st"&gt;&amp;#39; wrote &amp;#39;&lt;/span&gt; &lt;span class="op"&gt;+&lt;/span&gt; payload&lt;span class="op"&gt;.&lt;/span&gt;&lt;span class="at"&gt;posts&lt;/span&gt; &lt;span class="op"&gt;+&lt;/span&gt; &lt;span class="st"&gt;&amp;#39; post(s)&amp;#39;&lt;/span&gt;&lt;span class="op"&gt;;&lt;/span&gt;&lt;/span&gt;
+&lt;span id="7"&gt;&lt;a href="#7" aria-hidden="true" tabindex="-1"&gt;&lt;/a&gt;        &lt;span class="cf"&gt;break&lt;/span&gt;&lt;span class="op"&gt;;&lt;/span&gt;&lt;/span&gt;
+&lt;span id="8"&gt;&lt;a href="#8" aria-hidden="true" tabindex="-1"&gt;&lt;/a&gt;      &lt;span class="cf"&gt;default&lt;/span&gt;&lt;span class="op"&gt;:&lt;/span&gt;&lt;/span&gt;
+&lt;span id="9"&gt;&lt;a href="#9" aria-hidden="true" tabindex="-1"&gt;&lt;/a&gt;        log&lt;span class="op"&gt;.&lt;/span&gt;&lt;span class="at"&gt;textContent&lt;/span&gt; &lt;span class="op"&gt;=&lt;/span&gt; &lt;span class="st"&gt;&amp;#39;unhandled action: &amp;#39;&lt;/span&gt; &lt;span class="op"&gt;+&lt;/span&gt; key&lt;span class="op"&gt;;&lt;/span&gt;&lt;/span&gt;
+&lt;span id="10"&gt;&lt;a href="#10" aria-hidden="true" tabindex="-1"&gt;&lt;/a&gt;    }&lt;/span&gt;
+&lt;span id="11"&gt;&lt;a href="#11" aria-hidden="true" tabindex="-1"&gt;&lt;/a&gt;  }&lt;/span&gt;
+&lt;span id="12"&gt;&lt;a href="#12" aria-hidden="true" tabindex="-1"&gt;&lt;/a&gt;&lt;/span&gt;
+&lt;span id="13"&gt;&lt;a href="#13" aria-hidden="true" tabindex="-1"&gt;&lt;/a&gt;  &lt;span class="bu"&gt;document&lt;/span&gt;&lt;span class="op"&gt;.&lt;/span&gt;&lt;span class="fu"&gt;querySelectorAll&lt;/span&gt;(&lt;span class="st"&gt;&amp;#39;[data-ks-action-event=&amp;quot;on-click&amp;quot;]&amp;#39;&lt;/span&gt;)&lt;span class="op"&gt;.&lt;/span&gt;&lt;span class="fu"&gt;forEach&lt;/span&gt;(&lt;span class="kw"&gt;function&lt;/span&gt; (el) {&lt;/span&gt;
+&lt;span id="14"&gt;&lt;a href="#14" aria-hidden="true" tabindex="-1"&gt;&lt;/a&gt;    el&lt;span class="op"&gt;.&lt;/span&gt;&lt;span class="fu"&gt;addEventListener&lt;/span&gt;(&lt;span class="st"&gt;&amp;#39;click&amp;#39;&lt;/span&gt;&lt;span class="op"&gt;,&lt;/span&gt; &lt;span class="kw"&gt;function&lt;/span&gt; () {&lt;/span&gt;
+&lt;span id="15"&gt;&lt;a href="#15" aria-hidden="true" tabindex="-1"&gt;&lt;/a&gt;      &lt;span class="fu"&gt;dispatch&lt;/span&gt;(el&lt;span class="op"&gt;.&lt;/span&gt;&lt;span class="at"&gt;dataset&lt;/span&gt;&lt;span class="op"&gt;.&lt;/span&gt;&lt;span class="at"&gt;ksActionKey&lt;/span&gt;&lt;span class="op"&gt;,&lt;/span&gt; &lt;span class="bu"&gt;JSON&lt;/span&gt;&lt;span class="op"&gt;.&lt;/span&gt;&lt;span class="fu"&gt;parse&lt;/span&gt;(el&lt;span class="op"&gt;.&lt;/span&gt;&lt;span class="at"&gt;dataset&lt;/span&gt;&lt;span class="op"&gt;.&lt;/span&gt;&lt;span class="at"&gt;ksActionPayload&lt;/span&gt;))&lt;span class="op"&gt;;&lt;/span&gt;&lt;/span&gt;
+&lt;span id="16"&gt;&lt;a href="#16" aria-hidden="true" tabindex="-1"&gt;&lt;/a&gt;    })&lt;span class="op"&gt;;&lt;/span&gt;&lt;/span&gt;
+&lt;span id="17"&gt;&lt;a href="#17" aria-hidden="true" tabindex="-1"&gt;&lt;/a&gt;  })&lt;span class="op"&gt;;&lt;/span&gt;&lt;/span&gt;
+&lt;span id="18"&gt;&lt;a href="#18" aria-hidden="true" tabindex="-1"&gt;&lt;/a&gt;})()&lt;span class="op"&gt;;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;&lt;p&gt;That snippet is live on this page: the buttons above are wired by it, in a plain
+&lt;code&gt;&amp;lt;script&amp;gt;&lt;/code&gt; block in a &lt;code&gt;=base:main-content.cmark&lt;/code&gt; section. A real page would
+rather serve it as a &lt;code&gt;.js&lt;/code&gt; file next to the article and reference it with
+&lt;code&gt;&amp;lt;script src&amp;gt;&lt;/code&gt;; inline here only so that one file shows the whole loop.&lt;/p&gt;
+&lt;p&gt;Neither the event type nor the key is a fixed vocabulary: the language requires
+both to evaluate to a string and passes them through untouched, so
+&lt;code&gt;action(&amp;quot;on-hover&amp;quot;, …)&lt;/code&gt; or a computed &lt;code&gt;action($ctx.eventName, …)&lt;/code&gt; reach the page
+just as well. That makes the two attributes a pair of dispatch dimensions —
+which browser event to bind, and what to do when it fires — and both are yours
+to define. The selector above happens to bind clicks only.&lt;/p&gt;
+&lt;script&gt;
+(function () {
+  function dispatch(key, payload) {
+    var log = document.getElementById('action-log');
+    switch (key) {
+      case 'select-member':
+        log.textContent = payload.name + ' wrote ' + payload.posts + ' post(s)';
+        break;
+      default:
+        log.textContent = 'unhandled action: ' + key;
+    }
+  }
 
-{ contents = [&amp;quot;__generated from dhall__&amp;quot;, &amp;quot;\n&amp;quot;, kitchensink.file ], format = &amp;quot;html&amp;quot; }
+  document.querySelectorAll('[data-ks-action-event="on-click"]').forEach(function (el) {
+    el.addEventListener('click', function () {
+      dispatch(el.dataset.ksActionKey, JSON.parse(el.dataset.ksActionPayload));
+    });
+  });
+})();
+&lt;/script&gt;
+&lt;/section&gt;&lt;section class="main-section"&gt;&lt;h3 id="using-partial-templates"&gt;Using partial templates&lt;/h3&gt;
+&lt;p&gt;Templating-lang support partial templates and KitchenSink exposes them using a specific section close to datasets.&lt;/p&gt;
+&lt;p&gt;The &lt;code&gt;icon&lt;/code&gt; tag next to &lt;code&gt;library.templating-lib&lt;/code&gt; correspond to the name given to
+the library in further imports.&lt;/p&gt;
+&lt;p&gt;The context passed to imported libraries is entirely determined by the caller, KitchenSink does not add all the fancy datasets, they have to be passed from the call site.&lt;/p&gt;
+&lt;p&gt;A limitation today is that import must refer to a library defined above the
+evaluated section. In future release we will support libraries defined in other files.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;=base:library.templating-lib icon
+.span(class: &amp;quot;icon&amp;quot;,
+  .a(href: $ctx.href,
+     title: $ctx.title,
+    .img(height:16, width:16, src:$ctx.src)
+))
 &lt;/code&gt;&lt;/pre&gt;
-&lt;/section&gt;&lt;section class="main-section"&gt;&lt;h2 id="rendering-json-sections"&gt;Rendering JSON-sections&lt;/h2&gt;
-&lt;p&gt;Dhall can substitute itself to JSON objects as well.
-Jut replace a &lt;code&gt;.json&lt;/code&gt; with &lt;code&gt;.dhall&lt;/code&gt; and KitchenSink will interpret a Dhall expression to fill-in the JSON.&lt;/p&gt;
-&lt;p&gt;A few use cases are envisioned:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;generating a &lt;em&gt;commands&lt;/em&gt; from Dhall expressions
-&lt;/li&gt;
-&lt;li&gt;generating a command requiring the filename
-&lt;/li&gt;
-&lt;li&gt;avoiding redundant information like social infos using Dhall’s support for remote includes
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;strong&gt;example 1&lt;/strong&gt;&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;=generator:cmd.dhall
-let
-  ping = { cmd = &amp;quot;ping&amp;quot;
-         , args = [&amp;quot;-c&amp;quot;, &amp;quot;3&amp;quot;, &amp;quot;8.8.4.4&amp;quot;]
-         , target = &amp;quot;latency&amp;quot;
-         }
-in
-{ contents = ping
-, format = &amp;quot;json&amp;quot;
-}
+&lt;p&gt;We can then import this &lt;code&gt;icon&lt;/code&gt; template and apply it.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;=base:main-content.templating-doc
+@icon=partial-import(&amp;quot;icon&amp;quot;,{&amp;quot;href&amp;quot;:&amp;quot;&amp;quot;, &amp;quot;title&amp;quot;: &amp;quot;demo-templated-icon&amp;quot;})
+@icon1=$icon({&amp;quot;src&amp;quot;: &amp;quot;/images/favicon.png&amp;quot;})
+@icon2=$icon({&amp;quot;src&amp;quot;: &amp;quot;/images/features-001-targetsizes-timeseries.png&amp;quot;})
+@icon3=$icon({&amp;quot;src&amp;quot;: &amp;quot;/images/features-002-dot-demo.dot.png&amp;quot;})
+.div(class: &amp;quot;output&amp;quot;,
+  .p(&amp;quot;Below are multiple &amp;quot;, .em(&amp;quot;icons&amp;quot;), &amp;quot;.&amp;quot;),
+  $icon1.rendered,
+  $icon2.rendered,
+  $icon3.rendered
+)
 &lt;/code&gt;&lt;/pre&gt;
-&lt;/section&gt;&lt;section class="main-section"&gt;&lt;p&gt;&lt;strong&gt;example 2&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;This section is handy to show the content in this file. Note that I use
-&lt;code&gt;kitchensink.file&lt;/code&gt; to get the path name.&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;=generator:cmd.dhall
-let
-  cmd = { cmd = &amp;quot;cat&amp;quot;
-        , args = [kitchensink.file]
-        , target = &amp;quot;cat-this-file&amp;quot;
-        }
-in
-{ contents = cmd
-, format = &amp;quot;json&amp;quot;
-}
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;a href="/gen/out/sections-dhall.cmark__cat-this-file"&gt;once the generated section is evaluated&lt;/a&gt;&lt;/p&gt;
-&lt;/section&gt;&lt;section class="main-section"&gt;&lt;p&gt;&lt;strong&gt;example 3&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;You could write the content in &lt;code&gt;./social.dhall&lt;/code&gt; once and import the content.&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;=base:social.dhall
-{ contents = ./social.dhall
-, format = &amp;quot;json&amp;quot;
-}
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/section&gt;&lt;section class="main-section"&gt;&lt;p&gt;&lt;strong&gt;example 4&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;You can also generate JSON datasets if for some reason writing them in JSON is
-not immediate enough .&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;=base:dataset.dhall alice-bob
-{ contents =
-    [ {name = &amp;quot;Alice&amp;quot;, posts = 22.0}
-    , {name = &amp;quot;Bob&amp;quot;, posts = 7.0}
-    ]
-, format = &amp;quot;json&amp;quot;
-}
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;a href="/raw/data/sections-dhall.cmark__1.json"&gt;rendered&lt;/a&gt;&lt;/p&gt;
-&lt;/section&gt;&lt;section class="main-section"&gt;&lt;h1 id="implementation-notes"&gt;Implementation notes&lt;/h1&gt;
-&lt;p&gt;The following notes are more useful for myself and for people curious about modifying or contributing to KitchenSink.&lt;/p&gt;
-&lt;h2 id="present"&gt;present&lt;/h2&gt;
-&lt;h3 id="the-evaluation-chain"&gt;The evaluation chain&lt;/h3&gt;
-&lt;p&gt;Today SiteLoader traverses all sections (i.e., after mapping Article Sections
-to Article Sections). Upon encountering a &lt;code&gt;.dhall&lt;/code&gt; section, SiteLoader
-evaluates the content as a Dhall expression returning some well-known format.&lt;/p&gt;
-&lt;p&gt;Further, datasets encountered during this phase are collected in a &lt;code&gt;datasets&lt;/code&gt;
-object. Previous datasets are passed to Dhall sections. Thus Dhall can
-templatize an in-line dataset.&lt;/p&gt;
-&lt;p&gt;Thus, unlike &lt;code&gt;generators&lt;/code&gt;, Dhall sections are pre-processors. They are
-evaluated once.  When operating Kitchen-Sink as a static-site generator there
-is no much difference, however if you operate Kitchen-Sink as a live-website,
-then you cannot use Dhall as a generator-on-steroids.&lt;/p&gt;
-&lt;h3 id="the-kitchensink-object"&gt;The &lt;code&gt;kitchensink&lt;/code&gt; object&lt;/h3&gt;
-&lt;p&gt;Evaluated Dhall expressions carry information provided by
-KitchenSink. This information is bound to the &lt;code&gt;kitchensink&lt;/code&gt;
-Dhall value and has the following structure:&lt;/p&gt;
-&lt;pre&gt;&lt;code class="language-dhall"&gt;{ file : Text -- contains the source file path for the cmark
-, sectionNum : Integer -- contains the section number of this file (starting from zero)
-, datasets : &amp;lt;data-dependant&amp;gt; -- contains a record&amp;lt;dataset-name, (json-value-to-dhall|text-value)&amp;gt; or an error message if it failed to load
-, vars : &amp;lt;data-dependant&amp;gt; -- contains a record&amp;lt;key, value: Text&amp;gt; depending on the --var foo=bar command line arguments
-}
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Note that missing data-dependant bindings will prevent the site from loading,
-so be sure to not rely too much on these values.&lt;/p&gt;
-&lt;h2 id="future-work"&gt;future work&lt;/h2&gt;
-&lt;ul&gt;
-&lt;li&gt;carry-over more context from previous sections
-&lt;/li&gt;
-&lt;li&gt;allow appending new sections (i.e., preprocess articles over sections)?
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/section&gt;&lt;/div&gt;</content><link href="https://kitchensink-tech.github.io/sections-dhall.html" rel="alternate"/><summary type="text">Documenting the special feature of Dhall-sections.</summary></entry><entry><id>https://kitchensink-tech.github.io/sections.html</id><title type="text">The section-based format</title><updated>1970-01-01T00:00:00Z</updated><author><name>Lucas DiCioccio</name></author><content type="html">&lt;div class="main-article"&gt;&lt;section class="main-section"&gt;&lt;p&gt;In my &lt;a href="https://dicioccio.fr/how-this-blog-works.html"&gt;first article about why I wrote my own
+&lt;/section&gt;&lt;section class="main-section"&gt;&lt;div class="output"&gt;&lt;p&gt;Below are multiple &lt;em&gt;icons&lt;/em&gt;.&lt;/p&gt;&lt;span class="icon"&gt;&lt;a href title="demo-templated-icon"&gt;&lt;img height="16" src="/images/favicon.png" width="16"&gt;&lt;/a&gt;&lt;/span&gt;&lt;span class="icon"&gt;&lt;a href title="demo-templated-icon"&gt;&lt;img height="16" src="/images/features-001-targetsizes-timeseries.png" width="16"&gt;&lt;/a&gt;&lt;/span&gt;&lt;span class="icon"&gt;&lt;a href title="demo-templated-icon"&gt;&lt;img height="16" src="/gen/images/features-002-dot-demo.dot.png" width="16"&gt;&lt;/a&gt;&lt;/span&gt;&lt;/div&gt;
+&lt;/section&gt;&lt;section class="main-section"&gt;&lt;h2 id="notes-and-limitations"&gt;Notes and limitations&lt;/h2&gt;
+&lt;p&gt;Text interpolation goes through the language’s display rules: a string
+interpolates raw, an integral number drops its &lt;code&gt;.0&lt;/code&gt;, and anything else falls
+back to a compact JSON encoding. In &lt;code&gt;.templating-doc&lt;/code&gt; mode attribute values are
+display strings too — that mode produces a document, not data — which is
+exactly why expression mode exists for JSON payloads.&lt;/p&gt;
+&lt;p&gt;String literals have no escape sequences: a &lt;code&gt;&amp;quot;&lt;/code&gt; or a backtick simply cannot
+appear inside one, since the backtick is the interpolation delimiter. So a
+template can emit a &lt;code&gt;&amp;lt;script&amp;gt;&lt;/code&gt; or an HTML attribute containing quotes only
+awkwardly — prefer single quotes in generated JavaScript, or keep such content
+out of the template entirely, as the section above does.&lt;/p&gt;
+&lt;p&gt;Attribute names are validated before rendering: the language permits keys the
+DOM rejects, and those are reported as an error rather than written out as
+malformed markup.&lt;/p&gt;
+&lt;p&gt;The JSON (expression-rooted) mode exists only in &lt;code&gt;templating-hs&lt;/code&gt;, not in the
+PureScript implementation of the language, so templates using it are not
+portable to a browser host.&lt;/p&gt;
+&lt;/section&gt;&lt;/div&gt;</content><link href="https://kitchensink-tech.github.io/sections-templating.html" rel="alternate"/><summary type="text">Pre-processing sections with templating-lang, the lighter-weight alternative to Dhall-sections.</summary></entry><entry><id>https://kitchensink-tech.github.io/sections.html</id><title type="text">The section-based format</title><updated>1970-01-01T00:00:00Z</updated><author><name>Lucas DiCioccio</name></author><content type="html">&lt;div class="main-article"&gt;&lt;section class="main-section"&gt;&lt;p&gt;In my &lt;a href="https://dicioccio.fr/how-this-blog-works.html"&gt;first article about why I wrote my own
 blog-engine&lt;/a&gt;, I
 introduce an important separation between content and structure of articles. In
 short, the &lt;em&gt;meaty content&lt;/em&gt; is what readers are interested in, whereas structure
@@ -191,7 +239,7 @@ arises the need to separate big blocks of texts (markdown/commonmark) from
 structural information (json, CSS).  Here comes the section-based format: an
 article file consists of multiple sections separated with special line
 separators.&lt;/p&gt;
-&lt;h1 id="section-based-files"&gt;Section-based files&lt;/h1&gt;
+&lt;h2 id="section-based-files"&gt;Section-based files&lt;/h2&gt;
 &lt;p&gt;A Section starts with a &lt;code&gt;=&lt;/code&gt; followed by a section name (e.g.,
 &lt;code&gt;base:main-css.css&lt;/code&gt;) and ends with an empty line followed by another section
 (or the end of the file).&lt;/p&gt;
@@ -221,7 +269,7 @@ You’ll find plenty of section-based format examples by browsing the
 website&lt;/a&gt;,
 KitchenSink names section-based format with the &lt;code&gt;.cmark&lt;/code&gt; extension for
 convenience (because the meaty-content is written in CommonMark).&lt;/p&gt;
-&lt;h1 id="supported-sections"&gt;Supported sections&lt;/h1&gt;
+&lt;h2 id="supported-sections"&gt;Supported sections&lt;/h2&gt;
 &lt;p&gt;Recall that KitchenSink is both a library and an engine. We describe here
 sections when using KitchenSink without tuning. While using KitchenSink as a
 library, it should be easy enough to add new sections or new layouts or modify
@@ -230,7 +278,7 @@ subtly how Kitchen-Sink interprets some section data.&lt;/p&gt;
 engine works. It is not the case that this documentation is prescriptive (i.e.,
 you are free to modify any behavior – just avoid confusing your users that may
 end up reading this piece of documentation).&lt;/p&gt;
-&lt;h2 id="build-info-mandatory"&gt;build-info [mandatory]&lt;/h2&gt;
+&lt;h3 id="build-info-mandatory"&gt;build-info [mandatory]&lt;/h3&gt;
 &lt;div class="section-details"&gt;
 &lt;p&gt;An important section to let Kitchen-Sink know which &lt;strong&gt;layout&lt;/strong&gt; to apply.  Known
 layouts are &lt;code&gt;article&lt;/code&gt;, &lt;code&gt;index&lt;/code&gt; (for &lt;code&gt;index.cmark&lt;/code&gt;), &lt;code&gt;glossary&lt;/code&gt; (for
@@ -250,7 +298,7 @@ summary. A warning is also inserted on Upcoming and Archived articles.&lt;/p&gt;
 }
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
-&lt;h2 id="preamble-mandatory"&gt;preamble [mandatory]&lt;/h2&gt;
+&lt;h3 id="preamble-mandatory"&gt;preamble [mandatory]&lt;/h3&gt;
 &lt;div class="section-details"&gt;
 &lt;p&gt;Contains bibliographical information such as the title and author of the
 article. Optionally, you can add some link to a representative image.&lt;/p&gt;
@@ -265,7 +313,7 @@ using the &lt;code&gt;faviconUrl&lt;/code&gt; JSON key.&lt;/p&gt;
 }
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
-&lt;h2 id="summary-recommended"&gt;summary [recommended]&lt;/h2&gt;
+&lt;h3 id="summary-recommended"&gt;summary [recommended]&lt;/h3&gt;
 &lt;div class="section-details"&gt;
 &lt;p&gt;Some commonmark to generate a short summary about the article.&lt;/p&gt;
 &lt;p&gt;The summary is displayed in article listings but also in OpenGraph
@@ -279,7 +327,7 @@ too much (i.e., stick to emphasis, inlined code, and bold).&lt;/p&gt;
 A small article about _something_ interesting.
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
-&lt;h2 id="topics-recommended"&gt;topics [recommended]&lt;/h2&gt;
+&lt;h3 id="topics-recommended"&gt;topics [recommended]&lt;/h3&gt;
 &lt;div class="section-details"&gt;
 &lt;p&gt;Meta-information for contextualizing the article content.&lt;/p&gt;
 &lt;p&gt;The representative image is displayed in article listings but also in OpenGraph
@@ -298,7 +346,7 @@ and Twitter summaries when people share links on various media.&lt;/p&gt;
 }
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
-&lt;h2 id="social-recommended"&gt;social [recommended]&lt;/h2&gt;
+&lt;h3 id="social-recommended"&gt;social [recommended]&lt;/h3&gt;
 &lt;div class="section-details"&gt;
 &lt;p&gt;Listing of social-profiles on various sites, will drive the inclusion of links
 and some Twitter meta headers.&lt;/p&gt;
@@ -310,7 +358,7 @@ and some Twitter meta headers.&lt;/p&gt;
 }
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
-&lt;h2 id="main-content"&gt;main content&lt;/h2&gt;
+&lt;h3 id="main-content"&gt;main content&lt;/h3&gt;
 &lt;div class="section-details"&gt;
 &lt;p&gt;Well, sometimes you have good reason to not have some content. But these
 sections are where you should be spending most of your effort.&lt;/p&gt;
@@ -322,7 +370,54 @@ This fact is important when you are tuning the CSS of your articles (e.g., using
 some commonmark
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
-&lt;h2 id="taken-off-cmark-good-to-know"&gt;taken-off cmark [good-to-know]&lt;/h2&gt;
+&lt;h3 id="callout-good-to-know"&gt;callout [good-to-know]&lt;/h3&gt;
+&lt;div class="section-details"&gt;
+&lt;p&gt;An inline admonition/callout box (note, tip, warning, important/danger, or
+any other free-form &lt;code&gt;kind&lt;/code&gt; string, which falls back to a default style).
+&lt;code&gt;callout&lt;/code&gt; sections are rendered in the same position, relative to
+&lt;code&gt;main-content&lt;/code&gt; sections, as they appear in the source file — so you can
+interleave prose and admonitions freely by writing several &lt;code&gt;main-content&lt;/code&gt;
+and &lt;code&gt;callout&lt;/code&gt; sections one after another.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;title&lt;/code&gt; is optional and defaults to a capitalized version of &lt;code&gt;kind&lt;/code&gt;. &lt;code&gt;body&lt;/code&gt;
+is plain text (no markdown rendering, for now).&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;example&lt;/strong&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;=base:callout.json
+{&amp;quot;kind&amp;quot;: &amp;quot;warning&amp;quot;
+,&amp;quot;title&amp;quot;: &amp;quot;Heads up&amp;quot;
+,&amp;quot;body&amp;quot;: &amp;quot;This behavior may change in a future release.&amp;quot;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;h3 id="faq-good-to-know"&gt;faq [good-to-know]&lt;/h3&gt;
+&lt;div class="section-details"&gt;
+&lt;p&gt;A list of question/answer pairs, rendered as an accordion (&lt;code&gt;&amp;lt;details&amp;gt;&lt;/code&gt;
+elements, no JavaScript needed). Like &lt;code&gt;callout&lt;/code&gt;, &lt;code&gt;faq&lt;/code&gt; sections render in
+file order relative to &lt;code&gt;main-content&lt;/code&gt; and &lt;code&gt;callout&lt;/code&gt; sections, and you can
+have several of them in one article.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;example&lt;/strong&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;=base:faq.json
+{&amp;quot;items&amp;quot;:
+  [ {&amp;quot;question&amp;quot;: &amp;quot;Is this a FAQ?&amp;quot;, &amp;quot;answer&amp;quot;: &amp;quot;Yes.&amp;quot;}
+  ]
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;h3 id="pricing-good-to-know"&gt;pricing [good-to-know]&lt;/h3&gt;
+&lt;div class="section-details"&gt;
+&lt;p&gt;A comparison table: one column per plan, one row per feature. Each plan’s
+&lt;code&gt;values&lt;/code&gt; line up positionally with &lt;code&gt;pricingFeatures&lt;/code&gt;; mismatched lengths
+degrade to a ragged table rather than erroring.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;example&lt;/strong&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;=base:pricing.json
+{&amp;quot;pricingFeatures&amp;quot;: [&amp;quot;Sites&amp;quot;, &amp;quot;Support&amp;quot;]
+,&amp;quot;pricingPlans&amp;quot;:
+  [ {&amp;quot;name&amp;quot;: &amp;quot;Free&amp;quot;, &amp;quot;price&amp;quot;: &amp;quot;$0&amp;quot;, &amp;quot;values&amp;quot;: [&amp;quot;1&amp;quot;, &amp;quot;Community&amp;quot;]}
+  , {&amp;quot;name&amp;quot;: &amp;quot;Pro&amp;quot;, &amp;quot;price&amp;quot;: &amp;quot;$9/mo&amp;quot;, &amp;quot;values&amp;quot;: [&amp;quot;10&amp;quot;, &amp;quot;Priority&amp;quot;]}
+  ]
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;h3 id="taken-off-cmark-good-to-know"&gt;taken-off cmark [good-to-know]&lt;/h3&gt;
 &lt;div class="section-details"&gt;
 &lt;p&gt;Sometimes you really are taking notes along the way and you want to leave out
 some paragraph out of the generated output. For instance you wrote some
@@ -334,7 +429,7 @@ paragraph but realized it’s better to keep it around for future articles only.
 some content that will not show up in the article
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
-&lt;h2 id="css-recommended"&gt;CSS [recommended]&lt;/h2&gt;
+&lt;h3 id="css-recommended"&gt;CSS [recommended]&lt;/h3&gt;
 &lt;div class="section-details"&gt;
 &lt;p&gt;Some CSS block that is inlined in the HTML header. Includes are supported via
 the &lt;code&gt;@import&lt;/code&gt; CSS directive (note KitchenSink doesn’t interpret the CSS, it
@@ -352,7 +447,7 @@ h1 {
 }
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
-&lt;h2 id="commands-advanced"&gt;commands [advanced]&lt;/h2&gt;
+&lt;h3 id="commands-advanced"&gt;commands [advanced]&lt;/h3&gt;
 &lt;div class="section-details"&gt;
 &lt;p&gt;Sometimes you want to build content from an external command.  For instance,
 you could snapshot the agenda of your favorite music band each time you
@@ -417,7 +512,7 @@ At this point I assume that KitchenSink users are tech-savvy geeks.&lt;/p&gt;
 }
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
-&lt;/section&gt;&lt;section class="main-section"&gt;&lt;h2 id="dhall-advanced"&gt;dhall [advanced]&lt;/h2&gt;
+&lt;/section&gt;&lt;section class="main-section"&gt;&lt;h3 id="dhall-advanced"&gt;dhall [advanced]&lt;/h3&gt;
 &lt;div class="section-details"&gt;
 &lt;p&gt;There is one difficult design point when statically-generating website is when
 we have datasets of repeated structure (e.g., an image list with title, date,
@@ -435,6 +530,11 @@ content.&lt;/p&gt;
 appropriate format. The return type is currently rather primitive and will
 likely change in the future. Changes and specifications are tracked in a
 &lt;a href="/sections-dhall.html"&gt;WIP-page&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;The same &lt;code&gt;{format, contents}&lt;/code&gt; contract is also answered by &lt;code&gt;templating&lt;/code&gt;
+sections, which pre-process sections with
+&lt;a href="/sections-templating.html"&gt;templating-lang&lt;/a&gt; rather than Dhall. Both backends
+are supported; templating-lang is the lighter-weight one and the one likely to
+outlive the other, since &lt;code&gt;dhall-json&lt;/code&gt; is a recurring obstacle to upgrading GHC.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;example&lt;/strong&gt;&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;=base:main-content.dhall
 
@@ -459,7 +559,7 @@ in
 }
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
-&lt;h2 id="glossary-experimental"&gt;glossary [experimental]&lt;/h2&gt;
+&lt;h3 id="glossary-experimental"&gt;glossary [experimental]&lt;/h3&gt;
 &lt;div class="section-details"&gt;
 &lt;p&gt;Whether its a TLA or some other term, you sometimes want to introduce glossary
 terms. KitchenSink has some support for glossary in the form of parsing a
@@ -481,7 +581,7 @@ sitemap.&lt;/p&gt;
 }
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
-&lt;h2 id="embedded-datasets-experimental"&gt;embedded datasets [experimental]&lt;/h2&gt;
+&lt;h3 id="embedded-datasets-experimental"&gt;embedded datasets [experimental]&lt;/h3&gt;
 &lt;div class="section-details"&gt;
 &lt;p&gt;Sometimes you want to ship a dataset. An option is to create one file in the
 Kitchen-Sink directory. However you may not want to multiply files.  Rather,
@@ -514,7 +614,7 @@ b;51
 ]
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
-&lt;/section&gt;&lt;section class="main-section"&gt;&lt;h2 id="mustache-templates-experimental"&gt;Mustache templates [experimental]&lt;/h2&gt;
+&lt;/section&gt;&lt;section class="main-section"&gt;&lt;h3 id="mustache-templates-experimental"&gt;Mustache templates [experimental]&lt;/h3&gt;
 &lt;div class="section-details"&gt;
 &lt;p&gt;A well-known templating language for substituting a few variables in text
 objects is the &lt;a href="http://mustache.github.io/mustache.5.html"&gt;Mustache&lt;/a&gt; template language.&lt;/p&gt;
@@ -546,7 +646,7 @@ fully-form ideas about the details. In particular, I have some PHP-envy to turn 
 {{/ users }}
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
-&lt;/section&gt;&lt;section class="main-section"&gt;&lt;h3 id="hello-from-a-mustache-template"&gt;hello from a Mustache template&lt;/h3&gt;
+&lt;/section&gt;&lt;section class="main-section"&gt;&lt;h4 id="hello-from-a-mustache-template"&gt;hello from a Mustache template&lt;/h4&gt;
 &lt;ul&gt;
 &lt;li&gt;Albert : &lt;span style="color: darksalmon"&gt;Preferred Color&lt;/span&gt;
 &lt;/li&gt;
@@ -554,4 +654,230 @@ fully-form ideas about the details. In particular, I have some PHP-envy to turn 
 &lt;/li&gt;
 &lt;/ul&gt;
 &lt;/section&gt;&lt;section class="main-section"&gt;&lt;hr /&gt;
-&lt;/section&gt;&lt;/div&gt;</content><link href="https://kitchensink-tech.github.io/sections.html" rel="alternate"/><summary type="text">Writing articles in KitchenSink requires to write text files with a specific format called the section-based authoring format. A section-based format consists of delimited sections of text. Sections either configure the page (e.g., the tile of the page) or provide _meaty content_ for readers to read.  This article describes the section-based format and sections available to write articles.</summary></entry></feed>
+&lt;/section&gt;&lt;/div&gt;</content><link href="https://kitchensink-tech.github.io/sections.html" rel="alternate"/><summary type="text">Writing articles in KitchenSink requires to write text files with a specific format called the section-based authoring format. A section-based format consists of delimited sections of text. Sections either configure the page (e.g., the tile of the page) or provide _meaty content_ for readers to read.  This article describes the section-based format and sections available to write articles.</summary></entry><entry><id>https://kitchensink-tech.github.io/sections-dhall.html</id><title type="text">Dhall support in depth</title><updated>1970-01-01T00:00:00Z</updated><author><name>Lucas DiCioccio</name></author><content type="html">&lt;div class="main-article"&gt;&lt;section class="main-section"&gt;&lt;p&gt;The &lt;a href="https://dhall-lang.org/"&gt;Dhall&lt;/a&gt; support in KitchenSink provides a template
+engine unlike many static-site generators. In typical static-site generators,
+the template language serves two purposes: dictating the structure of the HTML
+files, and generating repetitive content of HTML files like for data tables. In
+KitchenSink, &lt;a href="/layouts.html"&gt;Layouts&lt;/a&gt; dictate the HTML structure and are hard
+to change. Dhall provides a pre-processor to apply some template on repetititve
+contents to render &lt;a href="/sections.html"&gt;Sections&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id="dhall-as-a-pre-processor"&gt;Dhall as a pre-processor&lt;/h2&gt;
+&lt;p&gt;Why Dhall rather than other languages? The short answer is that Dhall hits a
+sweet spot for pre-processing sections in static-blog generators. Dhall is at a
+same time: deterministic, easy to embed in Kitchen-Sink, and expressive.  Let’s
+develop these points.&lt;/p&gt;
+&lt;p&gt;First, Dhall is a deterministic language. A major benefit here is that Dhall is
+simple on a conceptual level: you can substitute a Dhall expression with its
+result and it will work as expected. Further, being deterministic, Dhall
+disallows user-defined side-effects. Albeit a constraint for people writing
+Dhall code, such determinism comes handy to write a pre-processor: a
+pre-processor turns &lt;code&gt;Sections&lt;/code&gt; into &lt;code&gt;Sections&lt;/code&gt;, since the pre-processor does
+not do more, for instance, by having no extra side-effects to track. We do not
+freeze KitchenSink development into a bad-architecture as the &lt;code&gt;Section -&amp;gt; Section&lt;/code&gt; function can be moved without surprises.&lt;/p&gt;
+&lt;p&gt;Second, Dhall is embeddable in Haskell, the programming language in which
+KitchenSink is written. The immediate benefit is that no external setup is
+required: KitchenSink embeds the same Dhall interpreter as the official Dhall
+binary and that’s it. Compare this simplicity (no setup required) to generator
+sections, whose result vary depending on which tools are available on each
+setups.&lt;/p&gt;
+&lt;p&gt;Third, Dhall is expressive enough to have libraries of functions that you
+import over the network or on the file-system. Such imports open the door to
+avoiding redundant code (e.g., to re-use the same &lt;code&gt;base:social&lt;/code&gt; content in
+every article). Networked imports open the door to community-based sharing.&lt;/p&gt;
+&lt;p&gt;Summarizing, the choice of Dhall is not that surprising after analyzis. Dhall
+fits the problem of pre-processing article sections pretty well, without
+costing much to implement and without freezing the design of KitchenSink
+engine.&lt;/p&gt;
+&lt;h2 id="examples"&gt;Examples&lt;/h2&gt;
+&lt;p&gt;Let’s now give some examples.&lt;/p&gt;
+&lt;/section&gt;&lt;section class="main-section"&gt;&lt;h3 id="rendering-a-section-in-commonmark"&gt;Rendering a section in CommonMark&lt;/h3&gt;
+&lt;p&gt;&lt;strong&gt;example 1&lt;/strong&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;=base:main-content.dhalL
+
+{ contents = [&amp;quot;__generated from dhall__&amp;quot;, &amp;quot;\n&amp;quot;, kitchensink.file ], format = &amp;quot;cmark&amp;quot; }
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;strong&gt;example 2&lt;/strong&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;=base:main-content.dhall
+    
+{ contents = [
+    &amp;quot;::: output&amp;quot;
+  , &amp;quot;\n&amp;quot;
+  , &amp;quot;__this code block is defined in some Dhall__&amp;quot;
+  , &amp;quot;\n&amp;quot;
+  , &amp;quot;file=&amp;quot;, kitchensink.file
+  , &amp;quot;\n&amp;quot;, &amp;quot;section=&amp;quot;
+  , Integer/show kitchensink.sectionNum
+  , &amp;quot;\n&amp;quot;
+  , &amp;quot;:::&amp;quot;
+  ]
+, format = &amp;quot;cmark&amp;quot;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;rendered in HTML (via CommonMark)&lt;/p&gt;
+&lt;/section&gt;&lt;section class="main-section"&gt;&lt;div class="output"&gt;
+&lt;p&gt;&lt;strong&gt;this code block is defined in some Dhall&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;file=
+./website-src/sections-dhall.cmark&lt;/p&gt;
+&lt;p&gt;section=
++9&lt;/p&gt;
+&lt;p&gt;some number from a dataset:
+42&lt;/p&gt;
+&lt;p&gt;some list from a dataset:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;foo
+&lt;/li&gt;
+&lt;li&gt;bar
+&lt;/li&gt;
+&lt;li&gt;baz
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/section&gt;&lt;section class="main-section"&gt;&lt;p&gt;The same section ported to &lt;a href="/sections-templating.html"&gt;templating-lang&lt;/a&gt;. The
+list has to be built structurally here, in &lt;code&gt;.templating-doc&lt;/code&gt; mode: the
+expression mode has no way to append the mapped item lines to the header lines,
+because the language has no &lt;code&gt;concat&lt;/code&gt; builtin and a &lt;code&gt;contents&lt;/code&gt; array must be
+flat.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;=base:main-content.templating-doc
+@d=$ctx.datasets.example
+.div(class: &amp;quot;output&amp;quot;,
+  .p(.strong(&amp;quot;this code block is defined in some templating-lang&amp;quot;)),
+  .p(&amp;quot;file=`$ctx.file`&amp;quot;),
+  .p(&amp;quot;section=`$ctx.sectionNum`&amp;quot;),
+  .p(&amp;quot;some number from a dataset:`$d.answer`&amp;quot;),
+  .p(&amp;quot;some list from a dataset:&amp;quot;),
+  .ul(map($d.items, (i) =&amp;gt; .li($i))))
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/section&gt;&lt;section class="main-section"&gt;&lt;div class="output"&gt;&lt;p&gt;&lt;strong&gt;this code block is defined in some templating-lang&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;file=./website-src/sections-dhall.cmark&lt;/p&gt;&lt;p&gt;section=11&lt;/p&gt;&lt;p&gt;some number from a dataset:42&lt;/p&gt;&lt;p&gt;some list from a dataset:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;foo&lt;/li&gt;&lt;li&gt;bar&lt;/li&gt;&lt;li&gt;baz&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;
+&lt;/section&gt;&lt;section class="main-section"&gt;&lt;h3 id="rendering-a-section-in-html"&gt;Rendering a section in HTML&lt;/h3&gt;
+&lt;p&gt;You can return HTML directly-formatted.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;example&lt;/strong&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;=base:main-content.dhall
+
+{ contents = [&amp;quot;__generated from dhall__&amp;quot;, &amp;quot;\n&amp;quot;, kitchensink.file ], format = &amp;quot;html&amp;quot; }
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/section&gt;&lt;section class="main-section"&gt;&lt;h3 id="rendering-json-sections"&gt;Rendering JSON-sections&lt;/h3&gt;
+&lt;p&gt;Dhall can substitute itself to JSON objects as well.
+Jut replace a &lt;code&gt;.json&lt;/code&gt; with &lt;code&gt;.dhall&lt;/code&gt; and KitchenSink will interpret a Dhall expression to fill-in the JSON.&lt;/p&gt;
+&lt;p&gt;A few use cases are envisioned:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;generating a &lt;em&gt;commands&lt;/em&gt; from Dhall expressions
+&lt;/li&gt;
+&lt;li&gt;generating a command requiring the filename
+&lt;/li&gt;
+&lt;li&gt;avoiding redundant information like social infos using Dhall’s support for remote includes
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;example 1&lt;/strong&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;=generator:cmd.dhall
+let
+  ping = { cmd = &amp;quot;ping&amp;quot;
+         , args = [&amp;quot;-c&amp;quot;, &amp;quot;3&amp;quot;, &amp;quot;8.8.4.4&amp;quot;]
+         , target = &amp;quot;latency&amp;quot;
+         }
+in
+{ contents = ping
+, format = &amp;quot;json&amp;quot;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/section&gt;&lt;section class="main-section"&gt;&lt;p&gt;&lt;strong&gt;example 2&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;This section is handy to show the content in this file. Note that I use
+&lt;code&gt;kitchensink.file&lt;/code&gt; to get the path name.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;=generator:cmd.dhall
+let
+  cmd = { cmd = &amp;quot;cat&amp;quot;
+        , args = [kitchensink.file]
+        , target = &amp;quot;cat-this-file&amp;quot;
+        }
+in
+{ contents = cmd
+, format = &amp;quot;json&amp;quot;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;a href="/gen/out/sections-dhall.cmark__cat-this-file"&gt;once the generated section is evaluated&lt;/a&gt;&lt;/p&gt;
+&lt;/section&gt;&lt;section class="main-section"&gt;&lt;p&gt;The same generator in templating-lang. This one is a straight port: the result
+is a JSON value rather than lines of text, so it stays in expression mode, and
+&lt;code&gt;kitchensink.file&lt;/code&gt; becomes &lt;code&gt;$ctx.file&lt;/code&gt;.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;=generator:cmd.templating
+{ &amp;quot;format&amp;quot;: &amp;quot;json&amp;quot;
+, &amp;quot;contents&amp;quot;: { &amp;quot;cmd&amp;quot;: &amp;quot;cat&amp;quot;
+              , &amp;quot;args&amp;quot;: [$ctx.file]
+              , &amp;quot;target&amp;quot;: &amp;quot;cat-this-file-templating&amp;quot;
+              }
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;a href="/gen/out/sections-dhall.cmark__cat-this-file-templating"&gt;once the generated section is evaluated&lt;/a&gt;&lt;/p&gt;
+&lt;/section&gt;&lt;section class="main-section"&gt;&lt;p&gt;&lt;strong&gt;example 3&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;You could write the content in &lt;code&gt;./social.dhall&lt;/code&gt; once and import the content.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;=base:social.dhall
+{ contents = ./social.dhall
+, format = &amp;quot;json&amp;quot;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/section&gt;&lt;section class="main-section"&gt;&lt;p&gt;&lt;strong&gt;example 4&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;You can also generate JSON datasets if for some reason writing them in JSON is
+not immediate enough .&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;=base:dataset.dhall alice-bob
+{ contents =
+    [ {name = &amp;quot;Alice&amp;quot;, posts = 22.0}
+    , {name = &amp;quot;Bob&amp;quot;, posts = 7.0}
+    ]
+, format = &amp;quot;json&amp;quot;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;a href="/raw/data/sections-dhall.cmark__alice-bob2.json"&gt;rendered&lt;/a&gt;&lt;/p&gt;
+&lt;/section&gt;&lt;section class="main-section"&gt;&lt;p&gt;And the same dataset in templating-lang. A &lt;code&gt;.templating&lt;/code&gt; cell returning
+&lt;code&gt;format = &amp;quot;json&amp;quot;&lt;/code&gt; registers a dataset exactly the way the Dhall one does, so
+every later section can read it back from &lt;code&gt;$ctx.datasets&lt;/code&gt;.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;=base:dataset.templating alice-bob-templating
+{ &amp;quot;format&amp;quot;: &amp;quot;json&amp;quot;
+, &amp;quot;contents&amp;quot;: [ {&amp;quot;name&amp;quot;: &amp;quot;Alice&amp;quot;, &amp;quot;posts&amp;quot;: 22}
+              , {&amp;quot;name&amp;quot;: &amp;quot;Bob&amp;quot;, &amp;quot;posts&amp;quot;: 7}
+              ]
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;a href="/raw/data/sections-dhall.cmark__alice-bob-templating3.json"&gt;rendered&lt;/a&gt;&lt;/p&gt;
+&lt;/section&gt;&lt;section class="main-section"&gt;&lt;h2 id="implementation-notes"&gt;Implementation notes&lt;/h2&gt;
+&lt;p&gt;The following notes are more useful for myself and for people curious about modifying or contributing to KitchenSink.&lt;/p&gt;
+&lt;h3 id="present"&gt;present&lt;/h3&gt;
+&lt;h4 id="the-evaluation-chain"&gt;The evaluation chain&lt;/h4&gt;
+&lt;p&gt;Today SiteLoader traverses all sections (i.e., after mapping Article Sections
+to Article Sections). Upon encountering a &lt;code&gt;.dhall&lt;/code&gt; section, SiteLoader
+evaluates the content as a Dhall expression returning some well-known format.&lt;/p&gt;
+&lt;p&gt;Further, datasets encountered during this phase are collected in a &lt;code&gt;datasets&lt;/code&gt;
+object. Previous datasets are passed to Dhall sections. Thus Dhall can
+templatize an in-line dataset.&lt;/p&gt;
+&lt;p&gt;Thus, unlike &lt;code&gt;generators&lt;/code&gt;, Dhall sections are pre-processors. They are
+evaluated once.  When operating Kitchen-Sink as a static-site generator there
+is no much difference, however if you operate Kitchen-Sink as a live-website,
+then you cannot use Dhall as a generator-on-steroids.&lt;/p&gt;
+&lt;h4 id="the-kitchensink-object"&gt;The &lt;code&gt;kitchensink&lt;/code&gt; object&lt;/h4&gt;
+&lt;p&gt;Evaluated Dhall expressions carry information provided by
+KitchenSink. This information is bound to the &lt;code&gt;kitchensink&lt;/code&gt;
+Dhall value and has the following structure:&lt;/p&gt;
+&lt;pre&gt;&lt;code class="language-dhall"&gt;{ file : Text -- contains the source file path for the cmark
+, sectionNum : Integer -- contains the section number of this file (starting from zero)
+, datasets : &amp;lt;data-dependant&amp;gt; -- contains a record&amp;lt;dataset-name, (json-value-to-dhall|text-value)&amp;gt; or an error message if it failed to load
+, vars : &amp;lt;data-dependant&amp;gt; -- contains a record&amp;lt;key, value: Text&amp;gt; depending on the --var foo=bar command line arguments
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Note that missing data-dependant bindings will prevent the site from loading,
+so be sure to not rely too much on these values.&lt;/p&gt;
+&lt;h3 id="future-work"&gt;future work&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;carry-over more context from previous sections
+&lt;/li&gt;
+&lt;li&gt;allow appending new sections (i.e., preprocess articles over sections)?
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/section&gt;&lt;/div&gt;</content><link href="https://kitchensink-tech.github.io/sections-dhall.html" rel="alternate"/><summary type="text">Documenting the special feature of Dhall-sections.</summary></entry><entry><id>https://kitchensink-tech.github.io/playground.html</id><title type="text">Templating-lang playground</title><updated>1970-01-01T00:00:00Z</updated><author><name>Lucas DiCioccio</name></author><content type="html">&lt;div class="main-article"&gt;&lt;section class="main-section"&gt;&lt;p&gt;This is the same playground built from the
+&lt;a href="https://github.com/lucasdicioccio/templating-lang"&gt;templating-lang&lt;/a&gt;
+repository’s PureScript sources, published here as a static bundle so it can
+be tried without a local build. It parses and evaluates templating-lang
+expressions and documents in the browser — nothing is sent to a server.&lt;/p&gt;
+&lt;p&gt;See &lt;a href="/sections-templating.html"&gt;Templating-lang sections&lt;/a&gt; for how the same
+language is embedded server-side, as a section pre-processor, by KitchenSink
+itself.&lt;/p&gt;
+&lt;iframe class="playground-frame" src="/templating-playground.html" title="templating-lang playground"&gt;&lt;/iframe&gt;
+&lt;p&gt;If the embedded frame does not load, open the
+&lt;a href="/templating-playground.html"&gt;playground&lt;/a&gt; directly.&lt;/p&gt;
+&lt;/section&gt;&lt;/div&gt;</content><link href="https://kitchensink-tech.github.io/playground.html" rel="alternate"/><summary type="text">An in-browser playground for [templating-lang](https://github.com/lucasdicioccio/templating-lang), the expression/document language behind [`.templating` and `.templating-doc` sections](/sections-templating.html), hosted directly on this site.</summary></entry></feed>
