@@ -77,11 +77,11 @@ engine.</p>
 </ul>
 </div>
 </section><section class="main-section"><p>The same section ported to <a href="/sections-templating.html">tramaj</a>. The list has
-to be built structurally here, in <code>.templating-doc</code> mode: expression mode’s
+to be built structurally here, in <code>.tramaj-doc</code> mode: expression mode’s
 <code>contents</code> array has to be a flat list of lines, with no way to splice in one
 <code>&lt;li&gt;</code> per item and keep the surrounding header lines, so a document built out
 of real elements is the natural fit.</p>
-<pre><code>=base:main-content.templating-doc
+<pre><code>=base:main-content.tramaj-doc
 @d=$ctx.datasets.example
 .div(class: &quot;output&quot;,
   .p(.strong(&quot;this code block is defined in some tramaj&quot;)),
@@ -141,7 +141,7 @@ in
 </section><section class="main-section"><p>The same generator in tramaj. This one is a straight port: the result
 is a JSON value rather than lines of text, so it stays in expression mode, and
 <code>kitchensink.file</code> becomes <code>$ctx.file</code>.</p>
-<pre><code>=generator:cmd.templating
+<pre><code>=generator:cmd.tramaj-json
 { &quot;format&quot;: &quot;json&quot;
 , &quot;contents&quot;: { &quot;cmd&quot;: &quot;cat&quot;
               , &quot;args&quot;: [$ctx.file]
@@ -169,10 +169,10 @@ not immediate enough .</p>
 }
 </code></pre>
 <p><a href="/raw/data/sections-dhall.cmark__alice-bob2.json">rendered</a></p>
-</section><section class="main-section"><p>And the same dataset in tramaj. A <code>.templating</code> cell returning
+</section><section class="main-section"><p>And the same dataset in tramaj. A <code>.tramaj-json</code> cell returning
 <code>format = &quot;json&quot;</code> registers a dataset exactly the way the Dhall one does, so
 every later section can read it back from <code>$ctx.datasets</code>.</p>
-<pre><code>=base:dataset.templating alice-bob-templating
+<pre><code>=base:dataset.tramaj-json alice-bob-templating
 { &quot;format&quot;: &quot;json&quot;
 , &quot;contents&quot;: [ {&quot;name&quot;: &quot;Alice&quot;, &quot;posts&quot;: 22}
               , {&quot;name&quot;: &quot;Bob&quot;, &quot;posts&quot;: 7}

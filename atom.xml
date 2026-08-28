@@ -173,7 +173,7 @@ embedded server-side, as a section pre-processor, by KitchenSink itself.&lt;/p&g
 &lt;iframe class="playground-frame" src="/templating-playground.html" title="tramaj playground"&gt;&lt;/iframe&gt;
 &lt;p&gt;If the embedded frame does not load, open the
 &lt;a href="/templating-playground.html"&gt;playground&lt;/a&gt; directly.&lt;/p&gt;
-&lt;/section&gt;&lt;/div&gt;</content><link href="https://kitchensink-tech.github.io/playground.html" rel="alternate"/><summary type="text">An in-browser playground for [tramaj](https://github.com/lucasdicioccio/tramaj) — formerly "templating-lang" — the expression/document language behind [`.templating` and `.templating-doc` sections](/sections-templating.html), hosted directly on this site.</summary></entry><entry><id>https://kitchensink-tech.github.io/philosophy.html</id><title type="text">The Kitchen Sink philosophy</title><updated>1970-01-01T00:00:00Z</updated><author><name>Lucas DiCioccio</name></author><content type="html">&lt;div class="main-article"&gt;&lt;section class="main-section"&gt;&lt;p&gt;In these pages, I sometimes use “&lt;strong&gt;It’s a kitchen-sink!&lt;/strong&gt;” as a placeholder for
+&lt;/section&gt;&lt;/div&gt;</content><link href="https://kitchensink-tech.github.io/playground.html" rel="alternate"/><summary type="text">An in-browser playground for [tramaj](https://github.com/lucasdicioccio/tramaj) — formerly "templating-lang" — the expression/document language behind [`.tramaj-json` and `.tramaj-doc` sections](/sections-templating.html), hosted directly on this site.</summary></entry><entry><id>https://kitchensink-tech.github.io/philosophy.html</id><title type="text">The Kitchen Sink philosophy</title><updated>1970-01-01T00:00:00Z</updated><author><name>Lucas DiCioccio</name></author><content type="html">&lt;div class="main-article"&gt;&lt;section class="main-section"&gt;&lt;p&gt;In these pages, I sometimes use “&lt;strong&gt;It’s a kitchen-sink!&lt;/strong&gt;” as a placeholder for
 apologetic or unapologetic statements regarding the lack of sophistication of
 Kitchen-Sink. I lament when something is suboptimal but ought to be improved. I
 duck out when something is suboptimal but ought to be left out scope. Let me
@@ -321,11 +321,11 @@ engine.&lt;/p&gt;
 &lt;/ul&gt;
 &lt;/div&gt;
 &lt;/section&gt;&lt;section class="main-section"&gt;&lt;p&gt;The same section ported to &lt;a href="/sections-templating.html"&gt;tramaj&lt;/a&gt;. The list has
-to be built structurally here, in &lt;code&gt;.templating-doc&lt;/code&gt; mode: expression mode’s
+to be built structurally here, in &lt;code&gt;.tramaj-doc&lt;/code&gt; mode: expression mode’s
 &lt;code&gt;contents&lt;/code&gt; array has to be a flat list of lines, with no way to splice in one
 &lt;code&gt;&amp;lt;li&amp;gt;&lt;/code&gt; per item and keep the surrounding header lines, so a document built out
 of real elements is the natural fit.&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;=base:main-content.templating-doc
+&lt;pre&gt;&lt;code&gt;=base:main-content.tramaj-doc
 @d=$ctx.datasets.example
 .div(class: &amp;quot;output&amp;quot;,
   .p(.strong(&amp;quot;this code block is defined in some tramaj&amp;quot;)),
@@ -385,7 +385,7 @@ in
 &lt;/section&gt;&lt;section class="main-section"&gt;&lt;p&gt;The same generator in tramaj. This one is a straight port: the result
 is a JSON value rather than lines of text, so it stays in expression mode, and
 &lt;code&gt;kitchensink.file&lt;/code&gt; becomes &lt;code&gt;$ctx.file&lt;/code&gt;.&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;=generator:cmd.templating
+&lt;pre&gt;&lt;code&gt;=generator:cmd.tramaj-json
 { &amp;quot;format&amp;quot;: &amp;quot;json&amp;quot;
 , &amp;quot;contents&amp;quot;: { &amp;quot;cmd&amp;quot;: &amp;quot;cat&amp;quot;
               , &amp;quot;args&amp;quot;: [$ctx.file]
@@ -413,10 +413,10 @@ not immediate enough .&lt;/p&gt;
 }
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;&lt;a href="/raw/data/sections-dhall.cmark__alice-bob2.json"&gt;rendered&lt;/a&gt;&lt;/p&gt;
-&lt;/section&gt;&lt;section class="main-section"&gt;&lt;p&gt;And the same dataset in tramaj. A &lt;code&gt;.templating&lt;/code&gt; cell returning
+&lt;/section&gt;&lt;section class="main-section"&gt;&lt;p&gt;And the same dataset in tramaj. A &lt;code&gt;.tramaj-json&lt;/code&gt; cell returning
 &lt;code&gt;format = &amp;quot;json&amp;quot;&lt;/code&gt; registers a dataset exactly the way the Dhall one does, so
 every later section can read it back from &lt;code&gt;$ctx.datasets&lt;/code&gt;.&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;=base:dataset.templating alice-bob-templating
+&lt;pre&gt;&lt;code&gt;=base:dataset.tramaj-json alice-bob-templating
 { &amp;quot;format&amp;quot;: &amp;quot;json&amp;quot;
 , &amp;quot;contents&amp;quot;: [ {&amp;quot;name&amp;quot;: &amp;quot;Alice&amp;quot;, &amp;quot;posts&amp;quot;: 22}
               , {&amp;quot;name&amp;quot;: &amp;quot;Bob&amp;quot;, &amp;quot;posts&amp;quot;: 7}
@@ -909,11 +909,11 @@ language itself that distinction is no longer syntactic (a single grammar and
 evaluator decide dynamically what a program’s root evaluated to); it is
 KitchenSink’s two section formats below that still enforce which one a given
 section must produce.&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;.templating&lt;/code&gt; sections are rooted at an expression and evaluate to a JSON
+&lt;p&gt;&lt;code&gt;.tramaj-json&lt;/code&gt; sections are rooted at an expression and evaluate to a JSON
 value. That value is the same &lt;code&gt;{format, contents}&lt;/code&gt; contract Dhall-sections
 answer with, so the section can rewrite itself to &lt;code&gt;json&lt;/code&gt;, &lt;code&gt;cmark&lt;/code&gt; or &lt;code&gt;html&lt;/code&gt;.
 This is the format to reach for as a drop-in replacement for a Dhall section.&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;.templating-doc&lt;/code&gt; sections are rooted at an element — &lt;code&gt;.div(...)&lt;/code&gt;, &lt;code&gt;.ul(...)&lt;/code&gt; —
+&lt;p&gt;&lt;code&gt;.tramaj-doc&lt;/code&gt; sections are rooted at an element — &lt;code&gt;.div(...)&lt;/code&gt;, &lt;code&gt;.ul(...)&lt;/code&gt; —
 and evaluate to a document tree, which KitchenSink renders to HTML. There is no
 &lt;code&gt;{format, contents}&lt;/code&gt; envelope here: the result is always HTML.&lt;/p&gt;
 &lt;p&gt;The two roots can never be confused: an element root always starts with &lt;code&gt;.&lt;/code&gt; and
@@ -948,10 +948,10 @@ templating section in this very file.&lt;/p&gt;
 }
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/section&gt;&lt;section class="main-section"&gt;&lt;h3 id="generating-a-dataset"&gt;Generating a dataset&lt;/h3&gt;
-&lt;p&gt;A &lt;code&gt;.templating&lt;/code&gt; section returning &lt;code&gt;format = &amp;quot;json&amp;quot;&lt;/code&gt; in a dataset cell declares a
+&lt;p&gt;A &lt;code&gt;.tramaj-json&lt;/code&gt; section returning &lt;code&gt;format = &amp;quot;json&amp;quot;&lt;/code&gt; in a dataset cell declares a
 &lt;em&gt;new&lt;/em&gt; dataset, visible to every later section — the same way a hand-written
 &lt;code&gt;=base:dataset.json&lt;/code&gt; cell is.&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;=base:dataset.templating crew-summary
+&lt;pre&gt;&lt;code&gt;=base:dataset.tramaj-json crew-summary
 @members=$ctx.datasets.crew.members
 @n=cardinality($members)
 { &amp;quot;format&amp;quot;: &amp;quot;json&amp;quot;
@@ -964,7 +964,7 @@ templating section in this very file.&lt;/p&gt;
 mode never stringifies its result.&lt;/p&gt;
 &lt;/section&gt;&lt;section class="main-section"&gt;&lt;h3 id="rendering-a-section-in-commonmark"&gt;Rendering a section in CommonMark&lt;/h3&gt;
 &lt;p&gt;Reading back the dataset the previous section generated:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;=base:main-content.templating
+&lt;pre&gt;&lt;code&gt;=base:main-content.tramaj-json
 @summary=$ctx.datasets.crew-summary
 { &amp;quot;format&amp;quot;: &amp;quot;cmark&amp;quot;
 , &amp;quot;contents&amp;quot;: [ &amp;quot;::: output&amp;quot;
@@ -987,7 +987,7 @@ arbitrary JSON value rather than a list of lines.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/section&gt;&lt;section class="main-section"&gt;&lt;h3 id="rendering-a-document-tree"&gt;Rendering a document tree&lt;/h3&gt;
 &lt;p&gt;The same data, but built structurally rather than as CommonMark lines:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;=base:main-content.templating-doc
+&lt;pre&gt;&lt;code&gt;=base:main-content.tramaj-doc
 @members=$ctx.datasets.crew.members
 .div(class: &amp;quot;output&amp;quot;,
   .h3(&amp;quot;Crew&amp;quot;),
@@ -1001,7 +1001,7 @@ arbitrary JSON value rather than a list of lines.&lt;/p&gt;
 browser host it binds to a real event handler; in a statically-produced page
 there is no dispatcher to bind to, so KitchenSink writes the &lt;em&gt;evaluated&lt;/em&gt; action
 onto the element as three data attributes and leaves the dispatching to you.&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;=base:main-content.templating-doc
+&lt;pre&gt;&lt;code&gt;=base:main-content.tramaj-doc
 @members=$ctx.datasets.crew.members
 .div(class: &amp;quot;output&amp;quot;,
   .p(id: &amp;quot;action-log&amp;quot;, &amp;quot;no action yet — click a name&amp;quot;),
@@ -1075,7 +1075,7 @@ to define. The selector above happens to bind clicks only.&lt;/p&gt;
 &lt;/section&gt;&lt;section class="main-section"&gt;&lt;h3 id="using-partial-templates"&gt;Using partial templates&lt;/h3&gt;
 &lt;p&gt;Tramaj supports importing one program from another, and KitchenSink exposes
 that using a specific section close to datasets.&lt;/p&gt;
-&lt;p&gt;The &lt;code&gt;icon&lt;/code&gt; tag next to &lt;code&gt;library.templating-lib&lt;/code&gt; corresponds to the name given
+&lt;p&gt;The &lt;code&gt;icon&lt;/code&gt; tag next to &lt;code&gt;library.tramaj-lib&lt;/code&gt; corresponds to the name given
 to the library in further imports.&lt;/p&gt;
 &lt;p&gt;The context passed to imported libraries is entirely determined by the caller:
 a library’s &lt;code&gt;$ctx&lt;/code&gt; &lt;em&gt;is&lt;/em&gt; the parameter object the importer supplies, KitchenSink
@@ -1087,9 +1087,11 @@ actually runs once a field (&lt;code&gt;.rendered&lt;/code&gt; or &lt;code&gt;.v
 wired-up import can be reused across a &lt;code&gt;map&lt;/code&gt; with each iteration adding its own
 parameter. There is no &lt;code&gt;partial-import&lt;/code&gt; builtin any more: partiality is not a
 separate construct, just what happens when a parameter is left out.&lt;/p&gt;
-&lt;p&gt;A limitation today is that import must refer to a library defined above the
-evaluated section. In future release we will support libraries defined in other files.&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;=base:library.templating-lib icon
+&lt;p&gt;Within one file, import must still refer to a library section defined above
+the section that imports it — a &lt;code&gt;.tramaj-json&lt;/code&gt;/&lt;code&gt;.tramaj-doc&lt;/code&gt; section
+evaluates immediately, against whatever the file has accumulated so far.
+Cross-file libraries (below) do not have that restriction.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;=base:library.tramaj-lib icon
 .span(class: &amp;quot;icon&amp;quot;,
   .a(href: $ctx.href,
      title: $ctx.title,
@@ -1097,7 +1099,7 @@ evaluated section. In future release we will support libraries defined in other 
 ))
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;We can then import this &lt;code&gt;icon&lt;/code&gt; template and apply it.&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;=base:main-content.templating-doc
+&lt;pre&gt;&lt;code&gt;=base:main-content.tramaj-doc
 @icon=import(&amp;quot;icon&amp;quot;,{&amp;quot;href&amp;quot;:&amp;quot;&amp;quot;, &amp;quot;title&amp;quot;: &amp;quot;demo-templated-icon&amp;quot;})
 @icon1=$icon({&amp;quot;src&amp;quot;: &amp;quot;/images/favicon.png&amp;quot;})
 @icon2=$icon({&amp;quot;src&amp;quot;: &amp;quot;/images/features-001-targetsizes-timeseries.png&amp;quot;})
@@ -1110,10 +1112,53 @@ evaluated section. In future release we will support libraries defined in other 
 )
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/section&gt;&lt;section class="main-section"&gt;&lt;div class="output"&gt;&lt;p&gt;Below are multiple &lt;em&gt;icons&lt;/em&gt;.&lt;/p&gt;&lt;span class="icon"&gt;&lt;a href title="demo-templated-icon"&gt;&lt;img height="16" width="16" src="/images/favicon.png"&gt;&lt;/a&gt;&lt;/span&gt;&lt;span class="icon"&gt;&lt;a href title="demo-templated-icon"&gt;&lt;img height="16" width="16" src="/images/features-001-targetsizes-timeseries.png"&gt;&lt;/a&gt;&lt;/span&gt;&lt;span class="icon"&gt;&lt;a href title="demo-templated-icon"&gt;&lt;img height="16" width="16" src="/gen/images/features-002-dot-demo.dot.png"&gt;&lt;/a&gt;&lt;/span&gt;&lt;/div&gt;
+&lt;/section&gt;&lt;section class="main-section"&gt;&lt;h3 id="libraries-shared-across-files"&gt;Libraries shared across files&lt;/h3&gt;
+&lt;p&gt;A library does not have to live in the article that imports it. Any source
+file with the &lt;code&gt;.cmark-tramaj&lt;/code&gt; extension is loaded before every article,
+contributes its &lt;code&gt;library.tramaj-lib&lt;/code&gt; sections to one shared library table,
+and produces no target of its own — it never becomes a page. &lt;code&gt;.cmark-tramaj&lt;/code&gt;
+is a distinct extension rather than a naming convention layered on &lt;code&gt;.cmark&lt;/code&gt; on
+purpose: an ordinary article can never be mistaken for a library file, or vice
+versa, whatever it happens to be named.&lt;/p&gt;
+&lt;p&gt;Every name such a file registers is nested under the file’s own basename: a
+library called &lt;code&gt;icon&lt;/code&gt; declared in &lt;code&gt;widgets.cmark-tramaj&lt;/code&gt; is only ever
+reachable as &lt;code&gt;import(&amp;quot;widgets/icon&amp;quot;, {…})&lt;/code&gt;. That is also why cross-file name
+collisions are not a KitchenSink concern — two files can’t share a basename in
+the same directory, so their libraries can’t share a prefix either. A
+collision can still happen &lt;em&gt;within&lt;/em&gt; one file (two &lt;code&gt;library.tramaj-lib&lt;/code&gt;
+sections given the same name there), and that is a load-time error naming the
+offending file.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;=base:library.tramaj-lib badge
+.span(class: &amp;quot;output&amp;quot;, &amp;quot;badge: `$ctx.text`&amp;quot;)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;living in this site’s &lt;code&gt;shared.cmark-tramaj&lt;/code&gt; — a real file next to this one,
+not a code sample — is importable from any article, this one included, as
+&lt;code&gt;shared/badge&lt;/code&gt;:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;=base:main-content.tramaj-doc
+import(&amp;quot;shared/badge&amp;quot;, {&amp;quot;text&amp;quot;: &amp;quot;hello from another file&amp;quot;}).rendered
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/section&gt;&lt;section class="main-section"&gt;&lt;span class="output"&gt;badge: hello from another file&lt;/span&gt;
+&lt;/section&gt;&lt;section class="main-section"&gt;&lt;p&gt;One thing is deliberately &lt;em&gt;not&lt;/em&gt; required here: a fixed load order between
+library files. A library’s body is parsed when its file loads but not
+evaluated — the same as an in-article &lt;code&gt;library.tramaj-lib&lt;/code&gt; section never
+runs where it is declared — so which &lt;code&gt;.cmark-tramaj&lt;/code&gt; file KitchenSink
+processes first cannot matter for whether an import resolves: by the time
+anything actually imports and reads &lt;code&gt;.rendered&lt;/code&gt; off it, every library file has
+already contributed to the shared table. Two library files may freely import
+each other’s libraries in either direction, and KitchenSink runs no cycle
+detector of its own over any of this: a library that, directly or through a
+chain of imports, ends up importing itself is caught by tramaj itself, as an
+ordinary &lt;code&gt;EvalError&lt;/code&gt; (&lt;code&gt;ImportCycle&lt;/code&gt;) raised the first time evaluation actually
+re-enters it — not a hang.&lt;/p&gt;
+&lt;p&gt;A library file is still a KitchenSink section file, with a &lt;code&gt;library.tramaj-lib&lt;/code&gt;
+header per library — there is no support yet for a “bare” file containing just
+a program body and nothing else — and imports still only resolve by name
+within the same site, never across a networked location the way a Dhall
+import can.&lt;/p&gt;
 &lt;/section&gt;&lt;section class="main-section"&gt;&lt;h2 id="notes-and-limitations"&gt;Notes and limitations&lt;/h2&gt;
 &lt;p&gt;Text interpolation goes through the language’s display rules: a string
 interpolates raw, an integral number drops its &lt;code&gt;.0&lt;/code&gt;, and anything else falls
-back to a compact JSON encoding. In &lt;code&gt;.templating-doc&lt;/code&gt; mode an element’s node is
+back to a compact JSON encoding. In &lt;code&gt;.tramaj-doc&lt;/code&gt; mode an element’s node is
 left as-is — its text and attribute values keep whatever type they evaluated
 to (a number stays a number) — and it is KitchenSink’s HTML renderer, not the
 language, that turns them into display strings on the way out.&lt;/p&gt;
@@ -1126,7 +1171,7 @@ still prefers single quotes in the generated JavaScript purely for readability.&
 &lt;p&gt;Attribute names are validated before rendering: the language permits keys the
 DOM rejects, and those are reported as an error rather than written out as
 malformed markup.&lt;/p&gt;
-&lt;p&gt;Both &lt;code&gt;.templating&lt;/code&gt; and &lt;code&gt;.templating-doc&lt;/code&gt; sections are backed by the same
+&lt;p&gt;Both &lt;code&gt;.tramaj-json&lt;/code&gt; and &lt;code&gt;.tramaj-doc&lt;/code&gt; sections are backed by the same
 grammar and evaluator now — &lt;code&gt;tramaj-hs&lt;/code&gt; no longer has a separate
 expression-only mode, so which one a program produces follows from what its
 root evaluated to rather than from which parser ran. KitchenSink still keeps
@@ -1780,24 +1825,20 @@ blog&lt;/a&gt; as I’ve added this section in the
 }
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;&lt;img src="https://lucasdicioccio.github.io/gen/out/about-me.cmark__latest-selfie.jpg" alt="selfie" /&gt;&lt;/p&gt;
-&lt;p&gt;Another fun usage is to roast your articles, provided agents-exe is installed, the following uses an LLM to roast an article (example at &lt;a href="/gen/out/philosophy.cmark__roast-me"&gt;a generated-file path&lt;/a&gt;). Here I’ve used the Dhall section (see below) so that the source-path is accessible to the generator command.&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;=generator:cmd.dhall
-
-let cmdcontent =
-  { cmd = &amp;quot;agents-exe&amp;quot;
-  , args =
-    [ &amp;quot;--agent-file&amp;quot; , &amp;quot;agents/critique.json&amp;quot;
-    , &amp;quot;run&amp;quot;
-    , &amp;quot;-p&amp;quot; , &amp;quot;you are given a source file of a blog post, the content resides below a =base:main-content.cmark marker. comment on the article by giving honest feedback in a sarcastic manner&amp;quot;
-    , &amp;quot;-S&amp;quot; , &amp;quot;-&amp;quot;
-    , &amp;quot;-f&amp;quot; , kitchensink.file
-    ]
-  , target = &amp;quot;roast-me&amp;quot;
-  }
-
-in 
-{ contents = cmdcontent
-, format = &amp;quot;json&amp;quot;
+&lt;p&gt;Another fun usage is to roast your articles, provided agents-exe is installed, the following uses an LLM to roast an article (example at &lt;a href="/gen/out/philosophy.cmark__roast-me"&gt;a generated-file path&lt;/a&gt;). Here I’ve used a &lt;a href="/sections-templating.html"&gt;tramaj section&lt;/a&gt; so that the source-path is accessible to the generator command, as &lt;code&gt;$ctx.file&lt;/code&gt;.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;=generator:cmd.tramaj-json
+{ &amp;quot;format&amp;quot;: &amp;quot;json&amp;quot;
+, &amp;quot;contents&amp;quot;:
+    { &amp;quot;cmd&amp;quot;: &amp;quot;agents-exe&amp;quot;
+    , &amp;quot;args&amp;quot;:
+      [ &amp;quot;--agent-file&amp;quot;, &amp;quot;agents/critique.json&amp;quot;
+      , &amp;quot;run&amp;quot;
+      , &amp;quot;-p&amp;quot;, &amp;quot;you are given a source file of a blog post, the content resides below a =base:main-content.cmark marker. comment on the article by giving honest feedback in a sarcastic manner&amp;quot;
+      , &amp;quot;-S&amp;quot;, &amp;quot;-&amp;quot;
+      , &amp;quot;-f&amp;quot;, $ctx.file
+      ]
+    , &amp;quot;target&amp;quot;: &amp;quot;roast-me&amp;quot;
+    }
 }
 &lt;/code&gt;&lt;/pre&gt;
 &lt;h4 id="microscriptable-in-dhall"&gt;microscriptable in Dhall&lt;/h4&gt;

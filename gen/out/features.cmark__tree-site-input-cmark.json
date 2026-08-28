@@ -44,6 +44,7 @@
     {"type":"file","name":"sections.cmark"},
     {"type":"file","name":"sections-dhall.cmark"},
     {"type":"file","name":"sections-templating.cmark"},
+    {"type":"file","name":"shared.cmark-tramaj"},
     {"type":"file","name":"templating-playground-app.js"},
     {"type":"file","name":"templating-playground.css"},
     {"type":"file","name":"templating-playground.html"},
@@ -53,5 +54,5 @@
     {"type":"file","name":"wishlist.cmark"}
   ]}
 ,
-  {"type":"report","directories":1,"files":51}
+  {"type":"report","directories":1,"files":52}
 ]

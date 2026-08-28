@@ -6,9 +6,9 @@ Both backends do the same job and both remain supported. Tramaj is, however, the
 
 Where Dhall has one format, tramaj sections come in two, because the language distinguishes producing _data_ from producing a _document_ — though in the language itself that distinction is no longer syntactic (a single grammar and evaluator decide dynamically what a program's root evaluated to); it is KitchenSink's two section formats below that still enforce which one a given section must produce.
 
-`.templating` sections are rooted at an expression and evaluate to a JSON value. That value is the same `{format, contents}` contract Dhall-sections answer with, so the section can rewrite itself to `json`, `cmark` or `html`. This is the format to reach for as a drop-in replacement for a Dhall section.
+`.tramaj-json` sections are rooted at an expression and evaluate to a JSON value. That value is the same `{format, contents}` contract Dhall-sections answer with, so the section can rewrite itself to `json`, `cmark` or `html`. This is the format to reach for as a drop-in replacement for a Dhall section.
 
-`.templating-doc` sections are rooted at an element — `.div(...)`, `.ul(...)` — and evaluate to a document tree, which KitchenSink renders to HTML. There is no `{format, contents}` envelope here: the result is always HTML.
+`.tramaj-doc` sections are rooted at an element — `.div(...)`, `.ul(...)` — and evaluate to a document tree, which KitchenSink renders to HTML. There is no `{format, contents}` envelope here: the result is always HTML.
 
 The two roots can never be confused: an element root always starts with `.` and no expression form does. The format token in the section header nevertheless says which mode you meant, so a mistake is a parse error rather than a surprise.
 
@@ -46,10 +46,10 @@ The rest of this page is its own fixture: every output below is produced by a te
 
 ## Generating a dataset
 
-A `.templating` section returning `format = "json"` in a dataset cell declares a _new_ dataset, visible to every later section — the same way a hand-written `=base:dataset.json` cell is.
+A `.tramaj-json` section returning `format = "json"` in a dataset cell declares a _new_ dataset, visible to every later section — the same way a hand-written `=base:dataset.json` cell is.
 
 ```
-=base:dataset.templating crew-summary
+=base:dataset.tramaj-json crew-summary
 @members=$ctx.datasets.crew.members
 @n=cardinality($members)
 { "format": "json"
@@ -67,7 +67,7 @@ Note that `$n` stays a JSON number and `names` stays a JSON array: expression mo
 Reading back the dataset the previous section generated:
 
 ```
-=base:main-content.templating
+=base:main-content.tramaj-json
 @summary=$ctx.datasets.crew-summary
 { "format": "cmark"
 , "contents": [ "::: output"
@@ -97,7 +97,7 @@ Each element of `contents` is one line. `format` may also be `"html"`, in which 
 The same data, but built structurally rather than as CommonMark lines:
 
 ```
-=base:main-content.templating-doc
+=base:main-content.tramaj-doc
 @members=$ctx.datasets.crew.members
 .div(class: "output",
   .h3("Crew"),
@@ -114,7 +114,7 @@ Attributes come first in an element's argument list, then children; `map(collect
 `action(eventType, key, payload)` is the language's interactivity hook. In a browser host it binds to a real event handler; in a statically-produced page there is no dispatcher to bind to, so KitchenSink writes the _evaluated_ action onto the element as three data attributes and leaves the dispatching to you.
 
 ```
-=base:main-content.templating-doc
+=base:main-content.tramaj-doc
 @members=$ctx.datasets.crew.members
 .div(class: "output",
   .p(id: "action-log", "no action yet — click a name"),
@@ -192,16 +192,16 @@ Neither the event type nor the key is a fixed vocabulary: the language requires 
 
 Tramaj supports importing one program from another, and KitchenSink exposes that using a specific section close to datasets.
 
-The `icon` tag next to `library.templating-lib` corresponds to the name given to the library in further imports.
+The `icon` tag next to `library.tramaj-lib` corresponds to the name given to the library in further imports.
 
 The context passed to imported libraries is entirely determined by the caller: a library's `$ctx` _is_ the parameter object the importer supplies, KitchenSink does not add any of its own datasets to it.
 
 Imports can be partially applied: `import("icon", {"href": ""})` wires up the library without running it, and calling the result with more parameters — `$icon({"src": "..."})` — adds to what was already supplied. The import only actually runs once a field (`.rendered` or `.vals`) is read off it, so one wired-up import can be reused across a `map` with each iteration adding its own parameter. There is no `partial-import` builtin any more: partiality is not a separate construct, just what happens when a parameter is left out.
 
-A limitation today is that import must refer to a library defined above the evaluated section. In future release we will support libraries defined in other files.
+Within one file, import must still refer to a library section defined above the section that imports it — a `.tramaj-json`/`.tramaj-doc` section evaluates immediately, against whatever the file has accumulated so far. Cross-file libraries (below) do not have that restriction.
 
 ```
-=base:library.templating-lib icon
+=base:library.tramaj-lib icon
 .span(class: "icon",
   .a(href: $ctx.href,
      title: $ctx.title,
@@ -212,7 +212,7 @@ A limitation today is that import must refer to a library defined above the eval
 We can then import this `icon` template and apply it.
 
 ```
-=base:main-content.templating-doc
+=base:main-content.tramaj-doc
 @icon=import("icon",{"href":"", "title": "demo-templated-icon"})
 @icon1=$icon({"src": "/images/favicon.png"})
 @icon2=$icon({"src": "/images/features-001-targetsizes-timeseries.png"})
@@ -228,14 +228,40 @@ We can then import this `icon` template and apply it.
 
 
 
+## Libraries shared across files
+
+A library does not have to live in the article that imports it. Any source file with the `.cmark-tramaj` extension is loaded before every article, contributes its `library.tramaj-lib` sections to one shared library table, and produces no target of its own — it never becomes a page. `.cmark-tramaj` is a distinct extension rather than a naming convention layered on `.cmark` on purpose: an ordinary article can never be mistaken for a library file, or vice versa, whatever it happens to be named.
+
+Every name such a file registers is nested under the file's own basename: a library called `icon` declared in `widgets.cmark-tramaj` is only ever reachable as `import("widgets/icon", {…})`. That is also why cross-file name collisions are not a KitchenSink concern — two files can't share a basename in the same directory, so their libraries can't share a prefix either. A collision can still happen _within_ one file (two `library.tramaj-lib` sections given the same name there), and that is a load-time error naming the offending file.
+
+```
+=base:library.tramaj-lib badge
+.span(class: "output", "badge: `$ctx.text`")
+```
+
+living in this site's `shared.cmark-tramaj` — a real file next to this one, not a code sample — is importable from any article, this one included, as `shared/badge`:
+
+```
+=base:main-content.tramaj-doc
+import("shared/badge", {"text": "hello from another file"}).rendered
+```
+
+
+
+
+One thing is deliberately _not_ required here: a fixed load order between library files. A library's body is parsed when its file loads but not evaluated — the same as an in-article `library.tramaj-lib` section never runs where it is declared — so which `.cmark-tramaj` file KitchenSink processes first cannot matter for whether an import resolves: by the time anything actually imports and reads `.rendered` off it, every library file has already contributed to the shared table. Two library files may freely import each other's libraries in either direction, and KitchenSink runs no cycle detector of its own over any of this: a library that, directly or through a chain of imports, ends up importing itself is caught by tramaj itself, as an ordinary `EvalError` (`ImportCycle`) raised the first time evaluation actually re-enters it — not a hang.
+
+A library file is still a KitchenSink section file, with a `library.tramaj-lib` header per library — there is no support yet for a "bare" file containing just a program body and nothing else — and imports still only resolve by name within the same site, never across a networked location the way a Dhall import can.
+
+
 # Notes and limitations
 
-Text interpolation goes through the language's display rules: a string interpolates raw, an integral number drops its `.0`, and anything else falls back to a compact JSON encoding. In `.templating-doc` mode an element's node is left as-is — its text and attribute values keep whatever type they evaluated to (a number stays a number) — and it is KitchenSink's HTML renderer, not the language, that turns them into display strings on the way out.
+Text interpolation goes through the language's display rules: a string interpolates raw, an integral number drops its `.0`, and anything else falls back to a compact JSON encoding. In `.tramaj-doc` mode an element's node is left as-is — its text and attribute values keep whatever type they evaluated to (a number stays a number) — and it is KitchenSink's HTML renderer, not the language, that turns them into display strings on the way out.
 
 String literals do have escape sequences now: `\n`, `\t`, `\r`, `\\`, `\"`, `\``, `\0` and a braced `\u{1F600}` for an arbitrary code point, so a `"` or a backtick can appear inside a literal when escaped — the backtick stays the interpolation delimiter otherwise. A template can therefore emit a `<script>` or an HTML attribute containing quotes directly; the dispatcher example above still prefers single quotes in the generated JavaScript purely for readability.
 
 Attribute names are validated before rendering: the language permits keys the DOM rejects, and those are reported as an error rather than written out as malformed markup.
 
-Both `.templating` and `.templating-doc` sections are backed by the same grammar and evaluator now — `tramaj-hs` no longer has a separate expression-only mode, so which one a program produces follows from what its root evaluated to rather than from which parser ran. KitchenSink still keeps the two section formats distinct, coercing the result to what each one expects (see "Two section formats" above).
+Both `.tramaj-json` and `.tramaj-doc` sections are backed by the same grammar and evaluator now — `tramaj-hs` no longer has a separate expression-only mode, so which one a program produces follows from what its root evaluated to rather than from which parser ran. KitchenSink still keeps the two section formats distinct, coercing the result to what each one expects (see "Two section formats" above).
 
 

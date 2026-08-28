@@ -251,24 +251,20 @@ blog&lt;/a&gt; as I’ve added this section in the
 }
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;&lt;img src="https://lucasdicioccio.github.io/gen/out/about-me.cmark__latest-selfie.jpg" alt="selfie" /&gt;&lt;/p&gt;
-&lt;p&gt;Another fun usage is to roast your articles, provided agents-exe is installed, the following uses an LLM to roast an article (example at &lt;a href="/gen/out/philosophy.cmark__roast-me"&gt;a generated-file path&lt;/a&gt;). Here I’ve used the Dhall section (see below) so that the source-path is accessible to the generator command.&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;=generator:cmd.dhall
-
-let cmdcontent =
-  { cmd = &amp;quot;agents-exe&amp;quot;
-  , args =
-    [ &amp;quot;--agent-file&amp;quot; , &amp;quot;agents/critique.json&amp;quot;
-    , &amp;quot;run&amp;quot;
-    , &amp;quot;-p&amp;quot; , &amp;quot;you are given a source file of a blog post, the content resides below a =base:main-content.cmark marker. comment on the article by giving honest feedback in a sarcastic manner&amp;quot;
-    , &amp;quot;-S&amp;quot; , &amp;quot;-&amp;quot;
-    , &amp;quot;-f&amp;quot; , kitchensink.file
-    ]
-  , target = &amp;quot;roast-me&amp;quot;
-  }
-
-in 
-{ contents = cmdcontent
-, format = &amp;quot;json&amp;quot;
+&lt;p&gt;Another fun usage is to roast your articles, provided agents-exe is installed, the following uses an LLM to roast an article (example at &lt;a href="/gen/out/philosophy.cmark__roast-me"&gt;a generated-file path&lt;/a&gt;). Here I’ve used a &lt;a href="/sections-templating.html"&gt;tramaj section&lt;/a&gt; so that the source-path is accessible to the generator command, as &lt;code&gt;$ctx.file&lt;/code&gt;.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;=generator:cmd.tramaj-json
+{ &amp;quot;format&amp;quot;: &amp;quot;json&amp;quot;
+, &amp;quot;contents&amp;quot;:
+    { &amp;quot;cmd&amp;quot;: &amp;quot;agents-exe&amp;quot;
+    , &amp;quot;args&amp;quot;:
+      [ &amp;quot;--agent-file&amp;quot;, &amp;quot;agents/critique.json&amp;quot;
+      , &amp;quot;run&amp;quot;
+      , &amp;quot;-p&amp;quot;, &amp;quot;you are given a source file of a blog post, the content resides below a =base:main-content.cmark marker. comment on the article by giving honest feedback in a sarcastic manner&amp;quot;
+      , &amp;quot;-S&amp;quot;, &amp;quot;-&amp;quot;
+      , &amp;quot;-f&amp;quot;, $ctx.file
+      ]
+    , &amp;quot;target&amp;quot;: &amp;quot;roast-me&amp;quot;
+    }
 }
 &lt;/code&gt;&lt;/pre&gt;
 &lt;h4 id="microscriptable-in-dhall"&gt;microscriptable in Dhall&lt;/h4&gt;
