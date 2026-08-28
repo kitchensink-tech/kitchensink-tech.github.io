@@ -1,14 +1,14 @@
 git commits:
-187
+190
 src files:
 56
 code size (lines):
-5808
+5840
 code size (bytes):
-210622
+212214
 details:
     67    363   2592 ./hs/src/KitchenSink/Engine.hs
-   165    748   6094 ./hs/src/KitchenSink/Engine/Templating.hs
+   196   1009   7802 ./hs/src/KitchenSink/Engine/Templating.hs
     95    407   3741 ./hs/src/KitchenSink/Engine/OnTheFly.hs
     74    199   1787 ./hs/src/KitchenSink/Engine/Config.hs
     89    247   2470 ./hs/src/KitchenSink/Engine/MultiSiteConfig.hs
@@ -22,7 +22,7 @@ details:
    368   1678  15666 ./hs/src/KitchenSink/Engine/MultiSite.hs
     79    361   3297 ./hs/src/KitchenSink/Engine/Counters.hs
     35    123    997 ./hs/src/KitchenSink/Engine/Utils.hs
-   392   1892  16236 ./hs/src/KitchenSink/Engine/SiteLoader.hs
+   393   1891  16120 ./hs/src/KitchenSink/Engine/SiteLoader.hs
     35     98    818 ./hs/src/KitchenSink/Engine/SiteConfig.hs
     25     74    960 ./hs/src/KitchenSink/Core/Assembler/Sections.hs
     93    343   2540 ./hs/src/KitchenSink/Core/Assembler/Sections/Primitives.hs
@@ -63,4 +63,4 @@ details:
     61    284   2357 ./hs/src/KitchenSink/Commonmark/BlogHTML.hs
     55    165   1364 ./hs/src/KitchenSink/Commonmark/HashTag.hs
     26     81    764 ./hs/src/KitchenSink/Commonmark/Highlighting.hs
-  5808  24127 210622 total
+  5840  24387 212214 total

@@ -1,19 +1,23 @@
-<?xml version="1.0" encoding="UTF-8"?><feed xmlns="http://www.w3.org/2005/Atom"><title type="text">The Kitchen Sink Blog Generator</title><id>https://kitchensink-tech.github.io/atom.xml</id><updated>1970-01-01T00:00:00Z</updated><entry><id>https://kitchensink-tech.github.io/sections-templating.html</id><title type="text">Templating-lang sections</title><updated>1970-01-01T00:00:00Z</updated><author><name>Lucas DiCioccio</name></author><content type="html">&lt;div class="main-article"&gt;&lt;section class="main-section"&gt;&lt;p&gt;&lt;a href="https://github.com/lucasdicioccio/templating-lang"&gt;templating-lang&lt;/a&gt; is a small
-template language: a &lt;code&gt;jq&lt;/code&gt;-flavoured expression language for the data half, a
-HAML-like block syntax for structure, and a deliberately tiny set of builtins.
-KitchenSink embeds its Haskell implementation, &lt;code&gt;templating-hs&lt;/code&gt;, as a second
-section pre-processor next to &lt;a href="/sections-dhall.html"&gt;Dhall-sections&lt;/a&gt;. A
+<?xml version="1.0" encoding="UTF-8"?><feed xmlns="http://www.w3.org/2005/Atom"><title type="text">The Kitchen Sink Blog Generator</title><id>https://kitchensink-tech.github.io/atom.xml</id><updated>1970-01-01T00:00:00Z</updated><entry><id>https://kitchensink-tech.github.io/sections-templating.html</id><title type="text">Tramaj sections</title><updated>1970-01-01T00:00:00Z</updated><author><name>Lucas DiCioccio</name></author><content type="html">&lt;div class="main-article"&gt;&lt;section class="main-section"&gt;&lt;p&gt;&lt;a href="https://github.com/lucasdicioccio/tramaj"&gt;tramaj&lt;/a&gt; — formerly “templating-lang”
+— is a small template language: a &lt;code&gt;jq&lt;/code&gt;-flavoured expression language for the
+data half, a HAML-like block syntax for structure, and a deliberately tiny set
+of builtins. KitchenSink embeds its Haskell implementation, &lt;code&gt;tramaj-hs&lt;/code&gt;, as a
+second section pre-processor next to &lt;a href="/sections-dhall.html"&gt;Dhall-sections&lt;/a&gt;. A
 &lt;a href="/playground.html"&gt;playground&lt;/a&gt; hosted on this site lets you try the language
 itself, outside of any KitchenSink section.&lt;/p&gt;
-&lt;p&gt;Both backends do the same job and both remain supported. Templating-lang is,
-however, the direction of travel: &lt;code&gt;dhall&lt;/code&gt; and &lt;code&gt;dhall-json&lt;/code&gt; are notoriously
-awkward to build and they have repeatedly held KitchenSink back from moving to
-newer GHC versions, whereas &lt;code&gt;templating-hs&lt;/code&gt; needs nothing beyond &lt;code&gt;megaparsec&lt;/code&gt;
-and &lt;code&gt;aeson&lt;/code&gt;. Expect Dhall-sections to be deprecated eventually; nothing is
-being removed today.&lt;/p&gt;
+&lt;p&gt;Both backends do the same job and both remain supported. Tramaj is, however,
+the direction of travel: &lt;code&gt;dhall&lt;/code&gt; and &lt;code&gt;dhall-json&lt;/code&gt; are notoriously awkward to
+build and they have repeatedly held KitchenSink back from moving to newer GHC
+versions, whereas &lt;code&gt;tramaj-hs&lt;/code&gt; needs nothing beyond &lt;code&gt;megaparsec&lt;/code&gt; and &lt;code&gt;aeson&lt;/code&gt;.
+Expect Dhall-sections to be deprecated eventually; nothing is being removed
+today.&lt;/p&gt;
 &lt;h2 id="two-section-formats"&gt;Two section formats&lt;/h2&gt;
-&lt;p&gt;Where Dhall has one format, templating-lang has two, because the language
-distinguishes producing &lt;em&gt;data&lt;/em&gt; from producing a &lt;em&gt;document&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Where Dhall has one format, tramaj sections come in two, because the language
+distinguishes producing &lt;em&gt;data&lt;/em&gt; from producing a &lt;em&gt;document&lt;/em&gt; — though in the
+language itself that distinction is no longer syntactic (a single grammar and
+evaluator decide dynamically what a program’s root evaluated to); it is
+KitchenSink’s two section formats below that still enforce which one a given
+section must produce.&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;.templating&lt;/code&gt; sections are rooted at an expression and evaluate to a JSON
 value. That value is the same &lt;code&gt;{format, contents}&lt;/code&gt; contract Dhall-sections
 answer with, so the section can rewrite itself to &lt;code&gt;json&lt;/code&gt;, &lt;code&gt;cmark&lt;/code&gt; or &lt;code&gt;html&lt;/code&gt;.
@@ -26,8 +30,8 @@ no expression form does. The format token in the section header nevertheless
 says which mode you meant, so a mistake is a parse error rather than a
 surprise.&lt;/p&gt;
 &lt;h2 id="the-ctx-object"&gt;The &lt;code&gt;$ctx&lt;/code&gt; object&lt;/h2&gt;
-&lt;p&gt;Templating-lang always has the input context in scope as &lt;code&gt;$ctx&lt;/code&gt;. KitchenSink
-fills it with the very same information the &lt;code&gt;kitchensink&lt;/code&gt; object carries in
+&lt;p&gt;Tramaj always has the input context in scope as &lt;code&gt;$ctx&lt;/code&gt;. KitchenSink fills it
+with the very same information the &lt;code&gt;kitchensink&lt;/code&gt; object carries in
 Dhall-sections:&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;{ file : Text        -- the source file path of this cmark file
 , sectionNum : Integer  -- this section's number in the file, from zero
@@ -39,9 +43,9 @@ Dhall-sections:&lt;/p&gt;
 &lt;code&gt;kitchensink.file&lt;/code&gt; becomes &lt;code&gt;$ctx.file&lt;/code&gt;.&lt;/p&gt;
 &lt;p&gt;Like Dhall-sections, templating sections are &lt;em&gt;pre-processors&lt;/em&gt;: they are
 evaluated once, at load time, and only see datasets declared before them in the
-file. Unlike Dhall, there are no imports — local or networked — so a template
-cannot pull in a shared library of helpers. That is a real gap against Dhall,
-and the reason the two coexist.&lt;/p&gt;
+file. Unlike Dhall there are no networked imports, but tramaj does have local
+imports of other sections in the same file — see “Using partial templates”
+below — so the gap against Dhall is narrower than it once was.&lt;/p&gt;
 &lt;/section&gt;&lt;section class="main-section"&gt;&lt;h2 id="examples"&gt;Examples&lt;/h2&gt;
 &lt;p&gt;The rest of this page is its own fixture: every output below is produced by a
 templating section in this very file.&lt;/p&gt;
@@ -178,10 +182,20 @@ to define. The selector above happens to bind clicks only.&lt;/p&gt;
 })();
 &lt;/script&gt;
 &lt;/section&gt;&lt;section class="main-section"&gt;&lt;h3 id="using-partial-templates"&gt;Using partial templates&lt;/h3&gt;
-&lt;p&gt;Templating-lang support partial templates and KitchenSink exposes them using a specific section close to datasets.&lt;/p&gt;
-&lt;p&gt;The &lt;code&gt;icon&lt;/code&gt; tag next to &lt;code&gt;library.templating-lib&lt;/code&gt; correspond to the name given to
-the library in further imports.&lt;/p&gt;
-&lt;p&gt;The context passed to imported libraries is entirely determined by the caller, KitchenSink does not add all the fancy datasets, they have to be passed from the call site.&lt;/p&gt;
+&lt;p&gt;Tramaj supports importing one program from another, and KitchenSink exposes
+that using a specific section close to datasets.&lt;/p&gt;
+&lt;p&gt;The &lt;code&gt;icon&lt;/code&gt; tag next to &lt;code&gt;library.templating-lib&lt;/code&gt; corresponds to the name given
+to the library in further imports.&lt;/p&gt;
+&lt;p&gt;The context passed to imported libraries is entirely determined by the caller:
+a library’s &lt;code&gt;$ctx&lt;/code&gt; &lt;em&gt;is&lt;/em&gt; the parameter object the importer supplies, KitchenSink
+does not add any of its own datasets to it.&lt;/p&gt;
+&lt;p&gt;Imports can be partially applied: &lt;code&gt;import(&amp;quot;icon&amp;quot;, {&amp;quot;href&amp;quot;: &amp;quot;&amp;quot;})&lt;/code&gt; wires up the
+library without running it, and calling the result with more parameters —
+&lt;code&gt;$icon({&amp;quot;src&amp;quot;: &amp;quot;...&amp;quot;})&lt;/code&gt; — adds to what was already supplied. The import only
+actually runs once a field (&lt;code&gt;.rendered&lt;/code&gt; or &lt;code&gt;.vals&lt;/code&gt;) is read off it, so one
+wired-up import can be reused across a &lt;code&gt;map&lt;/code&gt; with each iteration adding its own
+parameter. There is no &lt;code&gt;partial-import&lt;/code&gt; builtin any more: partiality is not a
+separate construct, just what happens when a parameter is left out.&lt;/p&gt;
 &lt;p&gt;A limitation today is that import must refer to a library defined above the
 evaluated section. In future release we will support libraries defined in other files.&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;=base:library.templating-lib icon
@@ -193,7 +207,7 @@ evaluated section. In future release we will support libraries defined in other 
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;We can then import this &lt;code&gt;icon&lt;/code&gt; template and apply it.&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;=base:main-content.templating-doc
-@icon=partial-import(&amp;quot;icon&amp;quot;,{&amp;quot;href&amp;quot;:&amp;quot;&amp;quot;, &amp;quot;title&amp;quot;: &amp;quot;demo-templated-icon&amp;quot;})
+@icon=import(&amp;quot;icon&amp;quot;,{&amp;quot;href&amp;quot;:&amp;quot;&amp;quot;, &amp;quot;title&amp;quot;: &amp;quot;demo-templated-icon&amp;quot;})
 @icon1=$icon({&amp;quot;src&amp;quot;: &amp;quot;/images/favicon.png&amp;quot;})
 @icon2=$icon({&amp;quot;src&amp;quot;: &amp;quot;/images/features-001-targetsizes-timeseries.png&amp;quot;})
 @icon3=$icon({&amp;quot;src&amp;quot;: &amp;quot;/images/features-002-dot-demo.dot.png&amp;quot;})
@@ -204,25 +218,30 @@ evaluated section. In future release we will support libraries defined in other 
   $icon3.rendered
 )
 &lt;/code&gt;&lt;/pre&gt;
-&lt;/section&gt;&lt;section class="main-section"&gt;&lt;div class="output"&gt;&lt;p&gt;Below are multiple &lt;em&gt;icons&lt;/em&gt;.&lt;/p&gt;&lt;span class="icon"&gt;&lt;a href title="demo-templated-icon"&gt;&lt;img height="16" src="/images/favicon.png" width="16"&gt;&lt;/a&gt;&lt;/span&gt;&lt;span class="icon"&gt;&lt;a href title="demo-templated-icon"&gt;&lt;img height="16" src="/images/features-001-targetsizes-timeseries.png" width="16"&gt;&lt;/a&gt;&lt;/span&gt;&lt;span class="icon"&gt;&lt;a href title="demo-templated-icon"&gt;&lt;img height="16" src="/gen/images/features-002-dot-demo.dot.png" width="16"&gt;&lt;/a&gt;&lt;/span&gt;&lt;/div&gt;
+&lt;/section&gt;&lt;section class="main-section"&gt;&lt;div class="output"&gt;&lt;p&gt;Below are multiple &lt;em&gt;icons&lt;/em&gt;.&lt;/p&gt;&lt;span class="icon"&gt;&lt;a href title="demo-templated-icon"&gt;&lt;img height="16" width="16" src="/images/favicon.png"&gt;&lt;/a&gt;&lt;/span&gt;&lt;span class="icon"&gt;&lt;a href title="demo-templated-icon"&gt;&lt;img height="16" width="16" src="/images/features-001-targetsizes-timeseries.png"&gt;&lt;/a&gt;&lt;/span&gt;&lt;span class="icon"&gt;&lt;a href title="demo-templated-icon"&gt;&lt;img height="16" width="16" src="/gen/images/features-002-dot-demo.dot.png"&gt;&lt;/a&gt;&lt;/span&gt;&lt;/div&gt;
 &lt;/section&gt;&lt;section class="main-section"&gt;&lt;h2 id="notes-and-limitations"&gt;Notes and limitations&lt;/h2&gt;
 &lt;p&gt;Text interpolation goes through the language’s display rules: a string
 interpolates raw, an integral number drops its &lt;code&gt;.0&lt;/code&gt;, and anything else falls
-back to a compact JSON encoding. In &lt;code&gt;.templating-doc&lt;/code&gt; mode attribute values are
-display strings too — that mode produces a document, not data — which is
-exactly why expression mode exists for JSON payloads.&lt;/p&gt;
-&lt;p&gt;String literals have no escape sequences: a &lt;code&gt;&amp;quot;&lt;/code&gt; or a backtick simply cannot
-appear inside one, since the backtick is the interpolation delimiter. So a
-template can emit a &lt;code&gt;&amp;lt;script&amp;gt;&lt;/code&gt; or an HTML attribute containing quotes only
-awkwardly — prefer single quotes in generated JavaScript, or keep such content
-out of the template entirely, as the section above does.&lt;/p&gt;
+back to a compact JSON encoding. In &lt;code&gt;.templating-doc&lt;/code&gt; mode an element’s node is
+left as-is — its text and attribute values keep whatever type they evaluated
+to (a number stays a number) — and it is KitchenSink’s HTML renderer, not the
+language, that turns them into display strings on the way out.&lt;/p&gt;
+&lt;p&gt;String literals do have escape sequences now: &lt;code&gt;\n&lt;/code&gt;, &lt;code&gt;\t&lt;/code&gt;, &lt;code&gt;\r&lt;/code&gt;, &lt;code&gt;\\&lt;/code&gt;, &lt;code&gt;\&amp;quot;&lt;/code&gt;,
+&lt;code&gt;\`&lt;/code&gt;, &lt;code&gt;\0&lt;/code&gt; and a braced &lt;code&gt;\u{1F600}&lt;/code&gt; for an arbitrary code point, so a &lt;code&gt;&amp;quot;&lt;/code&gt;
+or a backtick can appear inside a literal when escaped — the backtick stays the
+interpolation delimiter otherwise. A template can therefore emit a &lt;code&gt;&amp;lt;script&amp;gt;&lt;/code&gt;
+or an HTML attribute containing quotes directly; the dispatcher example above
+still prefers single quotes in the generated JavaScript purely for readability.&lt;/p&gt;
 &lt;p&gt;Attribute names are validated before rendering: the language permits keys the
 DOM rejects, and those are reported as an error rather than written out as
 malformed markup.&lt;/p&gt;
-&lt;p&gt;The JSON (expression-rooted) mode exists only in &lt;code&gt;templating-hs&lt;/code&gt;, not in the
-PureScript implementation of the language, so templates using it are not
-portable to a browser host.&lt;/p&gt;
-&lt;/section&gt;&lt;/div&gt;</content><link href="https://kitchensink-tech.github.io/sections-templating.html" rel="alternate"/><summary type="text">Pre-processing sections with templating-lang, the lighter-weight alternative to Dhall-sections.</summary></entry><entry><id>https://kitchensink-tech.github.io/sections.html</id><title type="text">The section-based format</title><updated>1970-01-01T00:00:00Z</updated><author><name>Lucas DiCioccio</name></author><content type="html">&lt;div class="main-article"&gt;&lt;section class="main-section"&gt;&lt;p&gt;In my &lt;a href="https://dicioccio.fr/how-this-blog-works.html"&gt;first article about why I wrote my own
+&lt;p&gt;Both &lt;code&gt;.templating&lt;/code&gt; and &lt;code&gt;.templating-doc&lt;/code&gt; sections are backed by the same
+grammar and evaluator now — &lt;code&gt;tramaj-hs&lt;/code&gt; no longer has a separate
+expression-only mode, so which one a program produces follows from what its
+root evaluated to rather than from which parser ran. KitchenSink still keeps
+the two section formats distinct, coercing the result to what each one expects
+(see “Two section formats” above).&lt;/p&gt;
+&lt;/section&gt;&lt;/div&gt;</content><link href="https://kitchensink-tech.github.io/sections-templating.html" rel="alternate"/><summary type="text">Pre-processing sections with tramaj, the lighter-weight alternative to Dhall-sections.</summary></entry><entry><id>https://kitchensink-tech.github.io/sections.html</id><title type="text">The section-based format</title><updated>1970-01-01T00:00:00Z</updated><author><name>Lucas DiCioccio</name></author><content type="html">&lt;div class="main-article"&gt;&lt;section class="main-section"&gt;&lt;p&gt;In my &lt;a href="https://dicioccio.fr/how-this-blog-works.html"&gt;first article about why I wrote my own
 blog-engine&lt;/a&gt;, I
 introduce an important separation between content and structure of articles. In
 short, the &lt;em&gt;meaty content&lt;/em&gt; is what readers are interested in, whereas structure
@@ -531,10 +550,10 @@ appropriate format. The return type is currently rather primitive and will
 likely change in the future. Changes and specifications are tracked in a
 &lt;a href="/sections-dhall.html"&gt;WIP-page&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;The same &lt;code&gt;{format, contents}&lt;/code&gt; contract is also answered by &lt;code&gt;templating&lt;/code&gt;
-sections, which pre-process sections with
-&lt;a href="/sections-templating.html"&gt;templating-lang&lt;/a&gt; rather than Dhall. Both backends
-are supported; templating-lang is the lighter-weight one and the one likely to
-outlive the other, since &lt;code&gt;dhall-json&lt;/code&gt; is a recurring obstacle to upgrading GHC.&lt;/p&gt;
+sections, which pre-process sections with &lt;a href="/sections-templating.html"&gt;tramaj&lt;/a&gt;
+rather than Dhall. Both backends are supported; tramaj is the lighter-weight
+one and the one likely to outlive the other, since &lt;code&gt;dhall-json&lt;/code&gt; is a recurring
+obstacle to upgrading GHC.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;example&lt;/strong&gt;&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;=base:main-content.dhall
 
@@ -732,22 +751,22 @@ engine.&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ul&gt;
 &lt;/div&gt;
-&lt;/section&gt;&lt;section class="main-section"&gt;&lt;p&gt;The same section ported to &lt;a href="/sections-templating.html"&gt;templating-lang&lt;/a&gt;. The
-list has to be built structurally here, in &lt;code&gt;.templating-doc&lt;/code&gt; mode: the
-expression mode has no way to append the mapped item lines to the header lines,
-because the language has no &lt;code&gt;concat&lt;/code&gt; builtin and a &lt;code&gt;contents&lt;/code&gt; array must be
-flat.&lt;/p&gt;
+&lt;/section&gt;&lt;section class="main-section"&gt;&lt;p&gt;The same section ported to &lt;a href="/sections-templating.html"&gt;tramaj&lt;/a&gt;. The list has
+to be built structurally here, in &lt;code&gt;.templating-doc&lt;/code&gt; mode: expression mode’s
+&lt;code&gt;contents&lt;/code&gt; array has to be a flat list of lines, with no way to splice in one
+&lt;code&gt;&amp;lt;li&amp;gt;&lt;/code&gt; per item and keep the surrounding header lines, so a document built out
+of real elements is the natural fit.&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;=base:main-content.templating-doc
 @d=$ctx.datasets.example
 .div(class: &amp;quot;output&amp;quot;,
-  .p(.strong(&amp;quot;this code block is defined in some templating-lang&amp;quot;)),
+  .p(.strong(&amp;quot;this code block is defined in some tramaj&amp;quot;)),
   .p(&amp;quot;file=`$ctx.file`&amp;quot;),
   .p(&amp;quot;section=`$ctx.sectionNum`&amp;quot;),
   .p(&amp;quot;some number from a dataset:`$d.answer`&amp;quot;),
   .p(&amp;quot;some list from a dataset:&amp;quot;),
   .ul(map($d.items, (i) =&amp;gt; .li($i))))
 &lt;/code&gt;&lt;/pre&gt;
-&lt;/section&gt;&lt;section class="main-section"&gt;&lt;div class="output"&gt;&lt;p&gt;&lt;strong&gt;this code block is defined in some templating-lang&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;file=./website-src/sections-dhall.cmark&lt;/p&gt;&lt;p&gt;section=11&lt;/p&gt;&lt;p&gt;some number from a dataset:42&lt;/p&gt;&lt;p&gt;some list from a dataset:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;foo&lt;/li&gt;&lt;li&gt;bar&lt;/li&gt;&lt;li&gt;baz&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;
+&lt;/section&gt;&lt;section class="main-section"&gt;&lt;div class="output"&gt;&lt;p&gt;&lt;strong&gt;this code block is defined in some tramaj&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;file=./website-src/sections-dhall.cmark&lt;/p&gt;&lt;p&gt;section=11&lt;/p&gt;&lt;p&gt;some number from a dataset:42&lt;/p&gt;&lt;p&gt;some list from a dataset:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;foo&lt;/li&gt;&lt;li&gt;bar&lt;/li&gt;&lt;li&gt;baz&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;
 &lt;/section&gt;&lt;section class="main-section"&gt;&lt;h3 id="rendering-a-section-in-html"&gt;Rendering a section in HTML&lt;/h3&gt;
 &lt;p&gt;You can return HTML directly-formatted.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;example&lt;/strong&gt;&lt;/p&gt;
@@ -794,7 +813,7 @@ in
 }
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;&lt;a href="/gen/out/sections-dhall.cmark__cat-this-file"&gt;once the generated section is evaluated&lt;/a&gt;&lt;/p&gt;
-&lt;/section&gt;&lt;section class="main-section"&gt;&lt;p&gt;The same generator in templating-lang. This one is a straight port: the result
+&lt;/section&gt;&lt;section class="main-section"&gt;&lt;p&gt;The same generator in tramaj. This one is a straight port: the result
 is a JSON value rather than lines of text, so it stays in expression mode, and
 &lt;code&gt;kitchensink.file&lt;/code&gt; becomes &lt;code&gt;$ctx.file&lt;/code&gt;.&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;=generator:cmd.templating
@@ -825,7 +844,7 @@ not immediate enough .&lt;/p&gt;
 }
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;&lt;a href="/raw/data/sections-dhall.cmark__alice-bob2.json"&gt;rendered&lt;/a&gt;&lt;/p&gt;
-&lt;/section&gt;&lt;section class="main-section"&gt;&lt;p&gt;And the same dataset in templating-lang. A &lt;code&gt;.templating&lt;/code&gt; cell returning
+&lt;/section&gt;&lt;section class="main-section"&gt;&lt;p&gt;And the same dataset in tramaj. A &lt;code&gt;.templating&lt;/code&gt; cell returning
 &lt;code&gt;format = &amp;quot;json&amp;quot;&lt;/code&gt; registers a dataset exactly the way the Dhall one does, so
 every later section can read it back from &lt;code&gt;$ctx.datasets&lt;/code&gt;.&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;=base:dataset.templating alice-bob-templating
@@ -869,15 +888,14 @@ so be sure to not rely too much on these values.&lt;/p&gt;
 &lt;li&gt;allow appending new sections (i.e., preprocess articles over sections)?
 &lt;/li&gt;
 &lt;/ul&gt;
-&lt;/section&gt;&lt;/div&gt;</content><link href="https://kitchensink-tech.github.io/sections-dhall.html" rel="alternate"/><summary type="text">Documenting the special feature of Dhall-sections.</summary></entry><entry><id>https://kitchensink-tech.github.io/playground.html</id><title type="text">Templating-lang playground</title><updated>1970-01-01T00:00:00Z</updated><author><name>Lucas DiCioccio</name></author><content type="html">&lt;div class="main-article"&gt;&lt;section class="main-section"&gt;&lt;p&gt;This is the same playground built from the
-&lt;a href="https://github.com/lucasdicioccio/templating-lang"&gt;templating-lang&lt;/a&gt;
-repository’s PureScript sources, published here as a static bundle so it can
-be tried without a local build. It parses and evaluates templating-lang
-expressions and documents in the browser — nothing is sent to a server.&lt;/p&gt;
-&lt;p&gt;See &lt;a href="/sections-templating.html"&gt;Templating-lang sections&lt;/a&gt; for how the same
-language is embedded server-side, as a section pre-processor, by KitchenSink
-itself.&lt;/p&gt;
-&lt;iframe class="playground-frame" src="/templating-playground.html" title="templating-lang playground"&gt;&lt;/iframe&gt;
+&lt;/section&gt;&lt;/div&gt;</content><link href="https://kitchensink-tech.github.io/sections-dhall.html" rel="alternate"/><summary type="text">Documenting the special feature of Dhall-sections.</summary></entry><entry><id>https://kitchensink-tech.github.io/playground.html</id><title type="text">Tramaj playground</title><updated>1970-01-01T00:00:00Z</updated><author><name>Lucas DiCioccio</name></author><content type="html">&lt;div class="main-article"&gt;&lt;section class="main-section"&gt;&lt;p&gt;This is the same playground built from the
+&lt;a href="https://github.com/lucasdicioccio/tramaj"&gt;tramaj&lt;/a&gt; repository’s PureScript
+sources, published here as a static bundle so it can be tried without a local
+build. It parses and evaluates tramaj expressions and documents in the
+browser — nothing is sent to a server.&lt;/p&gt;
+&lt;p&gt;See &lt;a href="/sections-templating.html"&gt;Tramaj sections&lt;/a&gt; for how the same language is
+embedded server-side, as a section pre-processor, by KitchenSink itself.&lt;/p&gt;
+&lt;iframe class="playground-frame" src="/templating-playground.html" title="tramaj playground"&gt;&lt;/iframe&gt;
 &lt;p&gt;If the embedded frame does not load, open the
 &lt;a href="/templating-playground.html"&gt;playground&lt;/a&gt; directly.&lt;/p&gt;
-&lt;/section&gt;&lt;/div&gt;</content><link href="https://kitchensink-tech.github.io/playground.html" rel="alternate"/><summary type="text">An in-browser playground for [templating-lang](https://github.com/lucasdicioccio/templating-lang), the expression/document language behind [`.templating` and `.templating-doc` sections](/sections-templating.html), hosted directly on this site.</summary></entry></feed>
+&lt;/section&gt;&lt;/div&gt;</content><link href="https://kitchensink-tech.github.io/playground.html" rel="alternate"/><summary type="text">An in-browser playground for [tramaj](https://github.com/lucasdicioccio/tramaj) — formerly "templating-lang" — the expression/document language behind [`.templating` and `.templating-doc` sections](/sections-templating.html), hosted directly on this site.</summary></entry></feed>

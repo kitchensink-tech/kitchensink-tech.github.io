@@ -1,10 +1,10 @@
-[templating-lang](https://github.com/lucasdicioccio/templating-lang ) is a small template language: a `jq`-flavoured expression language for the data half, a HAML-like block syntax for structure, and a deliberately tiny set of builtins. KitchenSink embeds its Haskell implementation, `templating-hs`, as a second section pre-processor next to [Dhall-sections](/sections-dhall.html ). A [playground](/playground.html ) hosted on this site lets you try the language itself, outside of any KitchenSink section.
+[tramaj](https://github.com/lucasdicioccio/tramaj ) — formerly "templating-lang" — is a small template language: a `jq`-flavoured expression language for the data half, a HAML-like block syntax for structure, and a deliberately tiny set of builtins. KitchenSink embeds its Haskell implementation, `tramaj-hs`, as a second section pre-processor next to [Dhall-sections](/sections-dhall.html ). A [playground](/playground.html ) hosted on this site lets you try the language itself, outside of any KitchenSink section.
 
-Both backends do the same job and both remain supported. Templating-lang is, however, the direction of travel: `dhall` and `dhall-json` are notoriously awkward to build and they have repeatedly held KitchenSink back from moving to newer GHC versions, whereas `templating-hs` needs nothing beyond `megaparsec` and `aeson`. Expect Dhall-sections to be deprecated eventually; nothing is being removed today.
+Both backends do the same job and both remain supported. Tramaj is, however, the direction of travel: `dhall` and `dhall-json` are notoriously awkward to build and they have repeatedly held KitchenSink back from moving to newer GHC versions, whereas `tramaj-hs` needs nothing beyond `megaparsec` and `aeson`. Expect Dhall-sections to be deprecated eventually; nothing is being removed today.
 
 # Two section formats
 
-Where Dhall has one format, templating-lang has two, because the language distinguishes producing _data_ from producing a _document_.
+Where Dhall has one format, tramaj sections come in two, because the language distinguishes producing _data_ from producing a _document_ — though in the language itself that distinction is no longer syntactic (a single grammar and evaluator decide dynamically what a program's root evaluated to); it is KitchenSink's two section formats below that still enforce which one a given section must produce.
 
 `.templating` sections are rooted at an expression and evaluate to a JSON value. That value is the same `{format, contents}` contract Dhall-sections answer with, so the section can rewrite itself to `json`, `cmark` or `html`. This is the format to reach for as a drop-in replacement for a Dhall section.
 
@@ -14,7 +14,7 @@ The two roots can never be confused: an element root always starts with `.` and 
 
 # The `$ctx` object
 
-Templating-lang always has the input context in scope as `$ctx`. KitchenSink fills it with the very same information the `kitchensink` object carries in Dhall-sections:
+Tramaj always has the input context in scope as `$ctx`. KitchenSink fills it with the very same information the `kitchensink` object carries in Dhall-sections:
 
 ```
 { file : Text        -- the source file path of this cmark file
@@ -26,7 +26,7 @@ Templating-lang always has the input context in scope as `$ctx`. KitchenSink fil
 
 So `kitchensink.datasets.my-name` becomes `$ctx.datasets.my-name`, and `kitchensink.file` becomes `$ctx.file`.
 
-Like Dhall-sections, templating sections are _pre-processors_: they are evaluated once, at load time, and only see datasets declared before them in the file. Unlike Dhall, there are no imports — local or networked — so a template cannot pull in a shared library of helpers. That is a real gap against Dhall, and the reason the two coexist.
+Like Dhall-sections, templating sections are _pre-processors_: they are evaluated once, at load time, and only see datasets declared before them in the file. Unlike Dhall there are no networked imports, but tramaj does have local imports of other sections in the same file — see "Using partial templates" below — so the gap against Dhall is narrower than it once was.
 
 
 # Examples
@@ -190,11 +190,13 @@ Neither the event type nor the key is a fixed vocabulary: the language requires 
 
 ## Using partial templates
 
-Templating-lang support partial templates and KitchenSink exposes them using a specific section close to datasets.
+Tramaj supports importing one program from another, and KitchenSink exposes that using a specific section close to datasets.
 
-The `icon` tag next to `library.templating-lib` correspond to the name given to the library in further imports.
+The `icon` tag next to `library.templating-lib` corresponds to the name given to the library in further imports.
 
-The context passed to imported libraries is entirely determined by the caller, KitchenSink does not add all the fancy datasets, they have to be passed from the call site.
+The context passed to imported libraries is entirely determined by the caller: a library's `$ctx` _is_ the parameter object the importer supplies, KitchenSink does not add any of its own datasets to it.
+
+Imports can be partially applied: `import("icon", {"href": ""})` wires up the library without running it, and calling the result with more parameters — `$icon({"src": "..."})` — adds to what was already supplied. The import only actually runs once a field (`.rendered` or `.vals`) is read off it, so one wired-up import can be reused across a `map` with each iteration adding its own parameter. There is no `partial-import` builtin any more: partiality is not a separate construct, just what happens when a parameter is left out.
 
 A limitation today is that import must refer to a library defined above the evaluated section. In future release we will support libraries defined in other files.
 
@@ -211,7 +213,7 @@ We can then import this `icon` template and apply it.
 
 ```
 =base:main-content.templating-doc
-@icon=partial-import("icon",{"href":"", "title": "demo-templated-icon"})
+@icon=import("icon",{"href":"", "title": "demo-templated-icon"})
 @icon1=$icon({"src": "/images/favicon.png"})
 @icon2=$icon({"src": "/images/features-001-targetsizes-timeseries.png"})
 @icon3=$icon({"src": "/images/features-002-dot-demo.dot.png"})
@@ -228,12 +230,12 @@ We can then import this `icon` template and apply it.
 
 # Notes and limitations
 
-Text interpolation goes through the language's display rules: a string interpolates raw, an integral number drops its `.0`, and anything else falls back to a compact JSON encoding. In `.templating-doc` mode attribute values are display strings too — that mode produces a document, not data — which is exactly why expression mode exists for JSON payloads.
+Text interpolation goes through the language's display rules: a string interpolates raw, an integral number drops its `.0`, and anything else falls back to a compact JSON encoding. In `.templating-doc` mode an element's node is left as-is — its text and attribute values keep whatever type they evaluated to (a number stays a number) — and it is KitchenSink's HTML renderer, not the language, that turns them into display strings on the way out.
 
-String literals have no escape sequences: a `"` or a backtick simply cannot appear inside one, since the backtick is the interpolation delimiter. So a template can emit a `<script>` or an HTML attribute containing quotes only awkwardly — prefer single quotes in generated JavaScript, or keep such content out of the template entirely, as the section above does.
+String literals do have escape sequences now: `\n`, `\t`, `\r`, `\\`, `\"`, `\``, `\0` and a braced `\u{1F600}` for an arbitrary code point, so a `"` or a backtick can appear inside a literal when escaped — the backtick stays the interpolation delimiter otherwise. A template can therefore emit a `<script>` or an HTML attribute containing quotes directly; the dispatcher example above still prefers single quotes in the generated JavaScript purely for readability.
 
 Attribute names are validated before rendering: the language permits keys the DOM rejects, and those are reported as an error rather than written out as malformed markup.
 
-The JSON (expression-rooted) mode exists only in `templating-hs`, not in the PureScript implementation of the language, so templates using it are not portable to a browser host.
+Both `.templating` and `.templating-doc` sections are backed by the same grammar and evaluator now — `tramaj-hs` no longer has a separate expression-only mode, so which one a program produces follows from what its root evaluated to rather than from which parser ran. KitchenSink still keeps the two section formats distinct, coercing the result to what each one expects (see "Two section formats" above).
 
 

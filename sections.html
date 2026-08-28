@@ -307,10 +307,10 @@ appropriate format. The return type is currently rather primitive and will
 likely change in the future. Changes and specifications are tracked in a
 <a href="/sections-dhall.html">WIP-page</a>.</p>
 <p>The same <code>{format, contents}</code> contract is also answered by <code>templating</code>
-sections, which pre-process sections with
-<a href="/sections-templating.html">templating-lang</a> rather than Dhall. Both backends
-are supported; templating-lang is the lighter-weight one and the one likely to
-outlive the other, since <code>dhall-json</code> is a recurring obstacle to upgrading GHC.</p>
+sections, which pre-process sections with <a href="/sections-templating.html">tramaj</a>
+rather than Dhall. Both backends are supported; tramaj is the lighter-weight
+one and the one likely to outlive the other, since <code>dhall-json</code> is a recurring
+obstacle to upgrading GHC.</p>
 <p><strong>example</strong></p>
 <pre><code>=base:main-content.dhall
 
