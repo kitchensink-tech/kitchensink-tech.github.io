@@ -1,0 +1,12 @@
+
+{ "plans":
+  [ {"name": "Starter", "price": "$0"}
+  , {"name": "Team", "price": "$29/mo"}
+  , {"name": "Scale", "price": "Talk to us"}
+  ]
+, "rows":
+  [ {"feature": "Buckets", "values": ["3", "25", "Unlimited"]}
+  , {"feature": "Delegated keys", "values": ["1", "20", "Unlimited"]}
+  , {"feature": "Support", "values": ["Community", "Priority", "Dedicated"]}
+  ]
+}

@@ -268,9 +268,11 @@ Another fun usage is to roast your articles, provided agents-exe is installed, t
 }
 ```
 
-### microscriptable in Dhall
+The LLM call can fail (rate limits, no network). This very site runs it through [`website-scripts/with-fallback.sh`](https://github.com/kitchensink-tech/kitchensink/blob/main/website-scripts/with-fallback.sh ), which prints a saved result committed in the repository when the command fails, so the build does not depend on the LLM being reachable.
 
-I have written a [full article](https://dicioccio.fr/dhall-section-demo.html ) on my personal blog a while ago to motivate the whole usage of [Dhall](https://dhall-lang.org/ ). Keep in mind that I'm still happy about the choice. Dhall "powers" my photo galleries and my [stream of notes](https://lucasdicioccio.github.io/notes.html ) on my personal blog.
+### microscriptable with tramaj
+
+Sections can be pre-processed by a [tramaj](/sections-templating.html ) expression: a small typed template language whose result is a value (`tramaj-json`) or a document tree rendered to HTML (`tramaj-doc`). This is how repeated structures, such as a photo gallery or a stream of notes built from JSON datasets, are generated statically. (Kitchen-Sink used to do this with Dhall, motivated in a [past article on my personal blog](https://dicioccio.fr/dhall-section-demo.html ); that format was removed.)
 
 
 ## article organization

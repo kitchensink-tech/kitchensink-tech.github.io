@@ -267,8 +267,12 @@ blog&lt;/a&gt; as I’ve added this section in the
     }
 }
 &lt;/code&gt;&lt;/pre&gt;
-&lt;h4 id="microscriptable-in-dhall"&gt;microscriptable in Dhall&lt;/h4&gt;
-&lt;p&gt;I have written a &lt;a href="https://dicioccio.fr/dhall-section-demo.html"&gt;full article&lt;/a&gt; on my personal blog a while ago to motivate the whole usage of &lt;a href="https://dhall-lang.org/"&gt;Dhall&lt;/a&gt;. Keep in mind that I’m still happy about the choice. Dhall “powers” my photo galleries and my &lt;a href="https://lucasdicioccio.github.io/notes.html"&gt;stream of notes&lt;/a&gt; on my personal blog.&lt;/p&gt;
+&lt;p&gt;The LLM call can fail (rate limits, no network). This very site runs it through
+&lt;a href="https://github.com/kitchensink-tech/kitchensink/blob/main/website-scripts/with-fallback.sh"&gt;&lt;code&gt;website-scripts/with-fallback.sh&lt;/code&gt;&lt;/a&gt;,
+which prints a saved result committed in the repository when the command fails,
+so the build does not depend on the LLM being reachable.&lt;/p&gt;
+&lt;h4 id="microscriptable-with-tramaj"&gt;microscriptable with tramaj&lt;/h4&gt;
+&lt;p&gt;Sections can be pre-processed by a &lt;a href="/sections-templating.html"&gt;tramaj&lt;/a&gt; expression: a small typed template language whose result is a value (&lt;code&gt;tramaj-json&lt;/code&gt;) or a document tree rendered to HTML (&lt;code&gt;tramaj-doc&lt;/code&gt;). This is how repeated structures, such as a photo gallery or a stream of notes built from JSON datasets, are generated statically. (Kitchen-Sink used to do this with Dhall, motivated in a &lt;a href="https://dicioccio.fr/dhall-section-demo.html"&gt;past article on my personal blog&lt;/a&gt;; that format was removed.)&lt;/p&gt;
 &lt;/section&gt;&lt;section class="main-section"&gt;&lt;h3 id="article-organization"&gt;article organization&lt;/h3&gt;
 &lt;p&gt;An article needs some &lt;em&gt;decorum&lt;/em&gt; to help readers of your site as well as other
 applications relaying your articles. For instance, who is the author? what

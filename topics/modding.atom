@@ -139,7 +139,7 @@ instance).&lt;/p&gt;
 &lt;/li&gt;
 &lt;li&gt;parsing content of &lt;code&gt;.cmark&lt;/code&gt; as section format
 &lt;/li&gt;
-&lt;li&gt;evaluating &lt;code&gt;.dhall&lt;/code&gt; sections
+&lt;li&gt;evaluating &lt;code&gt;tramaj-json&lt;/code&gt;/&lt;code&gt;tramaj-doc&lt;/code&gt; sections
 &lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;

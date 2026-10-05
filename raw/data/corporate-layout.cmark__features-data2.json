@@ -1,0 +1,7 @@
+
+{ "features":
+  [ {"title": "Live budgets", "body": "Every team sees its own bucket update as spend happens, not at month-end reconciliation."}
+  , {"title": "Delegated keys", "body": "Hand a scoped key to a sub-team or a robot; reclaim what it does not use."}
+  , {"title": "Audit trail", "body": "Every consumption and replenishment is timestamped and attributable, no export required."}
+  ]
+}

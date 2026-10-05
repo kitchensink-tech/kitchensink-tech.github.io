@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?><feed xmlns="http://www.w3.org/2005/Atom"><title type="text">The Kitchen Sink Blog Generator</title><id>https://kitchensink-tech.github.io/atom.xml</id><updated>1970-01-01T00:00:00Z</updated><entry><id>https://kitchensink-tech.github.io/corporate-components.html</id><title type="text">Corporate components</title><updated>1970-01-01T00:00:00Z</updated><author><name>Lucas DiCioccio</name></author><content type="html">&lt;div class="main-article"&gt;&lt;section class="main-section"&gt;&lt;p&gt;&lt;code&gt;corporate.cmark-tramaj&lt;/code&gt; is a &lt;code&gt;.cmark-tramaj&lt;/code&gt; library file (see
+&lt;a href="/sections-templating.html"&gt;tramaj sections&lt;/a&gt; for what that extension means
+and how cross-file imports resolve). It has no page of its own; every
+article imports from it as &lt;code&gt;corporate/&amp;lt;name&amp;gt;&lt;/code&gt;, most visibly the
+&lt;a href="/corporate-layout.html"&gt;corporate layout example&lt;/a&gt;, which composes its
+whole body from the six components documented below.&lt;/p&gt;
+&lt;p&gt;Each component is a single &lt;code&gt;library.tramaj-lib&lt;/code&gt; template rooted at one
+element, called from a page’s own &lt;code&gt;main-content.tramaj-doc&lt;/code&gt; section with
+&lt;code&gt;import(&amp;quot;corporate/&amp;lt;name&amp;gt;&amp;quot;, {…}).rendered&lt;/code&gt;. A component takes exactly the
+fields listed under it — nothing more, since tramaj has
+&lt;a href="/sections-templating.html"&gt;no arithmetic&lt;/a&gt;: counts, index
+alignment and conditional styling all have to be either decided by the
+data author ahead of time (e.g. &lt;code&gt;pricing-table&lt;/code&gt;’s &lt;code&gt;rows[].values&lt;/code&gt; line up
+with &lt;code&gt;plans&lt;/code&gt; positionally because the dataset says so, not because the
+template computes it) or reduced to the handful of comparisons &lt;code&gt;branch&lt;/code&gt;
+and &lt;code&gt;eq&lt;/code&gt; can express (&lt;code&gt;hero&lt;/code&gt;’s &lt;code&gt;style: &amp;quot;secondary&amp;quot;&lt;/code&gt; switch).&lt;/p&gt;
+&lt;/section&gt;&lt;section class="main-section"&gt;&lt;h3 id="hero"&gt;hero&lt;/h3&gt;
+&lt;p&gt;Fields: &lt;code&gt;title&lt;/code&gt; (string), &lt;code&gt;subtitle&lt;/code&gt; (string), &lt;code&gt;actions&lt;/code&gt; (array of
+&lt;code&gt;{label, href, style}&lt;/code&gt;, where &lt;code&gt;style: &amp;quot;secondary&amp;quot;&lt;/code&gt; renders as the outlined
+button and anything else — typically &lt;code&gt;&amp;quot;primary&amp;quot;&lt;/code&gt; — as the filled one).&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;=base:dataset.json hero-data
+{ &amp;quot;title&amp;quot;: &amp;quot;Acme Cloud&amp;quot;
+, &amp;quot;subtitle&amp;quot;: &amp;quot;Track team spend in real time, without the spreadsheet gymnastics.&amp;quot;
+, &amp;quot;actions&amp;quot;:
+  [ {&amp;quot;label&amp;quot;: &amp;quot;See pricing&amp;quot;, &amp;quot;href&amp;quot;: &amp;quot;#pricing&amp;quot;, &amp;quot;style&amp;quot;: &amp;quot;primary&amp;quot;}
+  , {&amp;quot;label&amp;quot;: &amp;quot;Talk to sales&amp;quot;, &amp;quot;href&amp;quot;: &amp;quot;#contact&amp;quot;, &amp;quot;style&amp;quot;: &amp;quot;secondary&amp;quot;}
+  ]
+}
+
+=base:main-content.tramaj-doc
+@d=$ctx.datasets.hero-data
+import(&amp;quot;corporate/hero&amp;quot;, {&amp;quot;title&amp;quot;: $d.title, &amp;quot;subtitle&amp;quot;: $d.subtitle, &amp;quot;actions&amp;quot;: $d.actions}).rendered
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/section&gt;&lt;section class="main-section"&gt;&lt;div class="output"&gt;&lt;div class="hero"&gt;&lt;h1&gt;Acme Cloud&lt;/h1&gt;&lt;p class="hero-subtitle"&gt;Track team spend in real time, without the spreadsheet gymnastics.&lt;/p&gt;&lt;div class="hero-actions"&gt;&lt;a class="button" href="#pricing"&gt;See pricing&lt;/a&gt;&lt;a class="button secondary" href="#contact"&gt;Talk to sales&lt;/a&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;/section&gt;&lt;section class="main-section"&gt;&lt;h3 id="feature-grid"&gt;feature-grid&lt;/h3&gt;
+&lt;p&gt;Fields: &lt;code&gt;features&lt;/code&gt; (array of &lt;code&gt;{title, body}&lt;/code&gt;), one &lt;code&gt;feature-card&lt;/code&gt; per
+entry.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;=base:dataset.json features-data
+{ &amp;quot;features&amp;quot;:
+  [ {&amp;quot;title&amp;quot;: &amp;quot;Live budgets&amp;quot;, &amp;quot;body&amp;quot;: &amp;quot;Every team sees its own bucket update as spend happens.&amp;quot;}
+  , {&amp;quot;title&amp;quot;: &amp;quot;Delegated keys&amp;quot;, &amp;quot;body&amp;quot;: &amp;quot;Hand a scoped key to a sub-team or a robot.&amp;quot;}
+  ]
+}
+
+=base:main-content.tramaj-doc
+@d=$ctx.datasets.features-data
+import(&amp;quot;corporate/feature-grid&amp;quot;, {&amp;quot;features&amp;quot;: $d.features}).rendered
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/section&gt;&lt;section class="main-section"&gt;&lt;div class="output"&gt;&lt;div class="feature-grid"&gt;&lt;div class="feature-card"&gt;&lt;h3&gt;Live budgets&lt;/h3&gt;&lt;p&gt;Every team sees its own bucket update as spend happens.&lt;/p&gt;&lt;/div&gt;&lt;div class="feature-card"&gt;&lt;h3&gt;Delegated keys&lt;/h3&gt;&lt;p&gt;Hand a scoped key to a sub-team or a robot.&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;/section&gt;&lt;section class="main-section"&gt;&lt;h3 id="pricing-table"&gt;pricing-table&lt;/h3&gt;
+&lt;p&gt;Fields: &lt;code&gt;plans&lt;/code&gt; (array of &lt;code&gt;{name, price}&lt;/code&gt;, one column each) and &lt;code&gt;rows&lt;/code&gt;
+(array of &lt;code&gt;{feature, values}&lt;/code&gt;, one row each, where &lt;code&gt;values&lt;/code&gt; is a plain
+array of strings that the data author has already lined up positionally
+with &lt;code&gt;plans&lt;/code&gt; — the template has no way to check or compute that alignment,
+it only &lt;code&gt;map&lt;/code&gt;s each side once).&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;=base:dataset.json pricing-data
+{ &amp;quot;plans&amp;quot;:
+  [ {&amp;quot;name&amp;quot;: &amp;quot;Starter&amp;quot;, &amp;quot;price&amp;quot;: &amp;quot;$0&amp;quot;}
+  , {&amp;quot;name&amp;quot;: &amp;quot;Team&amp;quot;, &amp;quot;price&amp;quot;: &amp;quot;$29/mo&amp;quot;}
+  ]
+, &amp;quot;rows&amp;quot;:
+  [ {&amp;quot;feature&amp;quot;: &amp;quot;Buckets&amp;quot;, &amp;quot;values&amp;quot;: [&amp;quot;3&amp;quot;, &amp;quot;25&amp;quot;]}
+  , {&amp;quot;feature&amp;quot;: &amp;quot;Delegated keys&amp;quot;, &amp;quot;values&amp;quot;: [&amp;quot;1&amp;quot;, &amp;quot;20&amp;quot;]}
+  ]
+}
+
+=base:main-content.tramaj-doc
+@d=$ctx.datasets.pricing-data
+import(&amp;quot;corporate/pricing-table&amp;quot;, {&amp;quot;plans&amp;quot;: $d.plans, &amp;quot;rows&amp;quot;: $d.rows}).rendered
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/section&gt;&lt;section class="main-section"&gt;&lt;div class="output"&gt;&lt;table class="pricing-table"&gt;&lt;thead&gt;&lt;tr&gt;&lt;th class="pricing-feature-header"&gt;&lt;/th&gt;&lt;th class="pricing-plan-header"&gt;&lt;div class="pricing-plan-name"&gt;Starter&lt;/div&gt;&lt;div class="pricing-plan-price"&gt;$0&lt;/div&gt;&lt;/th&gt;&lt;th class="pricing-plan-header"&gt;&lt;div class="pricing-plan-name"&gt;Team&lt;/div&gt;&lt;div class="pricing-plan-price"&gt;$29/mo&lt;/div&gt;&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="pricing-feature-name"&gt;Buckets&lt;/td&gt;&lt;td class="pricing-value"&gt;3&lt;/td&gt;&lt;td class="pricing-value"&gt;25&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td class="pricing-feature-name"&gt;Delegated keys&lt;/td&gt;&lt;td class="pricing-value"&gt;1&lt;/td&gt;&lt;td class="pricing-value"&gt;20&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;
+&lt;/section&gt;&lt;section class="main-section"&gt;&lt;h3 id="cta-banner"&gt;cta-banner&lt;/h3&gt;
+&lt;p&gt;Fields: &lt;code&gt;title&lt;/code&gt; (string), &lt;code&gt;body&lt;/code&gt; (string), &lt;code&gt;label&lt;/code&gt;/&lt;code&gt;href&lt;/code&gt; (the button),
+and &lt;code&gt;id&lt;/code&gt; (string, may be &lt;code&gt;&amp;quot;&amp;quot;&lt;/code&gt;; set to a real id when the banner is also an
+in-page anchor target, as the corporate layout example does for its
+“Talk to sales” hero link).&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;=base:dataset.json cta-data
+{ &amp;quot;title&amp;quot;: &amp;quot;Ready to see it on your own numbers?&amp;quot;
+, &amp;quot;body&amp;quot;: &amp;quot;No credit card required.&amp;quot;
+, &amp;quot;label&amp;quot;: &amp;quot;Get started&amp;quot;
+, &amp;quot;href&amp;quot;: &amp;quot;mailto:hello@example.invalid&amp;quot;
+, &amp;quot;id&amp;quot;: &amp;quot;&amp;quot;
+}
+
+=base:main-content.tramaj-doc
+@d=$ctx.datasets.cta-data
+import(&amp;quot;corporate/cta-banner&amp;quot;, {&amp;quot;title&amp;quot;: $d.title, &amp;quot;body&amp;quot;: $d.body, &amp;quot;label&amp;quot;: $d.label, &amp;quot;href&amp;quot;: $d.href, &amp;quot;id&amp;quot;: $d.id}).rendered
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/section&gt;&lt;section class="main-section"&gt;&lt;div class="output"&gt;&lt;div class="cta-banner" id&gt;&lt;h2&gt;Ready to see it on your own numbers?&lt;/h2&gt;&lt;p&gt;No credit card required.&lt;/p&gt;&lt;a class="button" href="mailto:hello@example.invalid"&gt;Get started&lt;/a&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;/section&gt;&lt;section class="main-section"&gt;&lt;h3 id="testimonial-strip"&gt;testimonial-strip&lt;/h3&gt;
+&lt;p&gt;Fields: &lt;code&gt;testimonials&lt;/code&gt; (array of &lt;code&gt;{quote, author}&lt;/code&gt;).&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;=base:dataset.json testimonials-data
+{ &amp;quot;testimonials&amp;quot;:
+  [ {&amp;quot;quote&amp;quot;: &amp;quot;We went from a shared spreadsheet nobody trusted to a dashboard every team lead checks before standup.&amp;quot;, &amp;quot;author&amp;quot;: &amp;quot;Head of Platform, mid-size fintech&amp;quot;}
+  ]
+}
+
+=base:main-content.tramaj-doc
+@d=$ctx.datasets.testimonials-data
+import(&amp;quot;corporate/testimonial-strip&amp;quot;, {&amp;quot;testimonials&amp;quot;: $d.testimonials}).rendered
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/section&gt;&lt;section class="main-section"&gt;&lt;div class="output"&gt;&lt;div class="testimonial-strip"&gt;&lt;div class="testimonial"&gt;We went from a shared spreadsheet nobody trusted to a dashboard every team lead checks before standup.&lt;span class="testimonial-author"&gt;Head of Platform, mid-size fintech&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;/section&gt;&lt;section class="main-section"&gt;&lt;h3 id="footer-columns"&gt;footer-columns&lt;/h3&gt;
+&lt;p&gt;Fields: &lt;code&gt;columns&lt;/code&gt; (array of &lt;code&gt;{heading, links}&lt;/code&gt;, where &lt;code&gt;links&lt;/code&gt; is an array
+of &lt;code&gt;{label, href}&lt;/code&gt;). This renders link columns as ordinary page content —
+&lt;code&gt;class=&amp;quot;corp-footer-columns&amp;quot;&lt;/code&gt; — distinct from the site-wide
+&lt;code&gt;&amp;lt;footer class=&amp;quot;site-footer&amp;quot;&amp;gt;&lt;/code&gt; chrome that &lt;code&gt;kitchen-sink.json&lt;/code&gt;’s own
+&lt;code&gt;footer&lt;/code&gt; configuration already renders below every page; use this
+component for an in-page “resources” band, not to replace the site
+footer.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;=base:dataset.json footer-columns-data
+{ &amp;quot;columns&amp;quot;:
+  [ {&amp;quot;heading&amp;quot;: &amp;quot;Product&amp;quot;, &amp;quot;links&amp;quot;: [{&amp;quot;label&amp;quot;: &amp;quot;Pricing&amp;quot;, &amp;quot;href&amp;quot;: &amp;quot;#pricing&amp;quot;}, {&amp;quot;label&amp;quot;: &amp;quot;Changelog&amp;quot;, &amp;quot;href&amp;quot;: &amp;quot;/changelog.html&amp;quot;}]}
+  , {&amp;quot;heading&amp;quot;: &amp;quot;Company&amp;quot;, &amp;quot;links&amp;quot;: [{&amp;quot;label&amp;quot;: &amp;quot;About&amp;quot;, &amp;quot;href&amp;quot;: &amp;quot;/about.html&amp;quot;}]}
+  ]
+}
+
+=base:main-content.tramaj-doc
+@d=$ctx.datasets.footer-columns-data
+import(&amp;quot;corporate/footer-columns&amp;quot;, {&amp;quot;columns&amp;quot;: $d.columns}).rendered
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/section&gt;&lt;section class="main-section"&gt;&lt;div class="output"&gt;&lt;div class="corp-footer-columns"&gt;&lt;div class="corp-footer-column"&gt;&lt;h2&gt;Product&lt;/h2&gt;&lt;ul&gt;&lt;li&gt;&lt;a href="#pricing"&gt;Pricing&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;a href="/changelog.html"&gt;Changelog&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;&lt;div class="corp-footer-column"&gt;&lt;h2&gt;Company&lt;/h2&gt;&lt;ul&gt;&lt;li&gt;&lt;a href="/about.html"&gt;About&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;/section&gt;&lt;section class="main-section"&gt;&lt;p&gt;See the &lt;a href="/corporate-layout.html"&gt;corporate layout example&lt;/a&gt; for all of
+&lt;code&gt;hero&lt;/code&gt;, &lt;code&gt;feature-grid&lt;/code&gt;, &lt;code&gt;pricing-table&lt;/code&gt;, &lt;code&gt;cta-banner&lt;/code&gt; and
+&lt;code&gt;testimonial-strip&lt;/code&gt; composed into one landing page, and
+&lt;a href="/sections-templating.html"&gt;tramaj sections&lt;/a&gt; for the underlying language
+(imports, &lt;code&gt;.cmark-tramaj&lt;/code&gt; library files, the &lt;code&gt;$ctx&lt;/code&gt; object).&lt;/p&gt;
+&lt;/section&gt;&lt;/div&gt;</content><link href="https://kitchensink-tech.github.io/corporate-components.html" rel="alternate"/><summary type="text">A small tramaj component library for the `corporate` article layout: hero, feature grid, pricing table, call to action, testimonial strip and footer columns, each driven by a `dataset.json` cell instead of hand-written HTML.</summary></entry></feed>

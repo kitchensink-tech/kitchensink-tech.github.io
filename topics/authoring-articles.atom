@@ -1,4 +1,34 @@
-<?xml version="1.0" encoding="UTF-8"?><feed xmlns="http://www.w3.org/2005/Atom"><title type="text">The Kitchen Sink Blog Generator</title><id>https://kitchensink-tech.github.io/atom.xml</id><updated>1970-01-01T00:00:00Z</updated><entry><id>https://kitchensink-tech.github.io/features.html</id><title type="text">Feature list</title><updated>1970-01-01T00:00:00Z</updated><author><name>Lucas DiCioccio</name></author><content type="html">&lt;div class="main-article"&gt;&lt;section class="main-section"&gt;&lt;p&gt;Kitchen-Sink consists of two related components:&lt;/p&gt;
+<?xml version="1.0" encoding="UTF-8"?><feed xmlns="http://www.w3.org/2005/Atom"><title type="text">The Kitchen Sink Blog Generator</title><id>https://kitchensink-tech.github.io/atom.xml</id><updated>1970-01-01T00:00:00Z</updated><entry><id>https://kitchensink-tech.github.io/documentation-layout.html</id><title type="text">The documentation layout</title><updated>1970-01-01T00:00:00Z</updated><author><name>Lucas DiCioccio</name></author><content type="html">&lt;div class="main-article"&gt;&lt;section class="main-section"&gt;&lt;p&gt;Set the layout of a page to &lt;code&gt;documentation&lt;/code&gt; to render it as a page of a
+documentation. This very page is written with it: one sidebar lists the pages
+of the documentation, the other one lists the headings of the page (on a narrow
+screen both move above the content), the header has a search box, and the links
+at the bottom lead to the previous and next pages of the documentation.&lt;/p&gt;
+&lt;h2 id="using-the-layout"&gt;Using the layout&lt;/h2&gt;
+&lt;p&gt;In the &lt;code&gt;base:build-info.json&lt;/code&gt; section of a page, use the &lt;code&gt;documentation&lt;/code&gt;
+layout and, optionally, a &lt;code&gt;group&lt;/code&gt; and an &lt;code&gt;order&lt;/code&gt;:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;=base:build-info.json
+{&amp;quot;layout&amp;quot;:&amp;quot;documentation&amp;quot;
+,&amp;quot;publicationStatus&amp;quot;:&amp;quot;Public&amp;quot;
+,&amp;quot;group&amp;quot;:&amp;quot;The documentation layout&amp;quot;
+,&amp;quot;order&amp;quot;:30
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Then import the stylesheet of the layout next to the other ones, in a
+&lt;code&gt;base:main-css.css&lt;/code&gt; section:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;@import &amp;quot;/css/documentation.css&amp;quot;;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;You can also start such a page with
+&lt;code&gt;kitchen-sink newarticle --layout documentation&lt;/code&gt;.&lt;/p&gt;
+&lt;h2 id="the-table-of-contents"&gt;The table of contents&lt;/h2&gt;
+&lt;p&gt;The table of contents lists the second and third level headings (&lt;code&gt;#&lt;/code&gt; and &lt;code&gt;##&lt;/code&gt;
+in the markdown of the &lt;code&gt;main-content&lt;/code&gt; sections). A page without any heading has
+no table of contents.&lt;/p&gt;
+&lt;h2 id="moving-between-pages"&gt;Moving between pages&lt;/h2&gt;
+&lt;p&gt;All the pages that use the &lt;code&gt;documentation&lt;/code&gt; layout are part of one
+documentation, sorted as explained in &lt;a href="/documentation-ordering.html"&gt;ordering documentation
+pages&lt;/a&gt;. Each page lists them all, see &lt;a href="/documentation-navigation.html"&gt;navigation
+and search&lt;/a&gt;.&lt;/p&gt;
+&lt;/section&gt;&lt;/div&gt;</content><link href="https://kitchensink-tech.github.io/documentation-layout.html" rel="alternate"/><summary type="text">A layout for technical documentation: the list of the pages, a search box, a table of contents of the page, and links to the previous and next pages.</summary></entry><entry><id>https://kitchensink-tech.github.io/features.html</id><title type="text">Feature list</title><updated>1970-01-01T00:00:00Z</updated><author><name>Lucas DiCioccio</name></author><content type="html">&lt;div class="main-article"&gt;&lt;section class="main-section"&gt;&lt;p&gt;Kitchen-Sink consists of two related components:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;i. a set of &lt;em&gt;libraries&lt;/em&gt; (at the time of writing, everything is packed in a single library: it’s a kitchen sink afterall)
 &lt;/li&gt;
@@ -267,8 +297,12 @@ blog&lt;/a&gt; as I’ve added this section in the
     }
 }
 &lt;/code&gt;&lt;/pre&gt;
-&lt;h4 id="microscriptable-in-dhall"&gt;microscriptable in Dhall&lt;/h4&gt;
-&lt;p&gt;I have written a &lt;a href="https://dicioccio.fr/dhall-section-demo.html"&gt;full article&lt;/a&gt; on my personal blog a while ago to motivate the whole usage of &lt;a href="https://dhall-lang.org/"&gt;Dhall&lt;/a&gt;. Keep in mind that I’m still happy about the choice. Dhall “powers” my photo galleries and my &lt;a href="https://lucasdicioccio.github.io/notes.html"&gt;stream of notes&lt;/a&gt; on my personal blog.&lt;/p&gt;
+&lt;p&gt;The LLM call can fail (rate limits, no network). This very site runs it through
+&lt;a href="https://github.com/kitchensink-tech/kitchensink/blob/main/website-scripts/with-fallback.sh"&gt;&lt;code&gt;website-scripts/with-fallback.sh&lt;/code&gt;&lt;/a&gt;,
+which prints a saved result committed in the repository when the command fails,
+so the build does not depend on the LLM being reachable.&lt;/p&gt;
+&lt;h4 id="microscriptable-with-tramaj"&gt;microscriptable with tramaj&lt;/h4&gt;
+&lt;p&gt;Sections can be pre-processed by a &lt;a href="/sections-templating.html"&gt;tramaj&lt;/a&gt; expression: a small typed template language whose result is a value (&lt;code&gt;tramaj-json&lt;/code&gt;) or a document tree rendered to HTML (&lt;code&gt;tramaj-doc&lt;/code&gt;). This is how repeated structures, such as a photo gallery or a stream of notes built from JSON datasets, are generated statically. (Kitchen-Sink used to do this with Dhall, motivated in a &lt;a href="https://dicioccio.fr/dhall-section-demo.html"&gt;past article on my personal blog&lt;/a&gt;; that format was removed.)&lt;/p&gt;
 &lt;/section&gt;&lt;section class="main-section"&gt;&lt;h3 id="article-organization"&gt;article organization&lt;/h3&gt;
 &lt;p&gt;An article needs some &lt;em&gt;decorum&lt;/em&gt; to help readers of your site as well as other
 applications relaying your articles. For instance, who is the author? what
@@ -378,7 +412,24 @@ article&lt;/a&gt; exists because we
 defined an entry for WikiPedia.
 Think of this feature like a revisit of the good-old webrings.&lt;/p&gt;
 &lt;script src="js/copy-snippets.js"&gt;&lt;/script&gt;
-&lt;/section&gt;&lt;/div&gt;</content><link href="https://kitchensink-tech.github.io/features.html" rel="alternate"/><summary type="text">This article lists the main features of Kitchen Sink. We do not really compare it to the vast amount of other static-site generators.</summary></entry><entry><id>https://kitchensink-tech.github.io/other-formats.html</id><title type="text">Other types of files</title><updated>1970-01-01T00:00:00Z</updated><author><name>Lucas DiCioccio</name></author><content type="html">&lt;div class="main-article"&gt;&lt;section class="main-section"&gt;&lt;p&gt;Besides generating content from &lt;code&gt;.cmark&lt;/code&gt; &lt;a href="/sections.html"&gt;section-based&lt;/a&gt; files,
+&lt;/section&gt;&lt;/div&gt;</content><link href="https://kitchensink-tech.github.io/features.html" rel="alternate"/><summary type="text">This article lists the main features of Kitchen Sink. We do not really compare it to the vast amount of other static-site generators.</summary></entry><entry><id>https://kitchensink-tech.github.io/documentation-ordering.html</id><title type="text">Ordering documentation pages</title><updated>1970-01-01T00:00:00Z</updated><author><name>Lucas DiCioccio</name></author><content type="html">&lt;div class="main-article"&gt;&lt;section class="main-section"&gt;&lt;p&gt;The list of pages and the previous and next links of a &lt;a href="/documentation-layout.html"&gt;documentation
+page&lt;/a&gt; follow the order of the pages that use the
+&lt;code&gt;documentation&lt;/code&gt; layout, and only those.&lt;/p&gt;
+&lt;h2 id="the-order-field"&gt;The order field&lt;/h2&gt;
+&lt;p&gt;The optional &lt;code&gt;order&lt;/code&gt; number of the &lt;code&gt;base:build-info.json&lt;/code&gt; section gives the
+position of a page: pages with a smaller number come first.&lt;/p&gt;
+&lt;h2 id="pages-without-an-order"&gt;Pages without an order&lt;/h2&gt;
+&lt;p&gt;Pages without an &lt;code&gt;order&lt;/code&gt; come after the numbered ones, sorted by title. A
+documentation where no page has an &lt;code&gt;order&lt;/code&gt; is thus sorted by title.&lt;/p&gt;
+&lt;h2 id="groups"&gt;Groups&lt;/h2&gt;
+&lt;p&gt;The optional &lt;code&gt;group&lt;/code&gt; of the &lt;code&gt;base:build-info.json&lt;/code&gt; section is the name of the
+group a page is listed under. The pages of a group are always listed together:
+a group stands where its first page does, and its other pages follow in order.
+Pages without a &lt;code&gt;group&lt;/code&gt; form a group of their own, listed without a name.&lt;/p&gt;
+&lt;h2 id="publication-status"&gt;Publication status&lt;/h2&gt;
+&lt;p&gt;The order only decides where a page stands among the others. A page follows the
+publication status rules of any other layout.&lt;/p&gt;
+&lt;/section&gt;&lt;/div&gt;</content><link href="https://kitchensink-tech.github.io/documentation-ordering.html" rel="alternate"/><summary type="text">How the pages of the documentation layout are sorted.</summary></entry><entry><id>https://kitchensink-tech.github.io/other-formats.html</id><title type="text">Other types of files</title><updated>1970-01-01T00:00:00Z</updated><author><name>Lucas DiCioccio</name></author><content type="html">&lt;div class="main-article"&gt;&lt;section class="main-section"&gt;&lt;p&gt;Besides generating content from &lt;code&gt;.cmark&lt;/code&gt; &lt;a href="/sections.html"&gt;section-based&lt;/a&gt; files,
 KitchenSink also copies some video and images, and knows how to call in some
 generators for very specific formats.&lt;/p&gt;
 &lt;h3 id="videos"&gt;videos&lt;/h3&gt;
@@ -394,6 +445,7 @@ generators for very specific formats.&lt;/p&gt;
 &lt;p&gt;The main use-case is to allow porting some other website to KitchenSink, starting from some imported &lt;code&gt;.html&lt;/code&gt;
 Other usages could be to support things like webmaster-verification tools on Google.&lt;/p&gt;
 &lt;p&gt;&lt;span class="emoji" data-emoji="warning"&gt;⚠️&lt;/span&gt; there is no conflict detection yet so avoid having a &lt;code&gt;.cmark&lt;/code&gt; matching a &lt;code&gt;.html&lt;/code&gt; file or you risk inconsistencies.&lt;/p&gt;
+&lt;p&gt;&lt;span class="emoji" data-emoji="warning"&gt;⚠️&lt;/span&gt; a raw &lt;code&gt;.html&lt;/code&gt; file is copied verbatim, so any &lt;code&gt;href&lt;/code&gt;/&lt;code&gt;src&lt;/code&gt; it contains is not rewritten for &lt;a href="/kitchen-sink-dot-json.html"&gt;&lt;code&gt;basePath&lt;/code&gt;&lt;/a&gt; the way generated pages and markdown links are — there is no static analysis over hand-written HTML to safely tell a root-relative link from, say, a snippet of markup you genuinely want left alone. The same is true of raw HTML embedded directly in a &lt;code&gt;main-content&lt;/code&gt;/&lt;code&gt;summary&lt;/code&gt; markdown section (an &lt;code&gt;&amp;lt;iframe src=&amp;quot;/foo.html&amp;quot;&amp;gt;&lt;/code&gt;, say). If you need such a link to follow the site’s &lt;code&gt;basePath&lt;/code&gt;, generate that HTML via a &lt;a href="/sections-templating.html"&gt;&lt;code&gt;.tramaj-doc&lt;/code&gt; section&lt;/a&gt; referencing &lt;code&gt;$ctx.pathPrefix&lt;/code&gt; instead of hand-typing it.&lt;/p&gt;
 &lt;h3 id="javascript"&gt;javascript&lt;/h3&gt;
 &lt;p&gt;KitchenSink copies &lt;code&gt;.js&lt;/code&gt; files under &lt;code&gt;/js&lt;/code&gt;.&lt;/p&gt;
 &lt;h3 id="webfonts"&gt;webfonts&lt;/h3&gt;
@@ -501,8 +553,51 @@ to be taken into account) while running KitchenSink in serve mode.&lt;/p&gt;
 &lt;pre&gt;&lt;code class="language-console"&gt;kitchen-sink produce --srcDir site-source/ --outDir www/
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;At this point the &lt;code&gt;www&lt;/code&gt; output dir should have the content for your website.&lt;/p&gt;
+&lt;p&gt;If one target cannot be produced (for example a &lt;code&gt;generator&lt;/code&gt; command that exits
+with an error), &lt;code&gt;produce&lt;/code&gt; reports it on stderr, still writes everything else,
+and exits non-zero at the end. Pass &lt;code&gt;--abortOnError&lt;/code&gt; to stop at the first
+failing target instead.&lt;/p&gt;
 &lt;script src="js/copy-snippets.js"&gt;&lt;/script&gt;
-&lt;/section&gt;&lt;/div&gt;</content><link href="https://kitchensink-tech.github.io/getting-started.html" rel="alternate"/><summary type="text">This article gets you started with KitchenSink. As of date, you need some amount of programming know-how.</summary></entry><entry><id>https://kitchensink-tech.github.io/sections.html</id><title type="text">The section-based format</title><updated>1970-01-01T00:00:00Z</updated><author><name>Lucas DiCioccio</name></author><content type="html">&lt;div class="main-article"&gt;&lt;section class="main-section"&gt;&lt;p&gt;In my &lt;a href="https://dicioccio.fr/how-this-blog-works.html"&gt;first article about why I wrote my own
+&lt;/section&gt;&lt;/div&gt;</content><link href="https://kitchensink-tech.github.io/getting-started.html" rel="alternate"/><summary type="text">This article gets you started with KitchenSink. As of date, you need some amount of programming know-how.</summary></entry><entry><id>https://kitchensink-tech.github.io/corporate-layout.html</id><title type="text">Acme Cloud</title><updated>1970-01-01T00:00:00Z</updated><author><name>Lucas DiCioccio</name></author><content type="html">&lt;div class="main-article"&gt;&lt;section class="main-section"&gt;&lt;div class="hero"&gt;&lt;h1&gt;Acme Cloud&lt;/h1&gt;&lt;p class="hero-subtitle"&gt;Track team spend in real time, without the spreadsheet gymnastics. Set up in an afternoon, keep everyone honest for years.&lt;/p&gt;&lt;div class="hero-actions"&gt;&lt;a class="button" href="#pricing"&gt;See pricing&lt;/a&gt;&lt;a class="button secondary" href="#contact"&gt;Talk to sales&lt;/a&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;/section&gt;&lt;section class="main-section"&gt;&lt;h2&gt;Why teams switch to Acme Cloud&lt;/h2&gt;&lt;div class="feature-grid"&gt;&lt;div class="feature-card"&gt;&lt;h3&gt;Live budgets&lt;/h3&gt;&lt;p&gt;Every team sees its own bucket update as spend happens, not at month-end reconciliation.&lt;/p&gt;&lt;/div&gt;&lt;div class="feature-card"&gt;&lt;h3&gt;Delegated keys&lt;/h3&gt;&lt;p&gt;Hand a scoped key to a sub-team or a robot; reclaim what it does not use.&lt;/p&gt;&lt;/div&gt;&lt;div class="feature-card"&gt;&lt;h3&gt;Audit trail&lt;/h3&gt;&lt;p&gt;Every consumption and replenishment is timestamped and attributable, no export required.&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;/section&gt;&lt;section class="main-section"&gt;&lt;table class="pricing-table"&gt;&lt;thead&gt;&lt;tr&gt;&lt;th class="pricing-feature-header"&gt;&lt;/th&gt;&lt;th class="pricing-plan-header"&gt;&lt;div class="pricing-plan-name"&gt;Starter&lt;/div&gt;&lt;div class="pricing-plan-price"&gt;$0&lt;/div&gt;&lt;/th&gt;&lt;th class="pricing-plan-header"&gt;&lt;div class="pricing-plan-name"&gt;Team&lt;/div&gt;&lt;div class="pricing-plan-price"&gt;$29/mo&lt;/div&gt;&lt;/th&gt;&lt;th class="pricing-plan-header"&gt;&lt;div class="pricing-plan-name"&gt;Scale&lt;/div&gt;&lt;div class="pricing-plan-price"&gt;Talk to us&lt;/div&gt;&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="pricing-feature-name"&gt;Buckets&lt;/td&gt;&lt;td class="pricing-value"&gt;3&lt;/td&gt;&lt;td class="pricing-value"&gt;25&lt;/td&gt;&lt;td class="pricing-value"&gt;Unlimited&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td class="pricing-feature-name"&gt;Delegated keys&lt;/td&gt;&lt;td class="pricing-value"&gt;1&lt;/td&gt;&lt;td class="pricing-value"&gt;20&lt;/td&gt;&lt;td class="pricing-value"&gt;Unlimited&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td class="pricing-feature-name"&gt;Support&lt;/td&gt;&lt;td class="pricing-value"&gt;Community&lt;/td&gt;&lt;td class="pricing-value"&gt;Priority&lt;/td&gt;&lt;td class="pricing-value"&gt;Dedicated&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;/section&gt;&lt;section class="main-section"&gt;&lt;h2&gt;What our early customers say&lt;/h2&gt;&lt;div class="testimonial-strip"&gt;&lt;div class="testimonial"&gt;We went from a shared spreadsheet nobody trusted to a dashboard every team lead checks before standup.&lt;span class="testimonial-author"&gt;Head of Platform, mid-size fintech&lt;/span&gt;&lt;/div&gt;&lt;div class="testimonial"&gt;Delegated keys are the feature that sold the rest of the team: our robots finally have their own budget instead of one shared secret.&lt;span class="testimonial-author"&gt;Staff engineer, dev tooling team&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;/section&gt;&lt;section class="main-section"&gt;&lt;div class="cta-banner" id="contact"&gt;&lt;h2&gt;Ready to see it on your own numbers?&lt;/h2&gt;&lt;p&gt;No credit card. Import a CSV of last month&amp;#39;s spend and get a live dashboard in minutes.&lt;/p&gt;&lt;a class="button" href="mailto:hello@example.invalid"&gt;Get started&lt;/a&gt;&lt;/div&gt;
+&lt;/section&gt;&lt;section class="main-section"&gt;&lt;p&gt;&amp;#8203;&lt;/p&gt;
+&lt;p&gt;This page uses the &lt;code&gt;corporate&lt;/code&gt; article layout: set
+&lt;code&gt;{“layout”:“corporate”}&lt;/code&gt; in &lt;code&gt;base:build-info.json&lt;/code&gt; and
+import &lt;code&gt;/css/corporate.css&lt;/code&gt; next to the usual stylesheets. Unlike
+the &lt;code&gt;article&lt;/code&gt; layout, it renders no byline, no publication date,
+and no topic links or glossary — only the site-wide menu and footer plus
+whatever sections the page declares, each as its own full-width section.
+Every section above is a &lt;code&gt;main-content.tramaj-doc&lt;/code&gt; section that reads a
+&lt;code&gt;dataset.json&lt;/code&gt; cell and imports a component from
+&lt;a href="/corporate-components.html"&gt;&lt;code&gt;corporate.cmark-tramaj&lt;/code&gt;&lt;/a&gt;, rather than
+hand-written HTML per page. See &lt;a href="/layouts.html"&gt;layouts&lt;/a&gt; for the other
+article layouts and &lt;a href="/corporate-components.html"&gt;corporate components&lt;/a&gt; for
+the library’s documented fields.&lt;/p&gt;
+&lt;/section&gt;&lt;/div&gt;</content><link href="https://kitchensink-tech.github.io/corporate-layout.html" rel="alternate"/><summary type="text">A `corporate` layout example: a fictional marketing page for an "Acme Cloud" product, composed from the `corporate.cmark-tramaj` component library (hero, feature grid, pricing table, call to action, testimonial strip) instead of hand-written HTML.</summary></entry><entry><id>https://kitchensink-tech.github.io/documentation-navigation.html</id><title type="text">Navigation and search</title><updated>1970-01-01T00:00:00Z</updated><author><name>Lucas DiCioccio</name></author><content type="html">&lt;div class="main-article"&gt;&lt;section class="main-section"&gt;&lt;p&gt;Every &lt;a href="/documentation-layout.html"&gt;documentation page&lt;/a&gt; comes with the list of
+all the pages of the documentation and with a search box. There is nothing to
+write for either of them: both are built from the pages that use the
+&lt;code&gt;documentation&lt;/code&gt; layout.&lt;/p&gt;
+&lt;h2 id="the-list-of-pages"&gt;The list of pages&lt;/h2&gt;
+&lt;p&gt;The sidebar lists the titles of the pages, by group, in the &lt;a href="/documentation-ordering.html"&gt;order of the
+documentation&lt;/a&gt;. The page being read is
+highlighted. On a narrow screen the list moves above the content, folded.&lt;/p&gt;
+&lt;h2 id="the-search-box"&gt;The search box&lt;/h2&gt;
+&lt;p&gt;The search box of the header looks for the typed words in the documentation
+pages only: their titles, their headings and their text. A result leads to the
+heading under which the words were found, not merely to the page.&lt;/p&gt;
+&lt;p&gt;Press &lt;code&gt;/&lt;/code&gt; to jump to the search box, use the arrow keys to pick a result and
+&lt;code&gt;Enter&lt;/code&gt; to open it.&lt;/p&gt;
+&lt;h2 id="the-search-index"&gt;The search index&lt;/h2&gt;
+&lt;p&gt;The search runs in the browser. It needs the &lt;code&gt;doc-search.js&lt;/code&gt; script, which a
+site started with &lt;code&gt;kitchen-sink init&lt;/code&gt; has (copy it from the &lt;code&gt;website-src&lt;/code&gt;
+directory of Kitchen-Sink otherwise), and it reads &lt;code&gt;/json/doc-search.json&lt;/code&gt;, a
+file produced for any site that has documentation pages. That file has one
+entry for the introduction of each page and one entry per heading, each with
+its &lt;code&gt;url&lt;/code&gt;, &lt;code&gt;title&lt;/code&gt;, &lt;code&gt;group&lt;/code&gt;, &lt;code&gt;heading&lt;/code&gt; and &lt;code&gt;text&lt;/code&gt;.&lt;/p&gt;
+&lt;/section&gt;&lt;/div&gt;</content><link href="https://kitchensink-tech.github.io/documentation-navigation.html" rel="alternate"/><summary type="text">How readers find their way across the pages of a documentation.</summary></entry><entry><id>https://kitchensink-tech.github.io/sections.html</id><title type="text">The section-based format</title><updated>1970-01-01T00:00:00Z</updated><author><name>Lucas DiCioccio</name></author><content type="html">&lt;div class="main-article"&gt;&lt;section class="main-section"&gt;&lt;p&gt;In my &lt;a href="https://dicioccio.fr/how-this-blog-works.html"&gt;first article about why I wrote my own
 blog-engine&lt;/a&gt;, I
 introduce an important separation between content and structure of articles. In
 short, the &lt;em&gt;meaty content&lt;/em&gt; is what readers are interested in, whereas structure
@@ -563,10 +658,17 @@ end up reading this piece of documentation).&lt;/p&gt;
 &lt;p&gt;An important section to let Kitchen-Sink know which &lt;strong&gt;layout&lt;/strong&gt; to apply.  Known
 layouts are &lt;code&gt;article&lt;/code&gt;, &lt;code&gt;index&lt;/code&gt; (for &lt;code&gt;index.cmark&lt;/code&gt;), &lt;code&gt;glossary&lt;/code&gt; (for
 &lt;code&gt;glossary.cmark&lt;/code&gt;), &lt;code&gt;topics&lt;/code&gt; (for &lt;code&gt;topics.cmark&lt;/code&gt;), &lt;code&gt;application&lt;/code&gt; for JavaScript
-single-page apps, &lt;code&gt;gallery&lt;/code&gt; for content galleries, and &lt;code&gt;listing&lt;/code&gt; for various
-listings. Overall, except for index and topics, the layout of content does not
+single-page apps, &lt;code&gt;gallery&lt;/code&gt; for content galleries, &lt;code&gt;listing&lt;/code&gt; for various
+listings, &lt;code&gt;documentation&lt;/code&gt; for &lt;a href="/documentation-layout.html"&gt;technical documentation&lt;/a&gt;
+(a sidebar table of contents and previous/next links between pages), and
+&lt;code&gt;corporate&lt;/code&gt; for &lt;a href="/corporate-layout.html"&gt;landing pages&lt;/a&gt; (wide sections instead
+of a reading column, no byline/date/topics), composed from the
+&lt;a href="/corporate-components.html"&gt;corporate components&lt;/a&gt; tramaj library. Overall, except for index,
+topics, documentation and corporate, the layout of content does not
 change significantly besides the HTML-nesting (which then allows you to modify
 CSS or hijack DOM elements for single-page apps).&lt;/p&gt;
+&lt;p&gt;An optional &lt;code&gt;order&lt;/code&gt; number sorts the pages of the &lt;code&gt;documentation&lt;/code&gt; layout (see
+&lt;a href="/documentation-ordering.html"&gt;ordering documentation pages&lt;/a&gt;).&lt;/p&gt;
 &lt;p&gt;The publicationStatus is either: &lt;code&gt;Public&lt;/code&gt;, &lt;code&gt;Upcoming&lt;/code&gt;, or &lt;code&gt;Archived&lt;/code&gt;. Upcoming
 and Archived articles are treated slightly differently from Public articles in
 listing or in the home page: they are ranked lower and they do not carry a
@@ -792,52 +894,13 @@ At this point I assume that KitchenSink users are tech-savvy geeks.&lt;/p&gt;
 }
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
-&lt;/section&gt;&lt;section class="main-section"&gt;&lt;h3 id="dhall-advanced"&gt;dhall [advanced]&lt;/h3&gt;
+&lt;/section&gt;&lt;section class="main-section"&gt;&lt;h3 id="dhall-removed"&gt;dhall [removed]&lt;/h3&gt;
 &lt;div class="section-details"&gt;
-&lt;p&gt;There is one difficult design point when statically-generating website is when
-we have datasets of repeated structure (e.g., an image list with title, date,
-sizes, filepath, preferred corner thickness etc.) and you want to generate some
-content on a page in a static form. I touch on this difficult use-case in a &lt;a href="https://dicioccio.fr/dhall-section-demo.html"&gt;past article on my blog&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;In this specific case, the section consists of a
-&lt;a href="https://dhall-lang.org/"&gt;Dhall&lt;/a&gt; expression typed so that it returns a page
-content.&lt;/p&gt;
-&lt;p&gt;The returned object must be of &lt;code&gt;Type&lt;/code&gt;&lt;/p&gt;
-&lt;pre&gt;&lt;code class="language-dhall"&gt;{ contents : Text
-, format : Text
-}
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Where &lt;code&gt;format&lt;/code&gt; is either &lt;code&gt;cmark&lt;/code&gt; or &lt;code&gt;html&lt;/code&gt; and &lt;code&gt;contents&lt;/code&gt; is formatted in the
-appropriate format. The return type is currently rather primitive and will
-likely change in the future. Changes and specifications are tracked in a
-&lt;a href="/sections-dhall.html"&gt;WIP-page&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;The same &lt;code&gt;{format, contents}&lt;/code&gt; contract is also answered by &lt;code&gt;templating&lt;/code&gt;
-sections, which pre-process sections with &lt;a href="/sections-templating.html"&gt;tramaj&lt;/a&gt;
-rather than Dhall. Both backends are supported; tramaj is the lighter-weight
-one and the one likely to outlive the other, since &lt;code&gt;dhall-json&lt;/code&gt; is a recurring
-obstacle to upgrading GHC.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;example&lt;/strong&gt;&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;=base:main-content.dhall
-
-let map =  https://prelude.dhall-lang.org/List/map
-
-let alphabet : List Text =
-  [ &amp;quot;Applicative&amp;quot;
-  , &amp;quot;Bisiumulation&amp;quot;
-  , &amp;quot;Closure&amp;quot;
-  , &amp;quot;Distributive&amp;quot;
-  , &amp;quot;...&amp;quot;
-  ]
-
-let toCmarkListItem = \(v : Text) -&amp;gt; &amp;quot;- ${v}&amp;quot;
-
-let cmarkContents : List Text =
-  map Text Text toCmarkListItem alphabet
-
-in
-{ contents =  cmarkContents
-, format = &amp;quot;cmark&amp;quot;
-}
-&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Kitchen-Sink used to pre-process sections with &lt;a href="https://dhall-lang.org/"&gt;Dhall&lt;/a&gt;
+expressions. That format was removed: a &lt;code&gt;.dhall&lt;/code&gt; section is now rejected at
+load time with an error naming the file. Use a &lt;code&gt;tramaj-json&lt;/code&gt; section (a value
+answering &lt;code&gt;{format, contents}&lt;/code&gt;) or a &lt;code&gt;tramaj-doc&lt;/code&gt; section (a document tree
+rendered to HTML) instead, see &lt;a href="/sections-templating.html"&gt;tramaj sections&lt;/a&gt;.&lt;/p&gt;
 &lt;/div&gt;
 &lt;h3 id="glossary-experimental"&gt;glossary [experimental]&lt;/h3&gt;
 &lt;div class="section-details"&gt;
@@ -867,7 +930,7 @@ sitemap.&lt;/p&gt;
 Kitchen-Sink directory. However you may not want to multiply files.  Rather,
 sometimes you just want to inline some dataset in a document.&lt;/p&gt;
 &lt;p&gt;Datasets are useful if you write a small JavaScript demo tool. Datasets also
-are useful as templating mechanisms as JSON datasets are input of Dhall and
+are useful as templating mechanisms as JSON datasets are input of tramaj and
 Mustache sections.&lt;/p&gt;
 &lt;p&gt;The &lt;code&gt;dataset&lt;/code&gt; section addresses such needs, by generating.  &lt;span class="emoji" data-emoji="warning"&gt;⚠️&lt;/span&gt; The
 ordering of the insertion determines the resulting filename, for instance

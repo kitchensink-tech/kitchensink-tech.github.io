@@ -120,7 +120,7 @@ The way KitchenSink divides work operates in two phases:
 
 - parsing content of `.cmark` as section format
 
-- evaluating `.dhall` sections
+- evaluating `tramaj-json`/`tramaj-doc` sections
 
 
 

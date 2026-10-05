@@ -1,4 +1,131 @@
-<?xml version="1.0" encoding="UTF-8"?><feed xmlns="http://www.w3.org/2005/Atom"><title type="text">The Kitchen Sink Blog Generator</title><id>https://kitchensink-tech.github.io/atom.xml</id><updated>1970-01-01T00:00:00Z</updated><entry><id>https://kitchensink-tech.github.io/engine.html</id><title type="text">Engine</title><updated>1970-01-01T00:00:00Z</updated><author><name>Lucas DiCioccio</name></author><content type="html">&lt;div class="main-article"&gt;&lt;section class="main-section"&gt;&lt;p&gt;In the &lt;a href="/getting-started.html"&gt;getting started&lt;/a&gt; article, we present the
+<?xml version="1.0" encoding="UTF-8"?><feed xmlns="http://www.w3.org/2005/Atom"><title type="text">The Kitchen Sink Blog Generator</title><id>https://kitchensink-tech.github.io/atom.xml</id><updated>1970-01-01T00:00:00Z</updated><entry><id>https://kitchensink-tech.github.io/corporate-components.html</id><title type="text">Corporate components</title><updated>1970-01-01T00:00:00Z</updated><author><name>Lucas DiCioccio</name></author><content type="html">&lt;div class="main-article"&gt;&lt;section class="main-section"&gt;&lt;p&gt;&lt;code&gt;corporate.cmark-tramaj&lt;/code&gt; is a &lt;code&gt;.cmark-tramaj&lt;/code&gt; library file (see
+&lt;a href="/sections-templating.html"&gt;tramaj sections&lt;/a&gt; for what that extension means
+and how cross-file imports resolve). It has no page of its own; every
+article imports from it as &lt;code&gt;corporate/&amp;lt;name&amp;gt;&lt;/code&gt;, most visibly the
+&lt;a href="/corporate-layout.html"&gt;corporate layout example&lt;/a&gt;, which composes its
+whole body from the six components documented below.&lt;/p&gt;
+&lt;p&gt;Each component is a single &lt;code&gt;library.tramaj-lib&lt;/code&gt; template rooted at one
+element, called from a page’s own &lt;code&gt;main-content.tramaj-doc&lt;/code&gt; section with
+&lt;code&gt;import(&amp;quot;corporate/&amp;lt;name&amp;gt;&amp;quot;, {…}).rendered&lt;/code&gt;. A component takes exactly the
+fields listed under it — nothing more, since tramaj has
+&lt;a href="/sections-templating.html"&gt;no arithmetic&lt;/a&gt;: counts, index
+alignment and conditional styling all have to be either decided by the
+data author ahead of time (e.g. &lt;code&gt;pricing-table&lt;/code&gt;’s &lt;code&gt;rows[].values&lt;/code&gt; line up
+with &lt;code&gt;plans&lt;/code&gt; positionally because the dataset says so, not because the
+template computes it) or reduced to the handful of comparisons &lt;code&gt;branch&lt;/code&gt;
+and &lt;code&gt;eq&lt;/code&gt; can express (&lt;code&gt;hero&lt;/code&gt;’s &lt;code&gt;style: &amp;quot;secondary&amp;quot;&lt;/code&gt; switch).&lt;/p&gt;
+&lt;/section&gt;&lt;section class="main-section"&gt;&lt;h3 id="hero"&gt;hero&lt;/h3&gt;
+&lt;p&gt;Fields: &lt;code&gt;title&lt;/code&gt; (string), &lt;code&gt;subtitle&lt;/code&gt; (string), &lt;code&gt;actions&lt;/code&gt; (array of
+&lt;code&gt;{label, href, style}&lt;/code&gt;, where &lt;code&gt;style: &amp;quot;secondary&amp;quot;&lt;/code&gt; renders as the outlined
+button and anything else — typically &lt;code&gt;&amp;quot;primary&amp;quot;&lt;/code&gt; — as the filled one).&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;=base:dataset.json hero-data
+{ &amp;quot;title&amp;quot;: &amp;quot;Acme Cloud&amp;quot;
+, &amp;quot;subtitle&amp;quot;: &amp;quot;Track team spend in real time, without the spreadsheet gymnastics.&amp;quot;
+, &amp;quot;actions&amp;quot;:
+  [ {&amp;quot;label&amp;quot;: &amp;quot;See pricing&amp;quot;, &amp;quot;href&amp;quot;: &amp;quot;#pricing&amp;quot;, &amp;quot;style&amp;quot;: &amp;quot;primary&amp;quot;}
+  , {&amp;quot;label&amp;quot;: &amp;quot;Talk to sales&amp;quot;, &amp;quot;href&amp;quot;: &amp;quot;#contact&amp;quot;, &amp;quot;style&amp;quot;: &amp;quot;secondary&amp;quot;}
+  ]
+}
+
+=base:main-content.tramaj-doc
+@d=$ctx.datasets.hero-data
+import(&amp;quot;corporate/hero&amp;quot;, {&amp;quot;title&amp;quot;: $d.title, &amp;quot;subtitle&amp;quot;: $d.subtitle, &amp;quot;actions&amp;quot;: $d.actions}).rendered
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/section&gt;&lt;section class="main-section"&gt;&lt;div class="output"&gt;&lt;div class="hero"&gt;&lt;h1&gt;Acme Cloud&lt;/h1&gt;&lt;p class="hero-subtitle"&gt;Track team spend in real time, without the spreadsheet gymnastics.&lt;/p&gt;&lt;div class="hero-actions"&gt;&lt;a class="button" href="#pricing"&gt;See pricing&lt;/a&gt;&lt;a class="button secondary" href="#contact"&gt;Talk to sales&lt;/a&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;/section&gt;&lt;section class="main-section"&gt;&lt;h3 id="feature-grid"&gt;feature-grid&lt;/h3&gt;
+&lt;p&gt;Fields: &lt;code&gt;features&lt;/code&gt; (array of &lt;code&gt;{title, body}&lt;/code&gt;), one &lt;code&gt;feature-card&lt;/code&gt; per
+entry.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;=base:dataset.json features-data
+{ &amp;quot;features&amp;quot;:
+  [ {&amp;quot;title&amp;quot;: &amp;quot;Live budgets&amp;quot;, &amp;quot;body&amp;quot;: &amp;quot;Every team sees its own bucket update as spend happens.&amp;quot;}
+  , {&amp;quot;title&amp;quot;: &amp;quot;Delegated keys&amp;quot;, &amp;quot;body&amp;quot;: &amp;quot;Hand a scoped key to a sub-team or a robot.&amp;quot;}
+  ]
+}
+
+=base:main-content.tramaj-doc
+@d=$ctx.datasets.features-data
+import(&amp;quot;corporate/feature-grid&amp;quot;, {&amp;quot;features&amp;quot;: $d.features}).rendered
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/section&gt;&lt;section class="main-section"&gt;&lt;div class="output"&gt;&lt;div class="feature-grid"&gt;&lt;div class="feature-card"&gt;&lt;h3&gt;Live budgets&lt;/h3&gt;&lt;p&gt;Every team sees its own bucket update as spend happens.&lt;/p&gt;&lt;/div&gt;&lt;div class="feature-card"&gt;&lt;h3&gt;Delegated keys&lt;/h3&gt;&lt;p&gt;Hand a scoped key to a sub-team or a robot.&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;/section&gt;&lt;section class="main-section"&gt;&lt;h3 id="pricing-table"&gt;pricing-table&lt;/h3&gt;
+&lt;p&gt;Fields: &lt;code&gt;plans&lt;/code&gt; (array of &lt;code&gt;{name, price}&lt;/code&gt;, one column each) and &lt;code&gt;rows&lt;/code&gt;
+(array of &lt;code&gt;{feature, values}&lt;/code&gt;, one row each, where &lt;code&gt;values&lt;/code&gt; is a plain
+array of strings that the data author has already lined up positionally
+with &lt;code&gt;plans&lt;/code&gt; — the template has no way to check or compute that alignment,
+it only &lt;code&gt;map&lt;/code&gt;s each side once).&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;=base:dataset.json pricing-data
+{ &amp;quot;plans&amp;quot;:
+  [ {&amp;quot;name&amp;quot;: &amp;quot;Starter&amp;quot;, &amp;quot;price&amp;quot;: &amp;quot;$0&amp;quot;}
+  , {&amp;quot;name&amp;quot;: &amp;quot;Team&amp;quot;, &amp;quot;price&amp;quot;: &amp;quot;$29/mo&amp;quot;}
+  ]
+, &amp;quot;rows&amp;quot;:
+  [ {&amp;quot;feature&amp;quot;: &amp;quot;Buckets&amp;quot;, &amp;quot;values&amp;quot;: [&amp;quot;3&amp;quot;, &amp;quot;25&amp;quot;]}
+  , {&amp;quot;feature&amp;quot;: &amp;quot;Delegated keys&amp;quot;, &amp;quot;values&amp;quot;: [&amp;quot;1&amp;quot;, &amp;quot;20&amp;quot;]}
+  ]
+}
+
+=base:main-content.tramaj-doc
+@d=$ctx.datasets.pricing-data
+import(&amp;quot;corporate/pricing-table&amp;quot;, {&amp;quot;plans&amp;quot;: $d.plans, &amp;quot;rows&amp;quot;: $d.rows}).rendered
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/section&gt;&lt;section class="main-section"&gt;&lt;div class="output"&gt;&lt;table class="pricing-table"&gt;&lt;thead&gt;&lt;tr&gt;&lt;th class="pricing-feature-header"&gt;&lt;/th&gt;&lt;th class="pricing-plan-header"&gt;&lt;div class="pricing-plan-name"&gt;Starter&lt;/div&gt;&lt;div class="pricing-plan-price"&gt;$0&lt;/div&gt;&lt;/th&gt;&lt;th class="pricing-plan-header"&gt;&lt;div class="pricing-plan-name"&gt;Team&lt;/div&gt;&lt;div class="pricing-plan-price"&gt;$29/mo&lt;/div&gt;&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="pricing-feature-name"&gt;Buckets&lt;/td&gt;&lt;td class="pricing-value"&gt;3&lt;/td&gt;&lt;td class="pricing-value"&gt;25&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td class="pricing-feature-name"&gt;Delegated keys&lt;/td&gt;&lt;td class="pricing-value"&gt;1&lt;/td&gt;&lt;td class="pricing-value"&gt;20&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;
+&lt;/section&gt;&lt;section class="main-section"&gt;&lt;h3 id="cta-banner"&gt;cta-banner&lt;/h3&gt;
+&lt;p&gt;Fields: &lt;code&gt;title&lt;/code&gt; (string), &lt;code&gt;body&lt;/code&gt; (string), &lt;code&gt;label&lt;/code&gt;/&lt;code&gt;href&lt;/code&gt; (the button),
+and &lt;code&gt;id&lt;/code&gt; (string, may be &lt;code&gt;&amp;quot;&amp;quot;&lt;/code&gt;; set to a real id when the banner is also an
+in-page anchor target, as the corporate layout example does for its
+“Talk to sales” hero link).&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;=base:dataset.json cta-data
+{ &amp;quot;title&amp;quot;: &amp;quot;Ready to see it on your own numbers?&amp;quot;
+, &amp;quot;body&amp;quot;: &amp;quot;No credit card required.&amp;quot;
+, &amp;quot;label&amp;quot;: &amp;quot;Get started&amp;quot;
+, &amp;quot;href&amp;quot;: &amp;quot;mailto:hello@example.invalid&amp;quot;
+, &amp;quot;id&amp;quot;: &amp;quot;&amp;quot;
+}
+
+=base:main-content.tramaj-doc
+@d=$ctx.datasets.cta-data
+import(&amp;quot;corporate/cta-banner&amp;quot;, {&amp;quot;title&amp;quot;: $d.title, &amp;quot;body&amp;quot;: $d.body, &amp;quot;label&amp;quot;: $d.label, &amp;quot;href&amp;quot;: $d.href, &amp;quot;id&amp;quot;: $d.id}).rendered
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/section&gt;&lt;section class="main-section"&gt;&lt;div class="output"&gt;&lt;div class="cta-banner" id&gt;&lt;h2&gt;Ready to see it on your own numbers?&lt;/h2&gt;&lt;p&gt;No credit card required.&lt;/p&gt;&lt;a class="button" href="mailto:hello@example.invalid"&gt;Get started&lt;/a&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;/section&gt;&lt;section class="main-section"&gt;&lt;h3 id="testimonial-strip"&gt;testimonial-strip&lt;/h3&gt;
+&lt;p&gt;Fields: &lt;code&gt;testimonials&lt;/code&gt; (array of &lt;code&gt;{quote, author}&lt;/code&gt;).&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;=base:dataset.json testimonials-data
+{ &amp;quot;testimonials&amp;quot;:
+  [ {&amp;quot;quote&amp;quot;: &amp;quot;We went from a shared spreadsheet nobody trusted to a dashboard every team lead checks before standup.&amp;quot;, &amp;quot;author&amp;quot;: &amp;quot;Head of Platform, mid-size fintech&amp;quot;}
+  ]
+}
+
+=base:main-content.tramaj-doc
+@d=$ctx.datasets.testimonials-data
+import(&amp;quot;corporate/testimonial-strip&amp;quot;, {&amp;quot;testimonials&amp;quot;: $d.testimonials}).rendered
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/section&gt;&lt;section class="main-section"&gt;&lt;div class="output"&gt;&lt;div class="testimonial-strip"&gt;&lt;div class="testimonial"&gt;We went from a shared spreadsheet nobody trusted to a dashboard every team lead checks before standup.&lt;span class="testimonial-author"&gt;Head of Platform, mid-size fintech&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;/section&gt;&lt;section class="main-section"&gt;&lt;h3 id="footer-columns"&gt;footer-columns&lt;/h3&gt;
+&lt;p&gt;Fields: &lt;code&gt;columns&lt;/code&gt; (array of &lt;code&gt;{heading, links}&lt;/code&gt;, where &lt;code&gt;links&lt;/code&gt; is an array
+of &lt;code&gt;{label, href}&lt;/code&gt;). This renders link columns as ordinary page content —
+&lt;code&gt;class=&amp;quot;corp-footer-columns&amp;quot;&lt;/code&gt; — distinct from the site-wide
+&lt;code&gt;&amp;lt;footer class=&amp;quot;site-footer&amp;quot;&amp;gt;&lt;/code&gt; chrome that &lt;code&gt;kitchen-sink.json&lt;/code&gt;’s own
+&lt;code&gt;footer&lt;/code&gt; configuration already renders below every page; use this
+component for an in-page “resources” band, not to replace the site
+footer.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;=base:dataset.json footer-columns-data
+{ &amp;quot;columns&amp;quot;:
+  [ {&amp;quot;heading&amp;quot;: &amp;quot;Product&amp;quot;, &amp;quot;links&amp;quot;: [{&amp;quot;label&amp;quot;: &amp;quot;Pricing&amp;quot;, &amp;quot;href&amp;quot;: &amp;quot;#pricing&amp;quot;}, {&amp;quot;label&amp;quot;: &amp;quot;Changelog&amp;quot;, &amp;quot;href&amp;quot;: &amp;quot;/changelog.html&amp;quot;}]}
+  , {&amp;quot;heading&amp;quot;: &amp;quot;Company&amp;quot;, &amp;quot;links&amp;quot;: [{&amp;quot;label&amp;quot;: &amp;quot;About&amp;quot;, &amp;quot;href&amp;quot;: &amp;quot;/about.html&amp;quot;}]}
+  ]
+}
+
+=base:main-content.tramaj-doc
+@d=$ctx.datasets.footer-columns-data
+import(&amp;quot;corporate/footer-columns&amp;quot;, {&amp;quot;columns&amp;quot;: $d.columns}).rendered
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/section&gt;&lt;section class="main-section"&gt;&lt;div class="output"&gt;&lt;div class="corp-footer-columns"&gt;&lt;div class="corp-footer-column"&gt;&lt;h2&gt;Product&lt;/h2&gt;&lt;ul&gt;&lt;li&gt;&lt;a href="#pricing"&gt;Pricing&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;a href="/changelog.html"&gt;Changelog&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;&lt;div class="corp-footer-column"&gt;&lt;h2&gt;Company&lt;/h2&gt;&lt;ul&gt;&lt;li&gt;&lt;a href="/about.html"&gt;About&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;/section&gt;&lt;section class="main-section"&gt;&lt;p&gt;See the &lt;a href="/corporate-layout.html"&gt;corporate layout example&lt;/a&gt; for all of
+&lt;code&gt;hero&lt;/code&gt;, &lt;code&gt;feature-grid&lt;/code&gt;, &lt;code&gt;pricing-table&lt;/code&gt;, &lt;code&gt;cta-banner&lt;/code&gt; and
+&lt;code&gt;testimonial-strip&lt;/code&gt; composed into one landing page, and
+&lt;a href="/sections-templating.html"&gt;tramaj sections&lt;/a&gt; for the underlying language
+(imports, &lt;code&gt;.cmark-tramaj&lt;/code&gt; library files, the &lt;code&gt;$ctx&lt;/code&gt; object).&lt;/p&gt;
+&lt;/section&gt;&lt;/div&gt;</content><link href="https://kitchensink-tech.github.io/corporate-components.html" rel="alternate"/><summary type="text">A small tramaj component library for the `corporate` article layout: hero, feature grid, pricing table, call to action, testimonial strip and footer columns, each driven by a `dataset.json` cell instead of hand-written HTML.</summary></entry><entry><id>https://kitchensink-tech.github.io/engine.html</id><title type="text">Engine</title><updated>1970-01-01T00:00:00Z</updated><author><name>Lucas DiCioccio</name></author><content type="html">&lt;div class="main-article"&gt;&lt;section class="main-section"&gt;&lt;p&gt;In the &lt;a href="/getting-started.html"&gt;getting started&lt;/a&gt; article, we present the
 following picture:&lt;/p&gt;
 &lt;div class="figure"&gt;
 &lt;p&gt;&lt;img src="/gen/images/architecture-01-pipeline.dot.png" alt="pipeline" /&gt;&lt;/p&gt;
@@ -73,7 +200,51 @@ There are some use to it:&lt;/p&gt;
 &lt;p&gt;If you ever change the engine, please keep in mind to also add counters for new
 features.  You can even have a target to catch the resulting metrics while
 generating your website output to record your performance for future uses.&lt;/p&gt;
-&lt;/section&gt;&lt;/div&gt;</content><link href="https://kitchensink-tech.github.io/engine.html" rel="alternate"/><summary type="text">This article answers questions the engine (i.e., the glue-code performing the dance to understand what layout code to apply to generate results).</summary></entry><entry><id>https://kitchensink-tech.github.io/wishlist.html</id><title type="text">Whishlist</title><updated>1970-01-01T00:00:00Z</updated><author><name>Lucas DiCioccio</name></author><content type="html">&lt;div class="main-article"&gt;&lt;section class="main-section"&gt;&lt;ul&gt;
+&lt;/section&gt;&lt;/div&gt;</content><link href="https://kitchensink-tech.github.io/engine.html" rel="alternate"/><summary type="text">This article answers questions the engine (i.e., the glue-code performing the dance to understand what layout code to apply to generate results).</summary></entry><entry><id>https://kitchensink-tech.github.io/comparison.html</id><title type="text">Kitchen-Sink vs. other static-site generators</title><updated>1970-01-01T00:00:00Z</updated><author><name>Lucas DiCioccio</name></author><content type="html">&lt;div class="main-article"&gt;&lt;section class="main-section"&gt;&lt;p&gt;There is no shortage of good static-site generators. This page is not here to
+declare a winner — &lt;a href="https://gohugo.io/"&gt;Hugo&lt;/a&gt;, &lt;a href="https://www.11ty.dev/"&gt;Eleventy&lt;/a&gt;,
+&lt;a href="https://jekyllrb.com/"&gt;Jekyll&lt;/a&gt;, and &lt;a href="https://www.getzola.org/"&gt;Zola&lt;/a&gt; are all
+mature, well-documented tools with large communities, themes, and plugin
+ecosystems that Kitchen-Sink does not try to match. What follows is a factual
+side-by-side of a few structural choices, plus a plainer explanation of what
+we think is actually different about Kitchen-Sink.&lt;/p&gt;
+&lt;p&gt;We have not run comparative build-time or output-size benchmarks, so this
+page makes no performance claims for any of these tools.&lt;/p&gt;
+&lt;/section&gt;&lt;table class="pricing-table"&gt;&lt;thead&gt;&lt;tr&gt;&lt;th class="pricing-feature-header"&gt;&lt;/th&gt;&lt;th class="pricing-plan-header"&gt;&lt;div class="pricing-plan-name"&gt;Kitchen-Sink&lt;/div&gt;&lt;div class="pricing-plan-price"&gt;Haskell&lt;/div&gt;&lt;/th&gt;&lt;th class="pricing-plan-header"&gt;&lt;div class="pricing-plan-name"&gt;Hugo&lt;/div&gt;&lt;div class="pricing-plan-price"&gt;Go&lt;/div&gt;&lt;/th&gt;&lt;th class="pricing-plan-header"&gt;&lt;div class="pricing-plan-name"&gt;Eleventy&lt;/div&gt;&lt;div class="pricing-plan-price"&gt;JavaScript&lt;/div&gt;&lt;/th&gt;&lt;th class="pricing-plan-header"&gt;&lt;div class="pricing-plan-name"&gt;Jekyll&lt;/div&gt;&lt;div class="pricing-plan-price"&gt;Ruby&lt;/div&gt;&lt;/th&gt;&lt;th class="pricing-plan-header"&gt;&lt;div class="pricing-plan-name"&gt;Zola&lt;/div&gt;&lt;div class="pricing-plan-price"&gt;Rust&lt;/div&gt;&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="pricing-feature-name"&gt;Content format&lt;/td&gt;&lt;td class="pricing-value"&gt;CommonMark (with JSON/CSS/Dhall/templating sections)&lt;/td&gt;&lt;td class="pricing-value"&gt;Markdown + YAML/TOML front matter&lt;/td&gt;&lt;td class="pricing-value"&gt;Markdown + pluggable template languages&lt;/td&gt;&lt;td class="pricing-value"&gt;Markdown + YAML front matter&lt;/td&gt;&lt;td class="pricing-value"&gt;Markdown + TOML/YAML front matter&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td class="pricing-feature-name"&gt;Templating&lt;/td&gt;&lt;td class="pricing-value"&gt;tramaj (typed expression + document language)&lt;/td&gt;&lt;td class="pricing-value"&gt;Go templates&lt;/td&gt;&lt;td class="pricing-value"&gt;Nunjucks, Liquid, EJS, Handlebars, JS, … (pluggable)&lt;/td&gt;&lt;td class="pricing-value"&gt;Liquid&lt;/td&gt;&lt;td class="pricing-value"&gt;Tera&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td class="pricing-feature-name"&gt;Single file mixes content, style, and data&lt;/td&gt;&lt;td class="pricing-value"&gt;Yes&lt;/td&gt;&lt;td class="pricing-value"&gt;No&lt;/td&gt;&lt;td class="pricing-value"&gt;No&lt;/td&gt;&lt;td class="pricing-value"&gt;No&lt;/td&gt;&lt;td class="pricing-value"&gt;No&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td class="pricing-feature-name"&gt;Built-in dev server with live reload&lt;/td&gt;&lt;td class="pricing-value"&gt;Yes&lt;/td&gt;&lt;td class="pricing-value"&gt;Yes (`hugo server`)&lt;/td&gt;&lt;td class="pricing-value"&gt;Yes (bundled dev server)&lt;/td&gt;&lt;td class="pricing-value"&gt;Yes (`jekyll serve`)&lt;/td&gt;&lt;td class="pricing-value"&gt;Yes (`zola serve`)&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td class="pricing-feature-name"&gt;Request-time (on-the-fly) rendering, not just static output&lt;/td&gt;&lt;td class="pricing-value"&gt;Yes (`serve --servMode SERVE`/`DEV`)&lt;/td&gt;&lt;td class="pricing-value"&gt;No&lt;/td&gt;&lt;td class="pricing-value"&gt;No&lt;/td&gt;&lt;td class="pricing-value"&gt;No&lt;/td&gt;&lt;td class="pricing-value"&gt;No&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td class="pricing-feature-name"&gt;Request-time dynamic pages backed by SQL datasources&lt;/td&gt;&lt;td class="pricing-value"&gt;Yes, opt-in (`--dynamic`)&lt;/td&gt;&lt;td class="pricing-value"&gt;No&lt;/td&gt;&lt;td class="pricing-value"&gt;No&lt;/td&gt;&lt;td class="pricing-value"&gt;No&lt;/td&gt;&lt;td class="pricing-value"&gt;No&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td class="pricing-feature-name"&gt;Built-in API gateway / reverse proxy&lt;/td&gt;&lt;td class="pricing-value"&gt;Yes (`/api` proxy)&lt;/td&gt;&lt;td class="pricing-value"&gt;No&lt;/td&gt;&lt;td class="pricing-value"&gt;No&lt;/td&gt;&lt;td class="pricing-value"&gt;No&lt;/td&gt;&lt;td class="pricing-value"&gt;No&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td class="pricing-feature-name"&gt;Multi-site hosting (one process, many domains)&lt;/td&gt;&lt;td class="pricing-value"&gt;Yes (`multisite`, Dhall-configured, SNI)&lt;/td&gt;&lt;td class="pricing-value"&gt;No&lt;/td&gt;&lt;td class="pricing-value"&gt;No&lt;/td&gt;&lt;td class="pricing-value"&gt;No&lt;/td&gt;&lt;td class="pricing-value"&gt;No&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;section class="main-section"&gt;&lt;h3 id="what-is-actually-distinctive-about-kitchen-sink"&gt;what is actually distinctive about Kitchen-Sink&lt;/h3&gt;
+&lt;p&gt;Table rows aside, here is the plainer version of what we think sets
+Kitchen-Sink apart — and why, mostly, it comes from being written by one
+person mainly for their own blog, not from a deliberate attempt to
+out-feature anyone.&lt;/p&gt;
+&lt;h4 id="one-file-all-the-sections"&gt;one file, all the sections&lt;/h4&gt;
+&lt;p&gt;The &lt;a href="/sections.html"&gt;section-based format&lt;/a&gt; lets a single &lt;code&gt;.cmark&lt;/code&gt; file
+declare its layout, metadata, topics, CSS, and one or more content blocks —
+including generator commands and templating sections — instead of spreading
+content, front matter, and per-page styling across separate files and
+directories. This is a genuine trade-off, not a free lunch: it means longer
+individual files, and it is less friendly to non-technical collaborators
+than a conventional &lt;code&gt;content/&lt;/code&gt; + &lt;code&gt;layouts/&lt;/code&gt; + &lt;code&gt;assets/&lt;/code&gt; split.&lt;/p&gt;
+&lt;h4 id="a-real-templating-language-evaluated-live"&gt;a real templating language, evaluated live&lt;/h4&gt;
+&lt;p&gt;Most static-site generators run their templates once, at build time, to
+produce static HTML. Kitchen-Sink’s &lt;a href="/sections-templating.html"&gt;&lt;code&gt;tramaj&lt;/code&gt; sections&lt;/a&gt;
+can do the same, but in &lt;code&gt;serve&lt;/code&gt; mode the same engine can also evaluate
+&lt;strong&gt;per request&lt;/strong&gt;: opt-in with &lt;code&gt;--dynamic&lt;/code&gt;, a route can query a SQL datasource
+declared in &lt;code&gt;kitchen-sink.json&lt;/code&gt; and render a page from the result, in the
+spirit of &lt;a href="https://sql-page.com/"&gt;SQLPage&lt;/a&gt;. You can also &lt;a href="/playground.html"&gt;try tramaj directly
+in your browser&lt;/a&gt; without installing anything.&lt;/p&gt;
+&lt;h4 id="the-dev-server-doubles-as-a-small-api-gateway"&gt;the dev server doubles as a small API gateway&lt;/h4&gt;
+&lt;p&gt;&lt;code&gt;kitchen-sink serve&lt;/code&gt; is not only a preview server: it can proxy an &lt;code&gt;/api&lt;/code&gt;
+route to a backend of your choice (useful for local development of a
+single-page app alongside its content), and in &lt;code&gt;multisite&lt;/code&gt; mode it can host
+several domains — with per-domain TLS/SNI and proxying rules — from a single
+process, configured in Dhall. None of the tools in the table above are meant
+to do this; it is not a criticism of them, it is simply a different job
+(they generate files, ours also wants to be a small always-on daemon).&lt;/p&gt;
+&lt;h4 id="produce-and-serve-share-one-pipeline"&gt;produce and serve share one pipeline&lt;/h4&gt;
+&lt;p&gt;&lt;code&gt;produce&lt;/code&gt; (one-shot build) and &lt;code&gt;serve&lt;/code&gt; (dev server / production-ish serving)
+run the exact same &lt;code&gt;Site → Target → bytes&lt;/code&gt; pipeline — the only difference is
+&lt;em&gt;when&lt;/em&gt; a target gets realized (ahead of time to disk, or on the fly per
+request). This is what makes on-the-fly dev-mode rendering and request-time
+dynamic pages possible without a second code path to keep in sync.&lt;/p&gt;
+&lt;/section&gt;&lt;div class="callout callout-note"&gt;&lt;p class="callout-title"&gt;When you might prefer one of the others&lt;/p&gt;&lt;p class="callout-body"&gt;If you want a large theme ecosystem, a big plugin marketplace, non-technical content editors, or a tool with a much bigger community for support, Hugo, Eleventy, Jekyll, and Zola are all solid, more established choices. Kitchen-Sink is a smaller, more opinionated tool, built first for its author&amp;#39;s own blog and now used as the demo of its own input format.&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;</content><link href="https://kitchensink-tech.github.io/comparison.html" rel="alternate"/><summary type="text">An honest, even-handed comparison of Kitchen-Sink against a few well-known static-site generators (Hugo, Eleventy, Jekyll, Zola), and a look at what is actually distinctive about Kitchen-Sink's own design.</summary></entry><entry><id>https://kitchensink-tech.github.io/wishlist.html</id><title type="text">Whishlist</title><updated>1970-01-01T00:00:00Z</updated><author><name>Lucas DiCioccio</name></author><content type="html">&lt;div class="main-article"&gt;&lt;section class="main-section"&gt;&lt;ul&gt;
 &lt;li&gt;test and fix what we find on commonmark module
 &lt;/li&gt;
 &lt;li&gt;port all .js to a single PureScript lib, deprecate histogram
@@ -141,7 +312,7 @@ someone who took all the time to setup a static-site generator.&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ul&gt;
 &lt;h2 id="lack-of-overloading-repeating-many-things-across-articles"&gt;Lack of overloading (repeating many things across articles)&lt;/h2&gt;
-&lt;p&gt;&lt;span class="emoji" data-emoji="bulb"&gt;💡&lt;/span&gt; Much of this concerned is now addressable using &lt;a href="/sections-dhall.html"&gt;Dhall-sections&lt;/a&gt; sections because Dhall has local (and even remote) imports. However we keep the discussion below for archival reasons.&lt;/p&gt;
+&lt;p&gt;&lt;span class="emoji" data-emoji="bulb"&gt;💡&lt;/span&gt; Much of this concerned is now addressable using &lt;a href="/sections-templating.html"&gt;tramaj sections&lt;/a&gt;, which have local imports of shared templates. However we keep the discussion below for archival reasons.&lt;/p&gt;
 &lt;p&gt;Oftentimes you would like one parameter to take effect on multiple pages (e.g., the social links).
 KitchenSink edges on the side of caution where we prefer to repeat the same small bit of information many times rather than forcing an overloading hierarchy:&lt;/p&gt;
 &lt;p&gt;Often you end up requiring to overload some “global parameter”, which means you
@@ -242,222 +413,7 @@ section-based format would not exist. Correctness may suffer a bit when things
 lack a good definition or inconsequential (e.g., the word-count not taking
 into account titles in the sections they start – feature or bug, I cannot
 tell, but definitely not a huge deal).&lt;/p&gt;
-&lt;/section&gt;&lt;/div&gt;</content><link href="https://kitchensink-tech.github.io/philosophy.html" rel="alternate"/><summary type="text">In these pages, I sometimes use "__It's a kitchen-sink!__" as a placeholder for apologetic or unapologetic statements regarding the lack of sophistication of Kitchen-Sink. This article positions a few tenents for Kitchen-Sink, and hopefully helps you get a feel the experience we want to build around this software.</summary></entry><entry><id>https://kitchensink-tech.github.io/sections-dhall.html</id><title type="text">Dhall support in depth</title><updated>1970-01-01T00:00:00Z</updated><author><name>Lucas DiCioccio</name></author><content type="html">&lt;div class="main-article"&gt;&lt;section class="main-section"&gt;&lt;p&gt;The &lt;a href="https://dhall-lang.org/"&gt;Dhall&lt;/a&gt; support in KitchenSink provides a template
-engine unlike many static-site generators. In typical static-site generators,
-the template language serves two purposes: dictating the structure of the HTML
-files, and generating repetitive content of HTML files like for data tables. In
-KitchenSink, &lt;a href="/layouts.html"&gt;Layouts&lt;/a&gt; dictate the HTML structure and are hard
-to change. Dhall provides a pre-processor to apply some template on repetititve
-contents to render &lt;a href="/sections.html"&gt;Sections&lt;/a&gt;.&lt;/p&gt;
-&lt;h2 id="dhall-as-a-pre-processor"&gt;Dhall as a pre-processor&lt;/h2&gt;
-&lt;p&gt;Why Dhall rather than other languages? The short answer is that Dhall hits a
-sweet spot for pre-processing sections in static-blog generators. Dhall is at a
-same time: deterministic, easy to embed in Kitchen-Sink, and expressive.  Let’s
-develop these points.&lt;/p&gt;
-&lt;p&gt;First, Dhall is a deterministic language. A major benefit here is that Dhall is
-simple on a conceptual level: you can substitute a Dhall expression with its
-result and it will work as expected. Further, being deterministic, Dhall
-disallows user-defined side-effects. Albeit a constraint for people writing
-Dhall code, such determinism comes handy to write a pre-processor: a
-pre-processor turns &lt;code&gt;Sections&lt;/code&gt; into &lt;code&gt;Sections&lt;/code&gt;, since the pre-processor does
-not do more, for instance, by having no extra side-effects to track. We do not
-freeze KitchenSink development into a bad-architecture as the &lt;code&gt;Section -&amp;gt; Section&lt;/code&gt; function can be moved without surprises.&lt;/p&gt;
-&lt;p&gt;Second, Dhall is embeddable in Haskell, the programming language in which
-KitchenSink is written. The immediate benefit is that no external setup is
-required: KitchenSink embeds the same Dhall interpreter as the official Dhall
-binary and that’s it. Compare this simplicity (no setup required) to generator
-sections, whose result vary depending on which tools are available on each
-setups.&lt;/p&gt;
-&lt;p&gt;Third, Dhall is expressive enough to have libraries of functions that you
-import over the network or on the file-system. Such imports open the door to
-avoiding redundant code (e.g., to re-use the same &lt;code&gt;base:social&lt;/code&gt; content in
-every article). Networked imports open the door to community-based sharing.&lt;/p&gt;
-&lt;p&gt;Summarizing, the choice of Dhall is not that surprising after analyzis. Dhall
-fits the problem of pre-processing article sections pretty well, without
-costing much to implement and without freezing the design of KitchenSink
-engine.&lt;/p&gt;
-&lt;h2 id="examples"&gt;Examples&lt;/h2&gt;
-&lt;p&gt;Let’s now give some examples.&lt;/p&gt;
-&lt;/section&gt;&lt;section class="main-section"&gt;&lt;h3 id="rendering-a-section-in-commonmark"&gt;Rendering a section in CommonMark&lt;/h3&gt;
-&lt;p&gt;&lt;strong&gt;example 1&lt;/strong&gt;&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;=base:main-content.dhalL
-
-{ contents = [&amp;quot;__generated from dhall__&amp;quot;, &amp;quot;\n&amp;quot;, kitchensink.file ], format = &amp;quot;cmark&amp;quot; }
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;strong&gt;example 2&lt;/strong&gt;&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;=base:main-content.dhall
-    
-{ contents = [
-    &amp;quot;::: output&amp;quot;
-  , &amp;quot;\n&amp;quot;
-  , &amp;quot;__this code block is defined in some Dhall__&amp;quot;
-  , &amp;quot;\n&amp;quot;
-  , &amp;quot;file=&amp;quot;, kitchensink.file
-  , &amp;quot;\n&amp;quot;, &amp;quot;section=&amp;quot;
-  , Integer/show kitchensink.sectionNum
-  , &amp;quot;\n&amp;quot;
-  , &amp;quot;:::&amp;quot;
-  ]
-, format = &amp;quot;cmark&amp;quot;
-}
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;rendered in HTML (via CommonMark)&lt;/p&gt;
-&lt;/section&gt;&lt;section class="main-section"&gt;&lt;div class="output"&gt;
-&lt;p&gt;&lt;strong&gt;this code block is defined in some Dhall&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;file=
-./website-src/sections-dhall.cmark&lt;/p&gt;
-&lt;p&gt;section=
-+9&lt;/p&gt;
-&lt;p&gt;some number from a dataset:
-42&lt;/p&gt;
-&lt;p&gt;some list from a dataset:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;foo
-&lt;/li&gt;
-&lt;li&gt;bar
-&lt;/li&gt;
-&lt;li&gt;baz
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/div&gt;
-&lt;/section&gt;&lt;section class="main-section"&gt;&lt;p&gt;The same section ported to &lt;a href="/sections-templating.html"&gt;tramaj&lt;/a&gt;. The list has
-to be built structurally here, in &lt;code&gt;.tramaj-doc&lt;/code&gt; mode: expression mode’s
-&lt;code&gt;contents&lt;/code&gt; array has to be a flat list of lines, with no way to splice in one
-&lt;code&gt;&amp;lt;li&amp;gt;&lt;/code&gt; per item and keep the surrounding header lines, so a document built out
-of real elements is the natural fit.&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;=base:main-content.tramaj-doc
-@d=$ctx.datasets.example
-.div(class: &amp;quot;output&amp;quot;,
-  .p(.strong(&amp;quot;this code block is defined in some tramaj&amp;quot;)),
-  .p(&amp;quot;file=`$ctx.file`&amp;quot;),
-  .p(&amp;quot;section=`$ctx.sectionNum`&amp;quot;),
-  .p(&amp;quot;some number from a dataset:`$d.answer`&amp;quot;),
-  .p(&amp;quot;some list from a dataset:&amp;quot;),
-  .ul(map($d.items, (i) =&amp;gt; .li($i))))
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/section&gt;&lt;section class="main-section"&gt;&lt;div class="output"&gt;&lt;p&gt;&lt;strong&gt;this code block is defined in some tramaj&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;file=./website-src/sections-dhall.cmark&lt;/p&gt;&lt;p&gt;section=11&lt;/p&gt;&lt;p&gt;some number from a dataset:42&lt;/p&gt;&lt;p&gt;some list from a dataset:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;foo&lt;/li&gt;&lt;li&gt;bar&lt;/li&gt;&lt;li&gt;baz&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;
-&lt;/section&gt;&lt;section class="main-section"&gt;&lt;h3 id="rendering-a-section-in-html"&gt;Rendering a section in HTML&lt;/h3&gt;
-&lt;p&gt;You can return HTML directly-formatted.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;example&lt;/strong&gt;&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;=base:main-content.dhall
-
-{ contents = [&amp;quot;__generated from dhall__&amp;quot;, &amp;quot;\n&amp;quot;, kitchensink.file ], format = &amp;quot;html&amp;quot; }
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/section&gt;&lt;section class="main-section"&gt;&lt;h3 id="rendering-json-sections"&gt;Rendering JSON-sections&lt;/h3&gt;
-&lt;p&gt;Dhall can substitute itself to JSON objects as well.
-Jut replace a &lt;code&gt;.json&lt;/code&gt; with &lt;code&gt;.dhall&lt;/code&gt; and KitchenSink will interpret a Dhall expression to fill-in the JSON.&lt;/p&gt;
-&lt;p&gt;A few use cases are envisioned:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;generating a &lt;em&gt;commands&lt;/em&gt; from Dhall expressions
-&lt;/li&gt;
-&lt;li&gt;generating a command requiring the filename
-&lt;/li&gt;
-&lt;li&gt;avoiding redundant information like social infos using Dhall’s support for remote includes
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;strong&gt;example 1&lt;/strong&gt;&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;=generator:cmd.dhall
-let
-  ping = { cmd = &amp;quot;ping&amp;quot;
-         , args = [&amp;quot;-c&amp;quot;, &amp;quot;3&amp;quot;, &amp;quot;8.8.4.4&amp;quot;]
-         , target = &amp;quot;latency&amp;quot;
-         }
-in
-{ contents = ping
-, format = &amp;quot;json&amp;quot;
-}
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/section&gt;&lt;section class="main-section"&gt;&lt;p&gt;&lt;strong&gt;example 2&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;This section is handy to show the content in this file. Note that I use
-&lt;code&gt;kitchensink.file&lt;/code&gt; to get the path name.&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;=generator:cmd.dhall
-let
-  cmd = { cmd = &amp;quot;cat&amp;quot;
-        , args = [kitchensink.file]
-        , target = &amp;quot;cat-this-file&amp;quot;
-        }
-in
-{ contents = cmd
-, format = &amp;quot;json&amp;quot;
-}
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;a href="/gen/out/sections-dhall.cmark__cat-this-file"&gt;once the generated section is evaluated&lt;/a&gt;&lt;/p&gt;
-&lt;/section&gt;&lt;section class="main-section"&gt;&lt;p&gt;The same generator in tramaj. This one is a straight port: the result
-is a JSON value rather than lines of text, so it stays in expression mode, and
-&lt;code&gt;kitchensink.file&lt;/code&gt; becomes &lt;code&gt;$ctx.file&lt;/code&gt;.&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;=generator:cmd.tramaj-json
-{ &amp;quot;format&amp;quot;: &amp;quot;json&amp;quot;
-, &amp;quot;contents&amp;quot;: { &amp;quot;cmd&amp;quot;: &amp;quot;cat&amp;quot;
-              , &amp;quot;args&amp;quot;: [$ctx.file]
-              , &amp;quot;target&amp;quot;: &amp;quot;cat-this-file-templating&amp;quot;
-              }
-}
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;a href="/gen/out/sections-dhall.cmark__cat-this-file-templating"&gt;once the generated section is evaluated&lt;/a&gt;&lt;/p&gt;
-&lt;/section&gt;&lt;section class="main-section"&gt;&lt;p&gt;&lt;strong&gt;example 3&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;You could write the content in &lt;code&gt;./social.dhall&lt;/code&gt; once and import the content.&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;=base:social.dhall
-{ contents = ./social.dhall
-, format = &amp;quot;json&amp;quot;
-}
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/section&gt;&lt;section class="main-section"&gt;&lt;p&gt;&lt;strong&gt;example 4&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;You can also generate JSON datasets if for some reason writing them in JSON is
-not immediate enough .&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;=base:dataset.dhall alice-bob
-{ contents =
-    [ {name = &amp;quot;Alice&amp;quot;, posts = 22.0}
-    , {name = &amp;quot;Bob&amp;quot;, posts = 7.0}
-    ]
-, format = &amp;quot;json&amp;quot;
-}
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;a href="/raw/data/sections-dhall.cmark__alice-bob2.json"&gt;rendered&lt;/a&gt;&lt;/p&gt;
-&lt;/section&gt;&lt;section class="main-section"&gt;&lt;p&gt;And the same dataset in tramaj. A &lt;code&gt;.tramaj-json&lt;/code&gt; cell returning
-&lt;code&gt;format = &amp;quot;json&amp;quot;&lt;/code&gt; registers a dataset exactly the way the Dhall one does, so
-every later section can read it back from &lt;code&gt;$ctx.datasets&lt;/code&gt;.&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;=base:dataset.tramaj-json alice-bob-templating
-{ &amp;quot;format&amp;quot;: &amp;quot;json&amp;quot;
-, &amp;quot;contents&amp;quot;: [ {&amp;quot;name&amp;quot;: &amp;quot;Alice&amp;quot;, &amp;quot;posts&amp;quot;: 22}
-              , {&amp;quot;name&amp;quot;: &amp;quot;Bob&amp;quot;, &amp;quot;posts&amp;quot;: 7}
-              ]
-}
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;a href="/raw/data/sections-dhall.cmark__alice-bob-templating3.json"&gt;rendered&lt;/a&gt;&lt;/p&gt;
-&lt;/section&gt;&lt;section class="main-section"&gt;&lt;h2 id="implementation-notes"&gt;Implementation notes&lt;/h2&gt;
-&lt;p&gt;The following notes are more useful for myself and for people curious about modifying or contributing to KitchenSink.&lt;/p&gt;
-&lt;h3 id="present"&gt;present&lt;/h3&gt;
-&lt;h4 id="the-evaluation-chain"&gt;The evaluation chain&lt;/h4&gt;
-&lt;p&gt;Today SiteLoader traverses all sections (i.e., after mapping Article Sections
-to Article Sections). Upon encountering a &lt;code&gt;.dhall&lt;/code&gt; section, SiteLoader
-evaluates the content as a Dhall expression returning some well-known format.&lt;/p&gt;
-&lt;p&gt;Further, datasets encountered during this phase are collected in a &lt;code&gt;datasets&lt;/code&gt;
-object. Previous datasets are passed to Dhall sections. Thus Dhall can
-templatize an in-line dataset.&lt;/p&gt;
-&lt;p&gt;Thus, unlike &lt;code&gt;generators&lt;/code&gt;, Dhall sections are pre-processors. They are
-evaluated once.  When operating Kitchen-Sink as a static-site generator there
-is no much difference, however if you operate Kitchen-Sink as a live-website,
-then you cannot use Dhall as a generator-on-steroids.&lt;/p&gt;
-&lt;h4 id="the-kitchensink-object"&gt;The &lt;code&gt;kitchensink&lt;/code&gt; object&lt;/h4&gt;
-&lt;p&gt;Evaluated Dhall expressions carry information provided by
-KitchenSink. This information is bound to the &lt;code&gt;kitchensink&lt;/code&gt;
-Dhall value and has the following structure:&lt;/p&gt;
-&lt;pre&gt;&lt;code class="language-dhall"&gt;{ file : Text -- contains the source file path for the cmark
-, sectionNum : Integer -- contains the section number of this file (starting from zero)
-, datasets : &amp;lt;data-dependant&amp;gt; -- contains a record&amp;lt;dataset-name, (json-value-to-dhall|text-value)&amp;gt; or an error message if it failed to load
-, vars : &amp;lt;data-dependant&amp;gt; -- contains a record&amp;lt;key, value: Text&amp;gt; depending on the --var foo=bar command line arguments
-}
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Note that missing data-dependant bindings will prevent the site from loading,
-so be sure to not rely too much on these values.&lt;/p&gt;
-&lt;h3 id="future-work"&gt;future work&lt;/h3&gt;
-&lt;ul&gt;
-&lt;li&gt;carry-over more context from previous sections
-&lt;/li&gt;
-&lt;li&gt;allow appending new sections (i.e., preprocess articles over sections)?
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/section&gt;&lt;/div&gt;</content><link href="https://kitchensink-tech.github.io/sections-dhall.html" rel="alternate"/><summary type="text">Documenting the special feature of Dhall-sections.</summary></entry><entry><id>https://kitchensink-tech.github.io/sections.html</id><title type="text">The section-based format</title><updated>1970-01-01T00:00:00Z</updated><author><name>Lucas DiCioccio</name></author><content type="html">&lt;div class="main-article"&gt;&lt;section class="main-section"&gt;&lt;p&gt;In my &lt;a href="https://dicioccio.fr/how-this-blog-works.html"&gt;first article about why I wrote my own
+&lt;/section&gt;&lt;/div&gt;</content><link href="https://kitchensink-tech.github.io/philosophy.html" rel="alternate"/><summary type="text">In these pages, I sometimes use "__It's a kitchen-sink!__" as a placeholder for apologetic or unapologetic statements regarding the lack of sophistication of Kitchen-Sink. This article positions a few tenents for Kitchen-Sink, and hopefully helps you get a feel the experience we want to build around this software.</summary></entry><entry><id>https://kitchensink-tech.github.io/sections.html</id><title type="text">The section-based format</title><updated>1970-01-01T00:00:00Z</updated><author><name>Lucas DiCioccio</name></author><content type="html">&lt;div class="main-article"&gt;&lt;section class="main-section"&gt;&lt;p&gt;In my &lt;a href="https://dicioccio.fr/how-this-blog-works.html"&gt;first article about why I wrote my own
 blog-engine&lt;/a&gt;, I
 introduce an important separation between content and structure of articles. In
 short, the &lt;em&gt;meaty content&lt;/em&gt; is what readers are interested in, whereas structure
@@ -518,10 +474,17 @@ end up reading this piece of documentation).&lt;/p&gt;
 &lt;p&gt;An important section to let Kitchen-Sink know which &lt;strong&gt;layout&lt;/strong&gt; to apply.  Known
 layouts are &lt;code&gt;article&lt;/code&gt;, &lt;code&gt;index&lt;/code&gt; (for &lt;code&gt;index.cmark&lt;/code&gt;), &lt;code&gt;glossary&lt;/code&gt; (for
 &lt;code&gt;glossary.cmark&lt;/code&gt;), &lt;code&gt;topics&lt;/code&gt; (for &lt;code&gt;topics.cmark&lt;/code&gt;), &lt;code&gt;application&lt;/code&gt; for JavaScript
-single-page apps, &lt;code&gt;gallery&lt;/code&gt; for content galleries, and &lt;code&gt;listing&lt;/code&gt; for various
-listings. Overall, except for index and topics, the layout of content does not
+single-page apps, &lt;code&gt;gallery&lt;/code&gt; for content galleries, &lt;code&gt;listing&lt;/code&gt; for various
+listings, &lt;code&gt;documentation&lt;/code&gt; for &lt;a href="/documentation-layout.html"&gt;technical documentation&lt;/a&gt;
+(a sidebar table of contents and previous/next links between pages), and
+&lt;code&gt;corporate&lt;/code&gt; for &lt;a href="/corporate-layout.html"&gt;landing pages&lt;/a&gt; (wide sections instead
+of a reading column, no byline/date/topics), composed from the
+&lt;a href="/corporate-components.html"&gt;corporate components&lt;/a&gt; tramaj library. Overall, except for index,
+topics, documentation and corporate, the layout of content does not
 change significantly besides the HTML-nesting (which then allows you to modify
 CSS or hijack DOM elements for single-page apps).&lt;/p&gt;
+&lt;p&gt;An optional &lt;code&gt;order&lt;/code&gt; number sorts the pages of the &lt;code&gt;documentation&lt;/code&gt; layout (see
+&lt;a href="/documentation-ordering.html"&gt;ordering documentation pages&lt;/a&gt;).&lt;/p&gt;
 &lt;p&gt;The publicationStatus is either: &lt;code&gt;Public&lt;/code&gt;, &lt;code&gt;Upcoming&lt;/code&gt;, or &lt;code&gt;Archived&lt;/code&gt;. Upcoming
 and Archived articles are treated slightly differently from Public articles in
 listing or in the home page: they are ranked lower and they do not carry a
@@ -747,52 +710,13 @@ At this point I assume that KitchenSink users are tech-savvy geeks.&lt;/p&gt;
 }
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
-&lt;/section&gt;&lt;section class="main-section"&gt;&lt;h3 id="dhall-advanced"&gt;dhall [advanced]&lt;/h3&gt;
+&lt;/section&gt;&lt;section class="main-section"&gt;&lt;h3 id="dhall-removed"&gt;dhall [removed]&lt;/h3&gt;
 &lt;div class="section-details"&gt;
-&lt;p&gt;There is one difficult design point when statically-generating website is when
-we have datasets of repeated structure (e.g., an image list with title, date,
-sizes, filepath, preferred corner thickness etc.) and you want to generate some
-content on a page in a static form. I touch on this difficult use-case in a &lt;a href="https://dicioccio.fr/dhall-section-demo.html"&gt;past article on my blog&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;In this specific case, the section consists of a
-&lt;a href="https://dhall-lang.org/"&gt;Dhall&lt;/a&gt; expression typed so that it returns a page
-content.&lt;/p&gt;
-&lt;p&gt;The returned object must be of &lt;code&gt;Type&lt;/code&gt;&lt;/p&gt;
-&lt;pre&gt;&lt;code class="language-dhall"&gt;{ contents : Text
-, format : Text
-}
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Where &lt;code&gt;format&lt;/code&gt; is either &lt;code&gt;cmark&lt;/code&gt; or &lt;code&gt;html&lt;/code&gt; and &lt;code&gt;contents&lt;/code&gt; is formatted in the
-appropriate format. The return type is currently rather primitive and will
-likely change in the future. Changes and specifications are tracked in a
-&lt;a href="/sections-dhall.html"&gt;WIP-page&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;The same &lt;code&gt;{format, contents}&lt;/code&gt; contract is also answered by &lt;code&gt;templating&lt;/code&gt;
-sections, which pre-process sections with &lt;a href="/sections-templating.html"&gt;tramaj&lt;/a&gt;
-rather than Dhall. Both backends are supported; tramaj is the lighter-weight
-one and the one likely to outlive the other, since &lt;code&gt;dhall-json&lt;/code&gt; is a recurring
-obstacle to upgrading GHC.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;example&lt;/strong&gt;&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;=base:main-content.dhall
-
-let map =  https://prelude.dhall-lang.org/List/map
-
-let alphabet : List Text =
-  [ &amp;quot;Applicative&amp;quot;
-  , &amp;quot;Bisiumulation&amp;quot;
-  , &amp;quot;Closure&amp;quot;
-  , &amp;quot;Distributive&amp;quot;
-  , &amp;quot;...&amp;quot;
-  ]
-
-let toCmarkListItem = \(v : Text) -&amp;gt; &amp;quot;- ${v}&amp;quot;
-
-let cmarkContents : List Text =
-  map Text Text toCmarkListItem alphabet
-
-in
-{ contents =  cmarkContents
-, format = &amp;quot;cmark&amp;quot;
-}
-&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Kitchen-Sink used to pre-process sections with &lt;a href="https://dhall-lang.org/"&gt;Dhall&lt;/a&gt;
+expressions. That format was removed: a &lt;code&gt;.dhall&lt;/code&gt; section is now rejected at
+load time with an error naming the file. Use a &lt;code&gt;tramaj-json&lt;/code&gt; section (a value
+answering &lt;code&gt;{format, contents}&lt;/code&gt;) or a &lt;code&gt;tramaj-doc&lt;/code&gt; section (a document tree
+rendered to HTML) instead, see &lt;a href="/sections-templating.html"&gt;tramaj sections&lt;/a&gt;.&lt;/p&gt;
 &lt;/div&gt;
 &lt;h3 id="glossary-experimental"&gt;glossary [experimental]&lt;/h3&gt;
 &lt;div class="section-details"&gt;
@@ -822,7 +746,7 @@ sitemap.&lt;/p&gt;
 Kitchen-Sink directory. However you may not want to multiply files.  Rather,
 sometimes you just want to inline some dataset in a document.&lt;/p&gt;
 &lt;p&gt;Datasets are useful if you write a small JavaScript demo tool. Datasets also
-are useful as templating mechanisms as JSON datasets are input of Dhall and
+are useful as templating mechanisms as JSON datasets are input of tramaj and
 Mustache sections.&lt;/p&gt;
 &lt;p&gt;The &lt;code&gt;dataset&lt;/code&gt; section addresses such needs, by generating.  &lt;span class="emoji" data-emoji="warning"&gt;⚠️&lt;/span&gt; The
 ordering of the insertion determines the resulting filename, for instance
@@ -893,15 +817,14 @@ fully-form ideas about the details. In particular, I have some PHP-envy to turn 
 — is a small template language: a &lt;code&gt;jq&lt;/code&gt;-flavoured expression language for the
 data half, a HAML-like block syntax for structure, and a deliberately tiny set
 of builtins. KitchenSink embeds its Haskell implementation, &lt;code&gt;tramaj-hs&lt;/code&gt;, as a
-second section pre-processor next to &lt;a href="/sections-dhall.html"&gt;Dhall-sections&lt;/a&gt;. A
+section pre-processor. A
 &lt;a href="/playground.html"&gt;playground&lt;/a&gt; hosted on this site lets you try the language
 itself, outside of any KitchenSink section.&lt;/p&gt;
-&lt;p&gt;Both backends do the same job and both remain supported. Tramaj is, however,
-the direction of travel: &lt;code&gt;dhall&lt;/code&gt; and &lt;code&gt;dhall-json&lt;/code&gt; are notoriously awkward to
-build and they have repeatedly held KitchenSink back from moving to newer GHC
-versions, whereas &lt;code&gt;tramaj-hs&lt;/code&gt; needs nothing beyond &lt;code&gt;megaparsec&lt;/code&gt; and &lt;code&gt;aeson&lt;/code&gt;.
-Expect Dhall-sections to be deprecated eventually; nothing is being removed
-today.&lt;/p&gt;
+&lt;p&gt;Tramaj replaced Dhall as the section pre-processor: &lt;code&gt;dhall&lt;/code&gt; and &lt;code&gt;dhall-json&lt;/code&gt;
+were notoriously awkward to build and had repeatedly held KitchenSink back from
+moving to newer GHC versions, whereas &lt;code&gt;tramaj-hs&lt;/code&gt; needs nothing beyond
+&lt;code&gt;megaparsec&lt;/code&gt; and &lt;code&gt;aeson&lt;/code&gt;. A &lt;code&gt;.dhall&lt;/code&gt; section is now rejected at load time with
+an error naming the file; rewrite it as a &lt;code&gt;tramaj-json&lt;/code&gt; or &lt;code&gt;tramaj-doc&lt;/code&gt; section.&lt;/p&gt;
 &lt;h2 id="two-section-formats"&gt;Two section formats&lt;/h2&gt;
 &lt;p&gt;Where Dhall has one format, tramaj sections come in two, because the language
 distinguishes producing &lt;em&gt;data&lt;/em&gt; from producing a &lt;em&gt;document&lt;/em&gt; — though in the
@@ -911,7 +834,8 @@ KitchenSink’s two section formats below that still enforce which one a given
 section must produce.&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;.tramaj-json&lt;/code&gt; sections are rooted at an expression and evaluate to a JSON
 value. That value is the same &lt;code&gt;{format, contents}&lt;/code&gt; contract Dhall-sections
-answer with, so the section can rewrite itself to &lt;code&gt;json&lt;/code&gt;, &lt;code&gt;cmark&lt;/code&gt; or &lt;code&gt;html&lt;/code&gt;.
+answer with, so the section can rewrite itself to &lt;code&gt;json&lt;/code&gt;, &lt;code&gt;cmark&lt;/code&gt;, &lt;code&gt;html&lt;/code&gt; or
+&lt;code&gt;css&lt;/code&gt;.
 This is the format to reach for as a drop-in replacement for a Dhall section.&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;.tramaj-doc&lt;/code&gt; sections are rooted at an element — &lt;code&gt;.div(...)&lt;/code&gt;, &lt;code&gt;.ul(...)&lt;/code&gt; —
 and evaluate to a document tree, which KitchenSink renders to HTML. There is no
@@ -922,21 +846,26 @@ says which mode you meant, so a mistake is a parse error rather than a
 surprise.&lt;/p&gt;
 &lt;h2 id="the-ctx-object"&gt;The &lt;code&gt;$ctx&lt;/code&gt; object&lt;/h2&gt;
 &lt;p&gt;Tramaj always has the input context in scope as &lt;code&gt;$ctx&lt;/code&gt;. KitchenSink fills it
-with the very same information the &lt;code&gt;kitchensink&lt;/code&gt; object carries in
+with the information the &lt;code&gt;kitchensink&lt;/code&gt; object carried in the former
 Dhall-sections:&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;{ file : Text        -- the source file path of this cmark file
 , sectionNum : Integer  -- this section's number in the file, from zero
+, pathPrefix : Text  -- the site's configured basePath (see kitchen-sink.json), or &amp;quot;&amp;quot; at the domain root
 , datasets : object  -- dataset cells declared *earlier* in this file
 , vars : object      -- the --var name=value pairs given on the command line
 }
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;So &lt;code&gt;kitchensink.datasets.my-name&lt;/code&gt; becomes &lt;code&gt;$ctx.datasets.my-name&lt;/code&gt;, and
-&lt;code&gt;kitchensink.file&lt;/code&gt; becomes &lt;code&gt;$ctx.file&lt;/code&gt;.&lt;/p&gt;
-&lt;p&gt;Like Dhall-sections, templating sections are &lt;em&gt;pre-processors&lt;/em&gt;: they are
-evaluated once, at load time, and only see datasets declared before them in the
-file. Unlike Dhall there are no networked imports, but tramaj does have local
-imports of other sections in the same file — see “Using partial templates”
-below — so the gap against Dhall is narrower than it once was.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;pathPrefix&lt;/code&gt; is what lets a &lt;code&gt;.tramaj-json&lt;/code&gt; &lt;code&gt;main-css&lt;/code&gt; section (returning
+&lt;code&gt;format = &amp;quot;css&amp;quot;&lt;/code&gt;) adapt its &lt;code&gt;@import&lt;/code&gt; URLs – or any &lt;code&gt;.tramaj-json&lt;/code&gt;/
+&lt;code&gt;.tramaj-doc&lt;/code&gt; section adapt a root-relative link – to a site hosted under a
+subpath, e.g. &lt;code&gt;&amp;quot;@import \&amp;quot;&lt;/code&gt;$ctx.pathPrefix&lt;code&gt;/css/dev.css\&amp;quot;;&amp;quot;&lt;/code&gt; instead of
+hardcoding &lt;code&gt;/css/dev.css&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;When migrating a Dhall section, &lt;code&gt;kitchensink.datasets.my-name&lt;/code&gt; becomes
+&lt;code&gt;$ctx.datasets.my-name&lt;/code&gt;, and &lt;code&gt;kitchensink.file&lt;/code&gt; becomes &lt;code&gt;$ctx.file&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Templating sections are &lt;em&gt;pre-processors&lt;/em&gt;: they are evaluated once, at load
+time, and only see datasets declared before them in the file. There are no
+networked imports, but tramaj does have local imports of other sections in the
+same file — see “Using partial templates” below.&lt;/p&gt;
 &lt;/section&gt;&lt;section class="main-section"&gt;&lt;h2 id="examples"&gt;Examples&lt;/h2&gt;
 &lt;p&gt;The rest of this page is its own fixture: every output below is produced by a
 templating section in this very file.&lt;/p&gt;
@@ -978,11 +907,13 @@ mode never stringifies its result.&lt;/p&gt;
 }
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;Each element of &lt;code&gt;contents&lt;/code&gt; is one line. &lt;code&gt;format&lt;/code&gt; may also be &lt;code&gt;&amp;quot;html&amp;quot;&lt;/code&gt;, in which
-case the lines are used verbatim, or &lt;code&gt;&amp;quot;json&amp;quot;&lt;/code&gt;, in which case &lt;code&gt;contents&lt;/code&gt; is an
-arbitrary JSON value rather than a list of lines.&lt;/p&gt;
+case the lines are used verbatim; &lt;code&gt;&amp;quot;css&amp;quot;&lt;/code&gt;, likewise verbatim but rewriting the
+section to CSS (handy for a &lt;code&gt;main-css&lt;/code&gt; section that needs &lt;code&gt;$ctx.pathPrefix&lt;/code&gt; in
+its &lt;code&gt;@import&lt;/code&gt; URLs); or &lt;code&gt;&amp;quot;json&amp;quot;&lt;/code&gt;, in which case &lt;code&gt;contents&lt;/code&gt; is an arbitrary
+JSON value rather than a list of lines.&lt;/p&gt;
 &lt;/section&gt;&lt;section class="main-section"&gt;&lt;div class="output"&gt;
 &lt;p&gt;&lt;strong&gt;generated from a templating section&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;file=./website-src/sections-templating.cmark, section=12&lt;/p&gt;
+&lt;p&gt;file=website-src/sections-templating.cmark, section=12&lt;/p&gt;
 &lt;p&gt;2 crew member(s)&lt;/p&gt;
 &lt;/div&gt;
 &lt;/section&gt;&lt;section class="main-section"&gt;&lt;h3 id="rendering-a-document-tree"&gt;Rendering a document tree&lt;/h3&gt;
@@ -1153,8 +1084,7 @@ re-enters it — not a hang.&lt;/p&gt;
 &lt;p&gt;A library file is still a KitchenSink section file, with a &lt;code&gt;library.tramaj-lib&lt;/code&gt;
 header per library — there is no support yet for a “bare” file containing just
 a program body and nothing else — and imports still only resolve by name
-within the same site, never across a networked location the way a Dhall
-import can.&lt;/p&gt;
+within the same site, never across a networked location.&lt;/p&gt;
 &lt;/section&gt;&lt;section class="main-section"&gt;&lt;h2 id="notes-and-limitations"&gt;Notes and limitations&lt;/h2&gt;
 &lt;p&gt;Text interpolation goes through the language’s display rules: a string
 interpolates raw, an integral number drops its &lt;code&gt;.0&lt;/code&gt;, and anything else falls
@@ -1177,7 +1107,46 @@ expression-only mode, so which one a program produces follows from what its
 root evaluated to rather than from which parser ran. KitchenSink still keeps
 the two section formats distinct, coercing the result to what each one expects
 (see “Two section formats” above).&lt;/p&gt;
-&lt;/section&gt;&lt;/div&gt;</content><link href="https://kitchensink-tech.github.io/sections-templating.html" rel="alternate"/><summary type="text">Pre-processing sections with tramaj, the lighter-weight alternative to Dhall-sections.</summary></entry><entry><id>https://kitchensink-tech.github.io/getting-started.html</id><title type="text">Getting started</title><updated>1970-01-01T00:00:00Z</updated><author><name>Lucas DiCioccio</name></author><content type="html">&lt;div class="main-article"&gt;&lt;section class="main-section"&gt;&lt;h3 id="expectations"&gt;expectations&lt;/h3&gt;
+&lt;/section&gt;&lt;/div&gt;</content><link href="https://kitchensink-tech.github.io/sections-templating.html" rel="alternate"/><summary type="text">Pre-processing sections with tramaj, which replaced the removed Dhall-sections.</summary></entry><entry><id>https://kitchensink-tech.github.io/documentation-navigation.html</id><title type="text">Navigation and search</title><updated>1970-01-01T00:00:00Z</updated><author><name>Lucas DiCioccio</name></author><content type="html">&lt;div class="main-article"&gt;&lt;section class="main-section"&gt;&lt;p&gt;Every &lt;a href="/documentation-layout.html"&gt;documentation page&lt;/a&gt; comes with the list of
+all the pages of the documentation and with a search box. There is nothing to
+write for either of them: both are built from the pages that use the
+&lt;code&gt;documentation&lt;/code&gt; layout.&lt;/p&gt;
+&lt;h2 id="the-list-of-pages"&gt;The list of pages&lt;/h2&gt;
+&lt;p&gt;The sidebar lists the titles of the pages, by group, in the &lt;a href="/documentation-ordering.html"&gt;order of the
+documentation&lt;/a&gt;. The page being read is
+highlighted. On a narrow screen the list moves above the content, folded.&lt;/p&gt;
+&lt;h2 id="the-search-box"&gt;The search box&lt;/h2&gt;
+&lt;p&gt;The search box of the header looks for the typed words in the documentation
+pages only: their titles, their headings and their text. A result leads to the
+heading under which the words were found, not merely to the page.&lt;/p&gt;
+&lt;p&gt;Press &lt;code&gt;/&lt;/code&gt; to jump to the search box, use the arrow keys to pick a result and
+&lt;code&gt;Enter&lt;/code&gt; to open it.&lt;/p&gt;
+&lt;h2 id="the-search-index"&gt;The search index&lt;/h2&gt;
+&lt;p&gt;The search runs in the browser. It needs the &lt;code&gt;doc-search.js&lt;/code&gt; script, which a
+site started with &lt;code&gt;kitchen-sink init&lt;/code&gt; has (copy it from the &lt;code&gt;website-src&lt;/code&gt;
+directory of Kitchen-Sink otherwise), and it reads &lt;code&gt;/json/doc-search.json&lt;/code&gt;, a
+file produced for any site that has documentation pages. That file has one
+entry for the introduction of each page and one entry per heading, each with
+its &lt;code&gt;url&lt;/code&gt;, &lt;code&gt;title&lt;/code&gt;, &lt;code&gt;group&lt;/code&gt;, &lt;code&gt;heading&lt;/code&gt; and &lt;code&gt;text&lt;/code&gt;.&lt;/p&gt;
+&lt;/section&gt;&lt;/div&gt;</content><link href="https://kitchensink-tech.github.io/documentation-navigation.html" rel="alternate"/><summary type="text">How readers find their way across the pages of a documentation.</summary></entry><entry><id>https://kitchensink-tech.github.io/corporate-layout.html</id><title type="text">Acme Cloud</title><updated>1970-01-01T00:00:00Z</updated><author><name>Lucas DiCioccio</name></author><content type="html">&lt;div class="main-article"&gt;&lt;section class="main-section"&gt;&lt;div class="hero"&gt;&lt;h1&gt;Acme Cloud&lt;/h1&gt;&lt;p class="hero-subtitle"&gt;Track team spend in real time, without the spreadsheet gymnastics. Set up in an afternoon, keep everyone honest for years.&lt;/p&gt;&lt;div class="hero-actions"&gt;&lt;a class="button" href="#pricing"&gt;See pricing&lt;/a&gt;&lt;a class="button secondary" href="#contact"&gt;Talk to sales&lt;/a&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;/section&gt;&lt;section class="main-section"&gt;&lt;h2&gt;Why teams switch to Acme Cloud&lt;/h2&gt;&lt;div class="feature-grid"&gt;&lt;div class="feature-card"&gt;&lt;h3&gt;Live budgets&lt;/h3&gt;&lt;p&gt;Every team sees its own bucket update as spend happens, not at month-end reconciliation.&lt;/p&gt;&lt;/div&gt;&lt;div class="feature-card"&gt;&lt;h3&gt;Delegated keys&lt;/h3&gt;&lt;p&gt;Hand a scoped key to a sub-team or a robot; reclaim what it does not use.&lt;/p&gt;&lt;/div&gt;&lt;div class="feature-card"&gt;&lt;h3&gt;Audit trail&lt;/h3&gt;&lt;p&gt;Every consumption and replenishment is timestamped and attributable, no export required.&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;/section&gt;&lt;section class="main-section"&gt;&lt;table class="pricing-table"&gt;&lt;thead&gt;&lt;tr&gt;&lt;th class="pricing-feature-header"&gt;&lt;/th&gt;&lt;th class="pricing-plan-header"&gt;&lt;div class="pricing-plan-name"&gt;Starter&lt;/div&gt;&lt;div class="pricing-plan-price"&gt;$0&lt;/div&gt;&lt;/th&gt;&lt;th class="pricing-plan-header"&gt;&lt;div class="pricing-plan-name"&gt;Team&lt;/div&gt;&lt;div class="pricing-plan-price"&gt;$29/mo&lt;/div&gt;&lt;/th&gt;&lt;th class="pricing-plan-header"&gt;&lt;div class="pricing-plan-name"&gt;Scale&lt;/div&gt;&lt;div class="pricing-plan-price"&gt;Talk to us&lt;/div&gt;&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="pricing-feature-name"&gt;Buckets&lt;/td&gt;&lt;td class="pricing-value"&gt;3&lt;/td&gt;&lt;td class="pricing-value"&gt;25&lt;/td&gt;&lt;td class="pricing-value"&gt;Unlimited&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td class="pricing-feature-name"&gt;Delegated keys&lt;/td&gt;&lt;td class="pricing-value"&gt;1&lt;/td&gt;&lt;td class="pricing-value"&gt;20&lt;/td&gt;&lt;td class="pricing-value"&gt;Unlimited&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td class="pricing-feature-name"&gt;Support&lt;/td&gt;&lt;td class="pricing-value"&gt;Community&lt;/td&gt;&lt;td class="pricing-value"&gt;Priority&lt;/td&gt;&lt;td class="pricing-value"&gt;Dedicated&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;/section&gt;&lt;section class="main-section"&gt;&lt;h2&gt;What our early customers say&lt;/h2&gt;&lt;div class="testimonial-strip"&gt;&lt;div class="testimonial"&gt;We went from a shared spreadsheet nobody trusted to a dashboard every team lead checks before standup.&lt;span class="testimonial-author"&gt;Head of Platform, mid-size fintech&lt;/span&gt;&lt;/div&gt;&lt;div class="testimonial"&gt;Delegated keys are the feature that sold the rest of the team: our robots finally have their own budget instead of one shared secret.&lt;span class="testimonial-author"&gt;Staff engineer, dev tooling team&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;/section&gt;&lt;section class="main-section"&gt;&lt;div class="cta-banner" id="contact"&gt;&lt;h2&gt;Ready to see it on your own numbers?&lt;/h2&gt;&lt;p&gt;No credit card. Import a CSV of last month&amp;#39;s spend and get a live dashboard in minutes.&lt;/p&gt;&lt;a class="button" href="mailto:hello@example.invalid"&gt;Get started&lt;/a&gt;&lt;/div&gt;
+&lt;/section&gt;&lt;section class="main-section"&gt;&lt;p&gt;&amp;#8203;&lt;/p&gt;
+&lt;p&gt;This page uses the &lt;code&gt;corporate&lt;/code&gt; article layout: set
+&lt;code&gt;{“layout”:“corporate”}&lt;/code&gt; in &lt;code&gt;base:build-info.json&lt;/code&gt; and
+import &lt;code&gt;/css/corporate.css&lt;/code&gt; next to the usual stylesheets. Unlike
+the &lt;code&gt;article&lt;/code&gt; layout, it renders no byline, no publication date,
+and no topic links or glossary — only the site-wide menu and footer plus
+whatever sections the page declares, each as its own full-width section.
+Every section above is a &lt;code&gt;main-content.tramaj-doc&lt;/code&gt; section that reads a
+&lt;code&gt;dataset.json&lt;/code&gt; cell and imports a component from
+&lt;a href="/corporate-components.html"&gt;&lt;code&gt;corporate.cmark-tramaj&lt;/code&gt;&lt;/a&gt;, rather than
+hand-written HTML per page. See &lt;a href="/layouts.html"&gt;layouts&lt;/a&gt; for the other
+article layouts and &lt;a href="/corporate-components.html"&gt;corporate components&lt;/a&gt; for
+the library’s documented fields.&lt;/p&gt;
+&lt;/section&gt;&lt;/div&gt;</content><link href="https://kitchensink-tech.github.io/corporate-layout.html" rel="alternate"/><summary type="text">A `corporate` layout example: a fictional marketing page for an "Acme Cloud" product, composed from the `corporate.cmark-tramaj` component library (hero, feature grid, pricing table, call to action, testimonial strip) instead of hand-written HTML.</summary></entry><entry><id>https://kitchensink-tech.github.io/getting-started.html</id><title type="text">Getting started</title><updated>1970-01-01T00:00:00Z</updated><author><name>Lucas DiCioccio</name></author><content type="html">&lt;div class="main-article"&gt;&lt;section class="main-section"&gt;&lt;h3 id="expectations"&gt;expectations&lt;/h3&gt;
 &lt;p&gt;At its core, KitchenSink is a static-site generator &lt;em&gt;library&lt;/em&gt; with merely a
 &lt;em&gt;default theme&lt;/em&gt;. That is, you can have multiple integration modes to run
 a KitchenSink-generated blog.&lt;/p&gt;
@@ -1271,6 +1240,10 @@ to be taken into account) while running KitchenSink in serve mode.&lt;/p&gt;
 &lt;pre&gt;&lt;code class="language-console"&gt;kitchen-sink produce --srcDir site-source/ --outDir www/
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;At this point the &lt;code&gt;www&lt;/code&gt; output dir should have the content for your website.&lt;/p&gt;
+&lt;p&gt;If one target cannot be produced (for example a &lt;code&gt;generator&lt;/code&gt; command that exits
+with an error), &lt;code&gt;produce&lt;/code&gt; reports it on stderr, still writes everything else,
+and exits non-zero at the end. Pass &lt;code&gt;--abortOnError&lt;/code&gt; to stop at the first
+failing target instead.&lt;/p&gt;
 &lt;script src="js/copy-snippets.js"&gt;&lt;/script&gt;
 &lt;/section&gt;&lt;/div&gt;</content><link href="https://kitchensink-tech.github.io/getting-started.html" rel="alternate"/><summary type="text">This article gets you started with KitchenSink. As of date, you need some amount of programming know-how.</summary></entry><entry><id>https://kitchensink-tech.github.io/layouts.html</id><title type="text">Layouts and extensions</title><updated>1970-01-01T00:00:00Z</updated><author><name>Lucas DiCioccio</name></author><content type="html">&lt;div class="main-article"&gt;&lt;section class="main-section"&gt;&lt;p&gt;There are two notions of layouts in KitchenSink: &lt;em&gt;article layouts&lt;/em&gt; and &lt;em&gt;website
 layouts&lt;/em&gt;. This article first discusses how they differ, then we deep-dive in
@@ -1413,7 +1386,7 @@ instance).&lt;/p&gt;
 &lt;/li&gt;
 &lt;li&gt;parsing content of &lt;code&gt;.cmark&lt;/code&gt; as section format
 &lt;/li&gt;
-&lt;li&gt;evaluating &lt;code&gt;.dhall&lt;/code&gt; sections
+&lt;li&gt;evaluating &lt;code&gt;tramaj-json&lt;/code&gt;/&lt;code&gt;tramaj-doc&lt;/code&gt; sections
 &lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
@@ -1559,6 +1532,7 @@ generators for very specific formats.&lt;/p&gt;
 &lt;p&gt;The main use-case is to allow porting some other website to KitchenSink, starting from some imported &lt;code&gt;.html&lt;/code&gt;
 Other usages could be to support things like webmaster-verification tools on Google.&lt;/p&gt;
 &lt;p&gt;&lt;span class="emoji" data-emoji="warning"&gt;⚠️&lt;/span&gt; there is no conflict detection yet so avoid having a &lt;code&gt;.cmark&lt;/code&gt; matching a &lt;code&gt;.html&lt;/code&gt; file or you risk inconsistencies.&lt;/p&gt;
+&lt;p&gt;&lt;span class="emoji" data-emoji="warning"&gt;⚠️&lt;/span&gt; a raw &lt;code&gt;.html&lt;/code&gt; file is copied verbatim, so any &lt;code&gt;href&lt;/code&gt;/&lt;code&gt;src&lt;/code&gt; it contains is not rewritten for &lt;a href="/kitchen-sink-dot-json.html"&gt;&lt;code&gt;basePath&lt;/code&gt;&lt;/a&gt; the way generated pages and markdown links are — there is no static analysis over hand-written HTML to safely tell a root-relative link from, say, a snippet of markup you genuinely want left alone. The same is true of raw HTML embedded directly in a &lt;code&gt;main-content&lt;/code&gt;/&lt;code&gt;summary&lt;/code&gt; markdown section (an &lt;code&gt;&amp;lt;iframe src=&amp;quot;/foo.html&amp;quot;&amp;gt;&lt;/code&gt;, say). If you need such a link to follow the site’s &lt;code&gt;basePath&lt;/code&gt;, generate that HTML via a &lt;a href="/sections-templating.html"&gt;&lt;code&gt;.tramaj-doc&lt;/code&gt; section&lt;/a&gt; referencing &lt;code&gt;$ctx.pathPrefix&lt;/code&gt; instead of hand-typing it.&lt;/p&gt;
 &lt;h3 id="javascript"&gt;javascript&lt;/h3&gt;
 &lt;p&gt;KitchenSink copies &lt;code&gt;.js&lt;/code&gt; files under &lt;code&gt;/js&lt;/code&gt;.&lt;/p&gt;
 &lt;h3 id="webfonts"&gt;webfonts&lt;/h3&gt;
@@ -1572,7 +1546,24 @@ text result (e.g., a long output of a command that is too slow to generate).&lt;
 &lt;p&gt;KitchenSink calls &lt;code&gt;dot&lt;/code&gt; to generate under &lt;code&gt;/gen/images/&amp;lt;filename&amp;gt;.png&lt;/code&gt;. There
 is little support to control the command that KitchenSink handles. If you need
 more control, generate pictures aside or use a command-section.&lt;/p&gt;
-&lt;/section&gt;&lt;/div&gt;</content><link href="https://kitchensink-tech.github.io/other-formats.html" rel="alternate"/><summary type="text">There is more to a blog than just CommonMark HTML. This article explains briefly how the KitchenSink engine handles other format.</summary></entry><entry><id>https://kitchensink-tech.github.io/features.html</id><title type="text">Feature list</title><updated>1970-01-01T00:00:00Z</updated><author><name>Lucas DiCioccio</name></author><content type="html">&lt;div class="main-article"&gt;&lt;section class="main-section"&gt;&lt;p&gt;Kitchen-Sink consists of two related components:&lt;/p&gt;
+&lt;/section&gt;&lt;/div&gt;</content><link href="https://kitchensink-tech.github.io/other-formats.html" rel="alternate"/><summary type="text">There is more to a blog than just CommonMark HTML. This article explains briefly how the KitchenSink engine handles other format.</summary></entry><entry><id>https://kitchensink-tech.github.io/documentation-ordering.html</id><title type="text">Ordering documentation pages</title><updated>1970-01-01T00:00:00Z</updated><author><name>Lucas DiCioccio</name></author><content type="html">&lt;div class="main-article"&gt;&lt;section class="main-section"&gt;&lt;p&gt;The list of pages and the previous and next links of a &lt;a href="/documentation-layout.html"&gt;documentation
+page&lt;/a&gt; follow the order of the pages that use the
+&lt;code&gt;documentation&lt;/code&gt; layout, and only those.&lt;/p&gt;
+&lt;h2 id="the-order-field"&gt;The order field&lt;/h2&gt;
+&lt;p&gt;The optional &lt;code&gt;order&lt;/code&gt; number of the &lt;code&gt;base:build-info.json&lt;/code&gt; section gives the
+position of a page: pages with a smaller number come first.&lt;/p&gt;
+&lt;h2 id="pages-without-an-order"&gt;Pages without an order&lt;/h2&gt;
+&lt;p&gt;Pages without an &lt;code&gt;order&lt;/code&gt; come after the numbered ones, sorted by title. A
+documentation where no page has an &lt;code&gt;order&lt;/code&gt; is thus sorted by title.&lt;/p&gt;
+&lt;h2 id="groups"&gt;Groups&lt;/h2&gt;
+&lt;p&gt;The optional &lt;code&gt;group&lt;/code&gt; of the &lt;code&gt;base:build-info.json&lt;/code&gt; section is the name of the
+group a page is listed under. The pages of a group are always listed together:
+a group stands where its first page does, and its other pages follow in order.
+Pages without a &lt;code&gt;group&lt;/code&gt; form a group of their own, listed without a name.&lt;/p&gt;
+&lt;h2 id="publication-status"&gt;Publication status&lt;/h2&gt;
+&lt;p&gt;The order only decides where a page stands among the others. A page follows the
+publication status rules of any other layout.&lt;/p&gt;
+&lt;/section&gt;&lt;/div&gt;</content><link href="https://kitchensink-tech.github.io/documentation-ordering.html" rel="alternate"/><summary type="text">How the pages of the documentation layout are sorted.</summary></entry><entry><id>https://kitchensink-tech.github.io/features.html</id><title type="text">Feature list</title><updated>1970-01-01T00:00:00Z</updated><author><name>Lucas DiCioccio</name></author><content type="html">&lt;div class="main-article"&gt;&lt;section class="main-section"&gt;&lt;p&gt;Kitchen-Sink consists of two related components:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;i. a set of &lt;em&gt;libraries&lt;/em&gt; (at the time of writing, everything is packed in a single library: it’s a kitchen sink afterall)
 &lt;/li&gt;
@@ -1841,8 +1832,12 @@ blog&lt;/a&gt; as I’ve added this section in the
     }
 }
 &lt;/code&gt;&lt;/pre&gt;
-&lt;h4 id="microscriptable-in-dhall"&gt;microscriptable in Dhall&lt;/h4&gt;
-&lt;p&gt;I have written a &lt;a href="https://dicioccio.fr/dhall-section-demo.html"&gt;full article&lt;/a&gt; on my personal blog a while ago to motivate the whole usage of &lt;a href="https://dhall-lang.org/"&gt;Dhall&lt;/a&gt;. Keep in mind that I’m still happy about the choice. Dhall “powers” my photo galleries and my &lt;a href="https://lucasdicioccio.github.io/notes.html"&gt;stream of notes&lt;/a&gt; on my personal blog.&lt;/p&gt;
+&lt;p&gt;The LLM call can fail (rate limits, no network). This very site runs it through
+&lt;a href="https://github.com/kitchensink-tech/kitchensink/blob/main/website-scripts/with-fallback.sh"&gt;&lt;code&gt;website-scripts/with-fallback.sh&lt;/code&gt;&lt;/a&gt;,
+which prints a saved result committed in the repository when the command fails,
+so the build does not depend on the LLM being reachable.&lt;/p&gt;
+&lt;h4 id="microscriptable-with-tramaj"&gt;microscriptable with tramaj&lt;/h4&gt;
+&lt;p&gt;Sections can be pre-processed by a &lt;a href="/sections-templating.html"&gt;tramaj&lt;/a&gt; expression: a small typed template language whose result is a value (&lt;code&gt;tramaj-json&lt;/code&gt;) or a document tree rendered to HTML (&lt;code&gt;tramaj-doc&lt;/code&gt;). This is how repeated structures, such as a photo gallery or a stream of notes built from JSON datasets, are generated statically. (Kitchen-Sink used to do this with Dhall, motivated in a &lt;a href="https://dicioccio.fr/dhall-section-demo.html"&gt;past article on my personal blog&lt;/a&gt;; that format was removed.)&lt;/p&gt;
 &lt;/section&gt;&lt;section class="main-section"&gt;&lt;h3 id="article-organization"&gt;article organization&lt;/h3&gt;
 &lt;p&gt;An article needs some &lt;em&gt;decorum&lt;/em&gt; to help readers of your site as well as other
 applications relaying your articles. For instance, who is the author? what
@@ -1966,6 +1961,14 @@ articles. Enters the &lt;code&gt;kitchen-sink.json&lt;/code&gt; configuration fi
 &lt;/li&gt;
 &lt;li&gt;&lt;code&gt;publishURL&lt;/code&gt;: the url that will be added as prefix of links in permalinks
 &lt;/li&gt;
+&lt;li&gt;&lt;code&gt;basePath&lt;/code&gt; (optional): a path prefix (e.g., &lt;code&gt;&amp;quot;tramaj&amp;quot;&lt;/code&gt; or &lt;code&gt;&amp;quot;/tramaj&amp;quot;&lt;/code&gt;) prepended to every internal link, stylesheet, script, and image URL that kitchen-sink generates. Leave unset (or &lt;code&gt;&amp;quot;&amp;quot;&lt;/code&gt;) when the site is hosted at the domain root; set it when the site is hosted under a subpath, such as a GitHub Pages &lt;em&gt;project&lt;/em&gt; page (&lt;code&gt;https://user.github.io/reponame/&lt;/code&gt;) as opposed to a &lt;em&gt;user/org&lt;/em&gt; page (&lt;code&gt;https://user.github.io/&lt;/code&gt;). This also covers root-relative links and images an author writes by hand inside &lt;code&gt;main-content&lt;/code&gt;/&lt;code&gt;summary&lt;/code&gt; markdown – &lt;code&gt;[home](/index.html)&lt;/code&gt; is rewritten the same way as kitchen-sink’s own generated links, while absolute (&lt;code&gt;https://...&lt;/code&gt;), protocol-relative (&lt;code&gt;//...&lt;/code&gt;), and fragment (&lt;code&gt;#...&lt;/code&gt;) URLs are left alone. Raw HTML is the exception: a &lt;code&gt;.html&lt;/code&gt; link/&lt;code&gt;src&lt;/code&gt; an author writes inside a raw &lt;code&gt;.html&lt;/code&gt; file, or inline in markdown (an &lt;code&gt;&amp;lt;iframe&amp;gt;&lt;/code&gt;, say), is not analyzed and is copied through untouched – see &lt;a href="/other-formats.html"&gt;Other Formats&lt;/a&gt; for why, and for the &lt;code&gt;.tramaj-doc&lt;/code&gt; workaround. It is also available to &lt;code&gt;.dhall&lt;/code&gt;/&lt;code&gt;.tramaj-json&lt;/code&gt;/&lt;code&gt;.tramaj-doc&lt;/code&gt; sections as &lt;code&gt;kitchensink.pathPrefix&lt;/code&gt;/&lt;code&gt;$ctx.pathPrefix&lt;/code&gt; (see &lt;a href="/sections-dhall.html"&gt;Dhall sections&lt;/a&gt; / &lt;a href="/sections-templating.html"&gt;Tramaj sections&lt;/a&gt;), for cases like a CSS section’s own &lt;code&gt;@import&lt;/code&gt; URLs that kitchen-sink itself does not rewrite
+&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;homeLink&lt;/code&gt; (optional): an object tuning the link back to the site root shown in every layout’s header, with two optional fields. &lt;code&gt;label&lt;/code&gt; is the link text and defaults to &lt;code&gt;&amp;quot;Home&amp;quot;&lt;/code&gt;. &lt;code&gt;icon&lt;/code&gt; is the URL of an image rendered inside the link before the label (with an empty &lt;code&gt;alt&lt;/code&gt;, since the label carries the meaning); a root-relative URL such as &lt;code&gt;&amp;quot;/images/logo.png&amp;quot;&lt;/code&gt; follows the &lt;code&gt;basePath&lt;/code&gt; like every other internal link, while absolute URLs are left alone. The anchor carries a &lt;code&gt;home-link&lt;/code&gt; class so a stylesheet can size the icon (the scaffold’s &lt;code&gt;navigation.css&lt;/code&gt; sets it to &lt;code&gt;1em&lt;/code&gt; high). Leave &lt;code&gt;homeLink&lt;/code&gt; out to keep a plain “Home” link.
+&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;menu&lt;/code&gt; (optional): an array of entries shown in the header of every layout, after the home link. Each entry has a &lt;code&gt;label&lt;/code&gt; and a &lt;code&gt;url&lt;/code&gt; and, optionally, &lt;code&gt;children&lt;/code&gt;: an array of &lt;code&gt;{label, url}&lt;/code&gt; links rendered as a sub-menu (one level only). URLs follow the same rule as &lt;code&gt;homeLink.icon&lt;/code&gt;: a root-relative URL follows the &lt;code&gt;basePath&lt;/code&gt;, other URLs are left alone. The list carries a &lt;code&gt;site-menu&lt;/code&gt; class (&lt;code&gt;site-submenu&lt;/code&gt; for the sub-menus). Leave &lt;code&gt;menu&lt;/code&gt; out to render nothing.
+&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;footer&lt;/code&gt; (optional): an object rendered at the bottom of every layout, with two optional fields. &lt;code&gt;columns&lt;/code&gt; is an array of &lt;code&gt;{heading, links}&lt;/code&gt; objects (&lt;code&gt;heading&lt;/code&gt; is optional, &lt;code&gt;links&lt;/code&gt; is an array of &lt;code&gt;{label, url}&lt;/code&gt;), and &lt;code&gt;legal&lt;/code&gt; is a line of text shown below the columns (e.g., a copyright notice). The &lt;code&gt;&amp;lt;footer&amp;gt;&lt;/code&gt; carries a &lt;code&gt;site-footer&lt;/code&gt; class, with &lt;code&gt;footer-columns&lt;/code&gt;, &lt;code&gt;footer-column&lt;/code&gt; and &lt;code&gt;footer-legal&lt;/code&gt; inside. Leave &lt;code&gt;footer&lt;/code&gt; out (or give it neither &lt;code&gt;columns&lt;/code&gt; nor &lt;code&gt;legal&lt;/code&gt;) to render nothing.
+&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;twitterLogin&lt;/code&gt; (optional): the Twitter handle for the website, which may differ from the Twitter handle of individual authors
 &lt;/li&gt;
 &lt;li&gt;&lt;code&gt;commands&lt;/code&gt;: an array of json objects containing:
@@ -2025,4 +2028,34 @@ and commit everything, git pushes).&lt;/p&gt;
 &lt;p&gt;The normal mode for KitchenSink is to locate &lt;code&gt;kitchen-sink.json&lt;/code&gt; in your site source directory.
 Thus, if your &lt;code&gt;--srcDir&lt;/code&gt; parameter is &lt;code&gt;foobar&lt;/code&gt;, KitchenSink will look for &lt;code&gt;foobar/kitchen-sink.json&lt;/code&gt;.&lt;/p&gt;
 &lt;p&gt;You can override where to locate this special file with the &lt;code&gt;--ksFile&lt;/code&gt; command line argument.&lt;/p&gt;
-&lt;/section&gt;&lt;/div&gt;</content><link href="https://kitchensink-tech.github.io/kitchen-sink-dot-json.html" rel="alternate"/><summary type="text">The `kitchen-sink.json` file is simpble but quite important as it configures things like the URL of your blog.</summary></entry></feed>
+&lt;/section&gt;&lt;/div&gt;</content><link href="https://kitchensink-tech.github.io/kitchen-sink-dot-json.html" rel="alternate"/><summary type="text">The `kitchen-sink.json` file is simpble but quite important as it configures things like the URL of your blog.</summary></entry><entry><id>https://kitchensink-tech.github.io/documentation-layout.html</id><title type="text">The documentation layout</title><updated>1970-01-01T00:00:00Z</updated><author><name>Lucas DiCioccio</name></author><content type="html">&lt;div class="main-article"&gt;&lt;section class="main-section"&gt;&lt;p&gt;Set the layout of a page to &lt;code&gt;documentation&lt;/code&gt; to render it as a page of a
+documentation. This very page is written with it: one sidebar lists the pages
+of the documentation, the other one lists the headings of the page (on a narrow
+screen both move above the content), the header has a search box, and the links
+at the bottom lead to the previous and next pages of the documentation.&lt;/p&gt;
+&lt;h2 id="using-the-layout"&gt;Using the layout&lt;/h2&gt;
+&lt;p&gt;In the &lt;code&gt;base:build-info.json&lt;/code&gt; section of a page, use the &lt;code&gt;documentation&lt;/code&gt;
+layout and, optionally, a &lt;code&gt;group&lt;/code&gt; and an &lt;code&gt;order&lt;/code&gt;:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;=base:build-info.json
+{&amp;quot;layout&amp;quot;:&amp;quot;documentation&amp;quot;
+,&amp;quot;publicationStatus&amp;quot;:&amp;quot;Public&amp;quot;
+,&amp;quot;group&amp;quot;:&amp;quot;The documentation layout&amp;quot;
+,&amp;quot;order&amp;quot;:30
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Then import the stylesheet of the layout next to the other ones, in a
+&lt;code&gt;base:main-css.css&lt;/code&gt; section:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;@import &amp;quot;/css/documentation.css&amp;quot;;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;You can also start such a page with
+&lt;code&gt;kitchen-sink newarticle --layout documentation&lt;/code&gt;.&lt;/p&gt;
+&lt;h2 id="the-table-of-contents"&gt;The table of contents&lt;/h2&gt;
+&lt;p&gt;The table of contents lists the second and third level headings (&lt;code&gt;#&lt;/code&gt; and &lt;code&gt;##&lt;/code&gt;
+in the markdown of the &lt;code&gt;main-content&lt;/code&gt; sections). A page without any heading has
+no table of contents.&lt;/p&gt;
+&lt;h2 id="moving-between-pages"&gt;Moving between pages&lt;/h2&gt;
+&lt;p&gt;All the pages that use the &lt;code&gt;documentation&lt;/code&gt; layout are part of one
+documentation, sorted as explained in &lt;a href="/documentation-ordering.html"&gt;ordering documentation
+pages&lt;/a&gt;. Each page lists them all, see &lt;a href="/documentation-navigation.html"&gt;navigation
+and search&lt;/a&gt;.&lt;/p&gt;
+&lt;/section&gt;&lt;/div&gt;</content><link href="https://kitchensink-tech.github.io/documentation-layout.html" rel="alternate"/><summary type="text">A layout for technical documentation: the list of the pages, a search box, a table of contents of the page, and links to the previous and next pages.</summary></entry></feed>

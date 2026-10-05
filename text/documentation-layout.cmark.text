@@ -1,0 +1,32 @@
+Set the layout of a page to `documentation` to render it as a page of a documentation. This very page is written with it: one sidebar lists the pages of the documentation, the other one lists the headings of the page (on a narrow screen both move above the content), the header has a search box, and the links at the bottom lead to the previous and next pages of the documentation.
+
+# Using the layout
+
+In the `base:build-info.json` section of a page, use the `documentation` layout and, optionally, a `group` and an `order`:
+
+```
+=base:build-info.json
+{"layout":"documentation"
+,"publicationStatus":"Public"
+,"group":"The documentation layout"
+,"order":30
+}
+```
+
+Then import the stylesheet of the layout next to the other ones, in a `base:main-css.css` section:
+
+```
+@import "/css/documentation.css";
+```
+
+You can also start such a page with `kitchen-sink newarticle --layout documentation`.
+
+# The table of contents
+
+The table of contents lists the second and third level headings (`#` and `##` in the markdown of the `main-content` sections). A page without any heading has no table of contents.
+
+# Moving between pages
+
+All the pages that use the `documentation` layout are part of one documentation, sorted as explained in [ordering documentation pages](/documentation-ordering.html ). Each page lists them all, see [navigation and search](/documentation-navigation.html ).
+
+

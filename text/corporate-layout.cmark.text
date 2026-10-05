@@ -1,0 +1,27 @@
+
+
+
+
+
+
+
+
+
+
+```html
+<p>&#8203;</p>
+```
+
+This page uses the ```html
+<code>```corporate```html
+</code>``` article layout: set ```html
+<code>```{"layout":"corporate"}```html
+</code>``` in ```html
+<code>```base:build-info.json```html
+</code>``` and import ```html
+<code>```/css/corporate.css```html
+</code>``` next to the usual stylesheets. Unlike the ```html
+<code>```article```html
+</code>``` layout, it renders no byline, no publication date, and no topic links or glossary — only the site-wide menu and footer plus whatever sections the page declares, each as its own full-width section. Every section above is a `main-content.tramaj-doc` section that reads a `dataset.json` cell and imports a component from [`corporate.cmark-tramaj`](/corporate-components.html ), rather than hand-written HTML per page. See [layouts](/layouts.html ) for the other article layouts and [corporate components](/corporate-components.html ) for the library's documented fields.
+
+

@@ -1,12 +1,12 @@
-[tramaj](https://github.com/lucasdicioccio/tramaj ) — formerly "templating-lang" — is a small template language: a `jq`-flavoured expression language for the data half, a HAML-like block syntax for structure, and a deliberately tiny set of builtins. KitchenSink embeds its Haskell implementation, `tramaj-hs`, as a second section pre-processor next to [Dhall-sections](/sections-dhall.html ). A [playground](/playground.html ) hosted on this site lets you try the language itself, outside of any KitchenSink section.
+[tramaj](https://github.com/lucasdicioccio/tramaj ) — formerly "templating-lang" — is a small template language: a `jq`-flavoured expression language for the data half, a HAML-like block syntax for structure, and a deliberately tiny set of builtins. KitchenSink embeds its Haskell implementation, `tramaj-hs`, as a section pre-processor. A [playground](/playground.html ) hosted on this site lets you try the language itself, outside of any KitchenSink section.
 
-Both backends do the same job and both remain supported. Tramaj is, however, the direction of travel: `dhall` and `dhall-json` are notoriously awkward to build and they have repeatedly held KitchenSink back from moving to newer GHC versions, whereas `tramaj-hs` needs nothing beyond `megaparsec` and `aeson`. Expect Dhall-sections to be deprecated eventually; nothing is being removed today.
+Tramaj replaced Dhall as the section pre-processor: `dhall` and `dhall-json` were notoriously awkward to build and had repeatedly held KitchenSink back from moving to newer GHC versions, whereas `tramaj-hs` needs nothing beyond `megaparsec` and `aeson`. A `.dhall` section is now rejected at load time with an error naming the file; rewrite it as a `tramaj-json` or `tramaj-doc` section.
 
 # Two section formats
 
 Where Dhall has one format, tramaj sections come in two, because the language distinguishes producing _data_ from producing a _document_ — though in the language itself that distinction is no longer syntactic (a single grammar and evaluator decide dynamically what a program's root evaluated to); it is KitchenSink's two section formats below that still enforce which one a given section must produce.
 
-`.tramaj-json` sections are rooted at an expression and evaluate to a JSON value. That value is the same `{format, contents}` contract Dhall-sections answer with, so the section can rewrite itself to `json`, `cmark` or `html`. This is the format to reach for as a drop-in replacement for a Dhall section.
+`.tramaj-json` sections are rooted at an expression and evaluate to a JSON value. That value is the same `{format, contents}` contract Dhall-sections answer with, so the section can rewrite itself to `json`, `cmark`, `html` or `css`. This is the format to reach for as a drop-in replacement for a Dhall section.
 
 `.tramaj-doc` sections are rooted at an element — `.div(...)`, `.ul(...)` — and evaluate to a document tree, which KitchenSink renders to HTML. There is no `{format, contents}` envelope here: the result is always HTML.
 
@@ -14,19 +14,22 @@ The two roots can never be confused: an element root always starts with `.` and 
 
 # The `$ctx` object
 
-Tramaj always has the input context in scope as `$ctx`. KitchenSink fills it with the very same information the `kitchensink` object carries in Dhall-sections:
+Tramaj always has the input context in scope as `$ctx`. KitchenSink fills it with the information the `kitchensink` object carried in the former Dhall-sections:
 
 ```
 { file : Text        -- the source file path of this cmark file
 , sectionNum : Integer  -- this section's number in the file, from zero
+, pathPrefix : Text  -- the site's configured basePath (see kitchen-sink.json), or "" at the domain root
 , datasets : object  -- dataset cells declared *earlier* in this file
 , vars : object      -- the --var name=value pairs given on the command line
 }
 ```
 
-So `kitchensink.datasets.my-name` becomes `$ctx.datasets.my-name`, and `kitchensink.file` becomes `$ctx.file`.
+`pathPrefix` is what lets a `.tramaj-json` `main-css` section (returning `format = "css"`) adapt its `@import` URLs -- or any `.tramaj-json`/ `.tramaj-doc` section adapt a root-relative link -- to a site hosted under a subpath, e.g. `"@import \"`$ctx.pathPrefix`/css/dev.css\";"` instead of hardcoding `/css/dev.css`.
 
-Like Dhall-sections, templating sections are _pre-processors_: they are evaluated once, at load time, and only see datasets declared before them in the file. Unlike Dhall there are no networked imports, but tramaj does have local imports of other sections in the same file — see "Using partial templates" below — so the gap against Dhall is narrower than it once was.
+When migrating a Dhall section, `kitchensink.datasets.my-name` becomes `$ctx.datasets.my-name`, and `kitchensink.file` becomes `$ctx.file`.
+
+Templating sections are _pre-processors_: they are evaluated once, at load time, and only see datasets declared before them in the file. There are no networked imports, but tramaj does have local imports of other sections in the same file — see "Using partial templates" below.
 
 
 # Examples
@@ -81,12 +84,12 @@ Reading back the dataset the previous section generated:
 }
 ```
 
-Each element of `contents` is one line. `format` may also be `"html"`, in which case the lines are used verbatim, or `"json"`, in which case `contents` is an arbitrary JSON value rather than a list of lines.
+Each element of `contents` is one line. `format` may also be `"html"`, in which case the lines are used verbatim; `"css"`, likewise verbatim but rewriting the section to CSS (handy for a `main-css` section that needs `$ctx.pathPrefix` in its `@import` URLs); or `"json"`, in which case `contents` is an arbitrary JSON value rather than a list of lines.
 
 
     **generated from a templating section**
 
-    file=./website-src/sections-templating.cmark, section=12
+    file=website-src/sections-templating.cmark, section=12
 
     2 crew member(s)
 
@@ -251,7 +254,7 @@ import("shared/badge", {"text": "hello from another file"}).rendered
 
 One thing is deliberately _not_ required here: a fixed load order between library files. A library's body is parsed when its file loads but not evaluated — the same as an in-article `library.tramaj-lib` section never runs where it is declared — so which `.cmark-tramaj` file KitchenSink processes first cannot matter for whether an import resolves: by the time anything actually imports and reads `.rendered` off it, every library file has already contributed to the shared table. Two library files may freely import each other's libraries in either direction, and KitchenSink runs no cycle detector of its own over any of this: a library that, directly or through a chain of imports, ends up importing itself is caught by tramaj itself, as an ordinary `EvalError` (`ImportCycle`) raised the first time evaluation actually re-enters it — not a hang.
 
-A library file is still a KitchenSink section file, with a `library.tramaj-lib` header per library — there is no support yet for a "bare" file containing just a program body and nothing else — and imports still only resolve by name within the same site, never across a networked location the way a Dhall import can.
+A library file is still a KitchenSink section file, with a `library.tramaj-lib` header per library — there is no support yet for a "bare" file containing just a program body and nothing else — and imports still only resolve by name within the same site, never across a networked location.
 
 
 # Notes and limitations

@@ -1,0 +1,128 @@
+<!DOCTYPE HTML><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="robots" content="index, follow"><title>The Kitchen Sink Blog Generator - Corporate components</title><link rel="icon" type="image/x-icon" href="/images/favicon.png"><link rel="canonical" href="https://kitchensink-tech.github.io/corporate-components.html"><link rel="alternate" type="application/atom+xml" title="Atom Feed" href="https://kitchensink-tech.github.io/atom.xml"><meta name="author" content="Lucas DiCioccio"><meta name="keywords" content="sections, corporate, tramaj, templating, landing-page"><meta name="description" content="A small tramaj component library for the `corporate` article layout: hero, feature grid, pricing table, call to action, testimonial strip and footer columns, each driven by a `dataset.json` cell instead of hand-written HTML."><meta name="twitter:card" content="summary"><meta name="twitter:title" content="The Kitchen Sink Blog Generator - Corporate components"><meta name="twitter:site" content="@lucasdicioccio"><meta name="twitter:creator" content="@lucasdicioccio"><meta property="twitter:description" content="A small tramaj component library for the `corporate` article layout: hero, feature grid, pricing table, call to action, testimonial strip and footer columns, each driven by a `dataset.json` cell instead of hand-written HTML."><meta name="type" property="og:type" content="article"><meta name="title" property="og:title" content="The Kitchen Sink Blog Generator - Corporate components"><meta property="og:site_name" content="The Kitchen Sink Blog Generator"><meta name="url" property="og:url" content="https://kitchensink-tech.github.io/corporate-components.html"><meta property="og:description" content="A small tramaj component library for the `corporate` article layout: hero, feature grid, pricing table, call to action, testimonial strip and footer columns, each driven by a `dataset.json` cell instead of hand-written HTML."><meta name="ks:article_json" content="/json/corporate-components.cmark.json"><meta name="ks:article_text" content="/text/corporate-components.cmark.text"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Lucas DiCioccio"},"description":"A small tramaj component library for the `corporate` article layout: hero, feature grid, pricing table, call to action, testimonial strip and footer columns, each driven by a `dataset.json` cell instead of hand-written HTML.","headline":"Corporate components","mainEntityOfPage":{"@id":"https://kitchensink-tech.github.io/corporate-components.html","@type":"WebPage"},"publisher":{"@type":"Organization","name":"The Kitchen Sink Blog Generator"}}</script><meta name="article:tag" content="sections"><meta name="article:tag" content="corporate"><meta name="article:tag" content="tramaj"><meta name="article:tag" content="templating"><meta name="article:tag" content="landing-page"><style>@import "/css/dev.css";@import "/css/colors.css";@import "/css/article.css";@import "/css/navigation.css";@import "/css/documentation.css";@import "/css/corporate.css";pre {  border-left: 4px double coral;  margin-left: 1em;  padding-left: 1em;}.output {  border: 1px dashed var(--border);  border-radius: var(--radius);  padding: 1em 1.5em;  margin: 1em 0;}</style></head><body><nav id="site-navigation" class="nav"><a href="/" class="home-link"><img src="/images/logo.png" alt>Home</a><div id="doc-search" data-index="/json/doc-search.json"><script type="text/javascript" src="/js/doc-search.js" async></script></div></nav><div class="main doc-layout"><nav class="doc-nav"><details class="doc-nav-menu" open><summary class="doc-nav-title">Documentation</summary><p class="doc-nav-group">Getting started</p><ul><li><a href="/getting-started.html">Getting started</a></li></ul><p class="doc-nav-group">Writing pages</p><ul><li><a href="/sections.html">The section-based format</a></li><li><a href="/sections-templating.html">Tramaj sections</a></li><li><a href="/other-formats.html">Other types of files</a></li><li><a href="/kitchen-sink-dot-json.html">The kitchen-sink-dot-json file</a></li></ul><p class="doc-nav-group">Layouts</p><ul><li><a href="/layouts.html">Layouts and extensions</a></li><li><a href="/corporate-components.html" class="doc-nav-current" aria-current="page">Corporate components</a></li></ul><p class="doc-nav-group">The documentation layout</p><ul><li><a href="/documentation-layout.html">The documentation layout</a></li><li><a href="/documentation-ordering.html">Ordering documentation pages</a></li><li><a href="/documentation-navigation.html">Navigation and search</a></li></ul><p class="doc-nav-group">Internals</p><ul><li><a href="/engine.html">Engine</a></li><li><a href="/development.html">Development</a></li></ul></details></nav><nav class="doc-toc"><p class="doc-toc-title">On this page</p><ul><li class="doc-toc-level-3"><a href="#hero">hero</a></li><li class="doc-toc-level-3"><a href="#feature-grid">feature-grid</a></li><li class="doc-toc-level-3"><a href="#pricing-table">pricing-table</a></li><li class="doc-toc-level-3"><a href="#cta-banner">cta-banner</a></li><li class="doc-toc-level-3"><a href="#testimonial-strip">testimonial-strip</a></li><li class="doc-toc-level-3"><a href="#footer-columns">footer-columns</a></li></ul></nav><article><header class="heading"><h1>Corporate components</h1><p>By <a href="https://twitter.com/lucasdicioccio">@lucasdicioccio</a>, 684 words, 6 code snippets, 5 links, 0images.</p><div class="topiclist"><div class="topic"><span class="topic-nav topic-prev-link"><a class="topic-nav-link" href="/playground.html">‹</a></span><a class="topic-link" href="/topics/sections.html"><span class="topic-name">sections</span><span class="topic-count">4/4</span></a><span class="topic-nav topic-next-link"><span class="topic-nav-boundary">|</span></span></div><div class="topic"><span class="topic-nav topic-prev-link"><span class="topic-nav-boundary">|</span></span><a class="topic-link" href="/topics/corporate.html"><span class="topic-name">corporate</span><span class="topic-count">1/1</span></a><span class="topic-nav topic-next-link"><span class="topic-nav-boundary">|</span></span></div></div></header><div class="main-article"><section class="main-section"><p><code>corporate.cmark-tramaj</code> is a <code>.cmark-tramaj</code> library file (see
+<a href="/sections-templating.html">tramaj sections</a> for what that extension means
+and how cross-file imports resolve). It has no page of its own; every
+article imports from it as <code>corporate/&lt;name&gt;</code>, most visibly the
+<a href="/corporate-layout.html">corporate layout example</a>, which composes its
+whole body from the six components documented below.</p>
+<p>Each component is a single <code>library.tramaj-lib</code> template rooted at one
+element, called from a page’s own <code>main-content.tramaj-doc</code> section with
+<code>import(&quot;corporate/&lt;name&gt;&quot;, {…}).rendered</code>. A component takes exactly the
+fields listed under it — nothing more, since tramaj has
+<a href="/sections-templating.html">no arithmetic</a>: counts, index
+alignment and conditional styling all have to be either decided by the
+data author ahead of time (e.g. <code>pricing-table</code>’s <code>rows[].values</code> line up
+with <code>plans</code> positionally because the dataset says so, not because the
+template computes it) or reduced to the handful of comparisons <code>branch</code>
+and <code>eq</code> can express (<code>hero</code>’s <code>style: &quot;secondary&quot;</code> switch).</p>
+</section><section class="main-section"><h3 id="hero">hero</h3>
+<p>Fields: <code>title</code> (string), <code>subtitle</code> (string), <code>actions</code> (array of
+<code>{label, href, style}</code>, where <code>style: &quot;secondary&quot;</code> renders as the outlined
+button and anything else — typically <code>&quot;primary&quot;</code> — as the filled one).</p>
+<pre><code>=base:dataset.json hero-data
+{ &quot;title&quot;: &quot;Acme Cloud&quot;
+, &quot;subtitle&quot;: &quot;Track team spend in real time, without the spreadsheet gymnastics.&quot;
+, &quot;actions&quot;:
+  [ {&quot;label&quot;: &quot;See pricing&quot;, &quot;href&quot;: &quot;#pricing&quot;, &quot;style&quot;: &quot;primary&quot;}
+  , {&quot;label&quot;: &quot;Talk to sales&quot;, &quot;href&quot;: &quot;#contact&quot;, &quot;style&quot;: &quot;secondary&quot;}
+  ]
+}
+
+=base:main-content.tramaj-doc
+@d=$ctx.datasets.hero-data
+import(&quot;corporate/hero&quot;, {&quot;title&quot;: $d.title, &quot;subtitle&quot;: $d.subtitle, &quot;actions&quot;: $d.actions}).rendered
+</code></pre>
+</section><section class="main-section"><div class="output"><div class="hero"><h1>Acme Cloud</h1><p class="hero-subtitle">Track team spend in real time, without the spreadsheet gymnastics.</p><div class="hero-actions"><a class="button" href="#pricing">See pricing</a><a class="button secondary" href="#contact">Talk to sales</a></div></div></div>
+</section><section class="main-section"><h3 id="feature-grid">feature-grid</h3>
+<p>Fields: <code>features</code> (array of <code>{title, body}</code>), one <code>feature-card</code> per
+entry.</p>
+<pre><code>=base:dataset.json features-data
+{ &quot;features&quot;:
+  [ {&quot;title&quot;: &quot;Live budgets&quot;, &quot;body&quot;: &quot;Every team sees its own bucket update as spend happens.&quot;}
+  , {&quot;title&quot;: &quot;Delegated keys&quot;, &quot;body&quot;: &quot;Hand a scoped key to a sub-team or a robot.&quot;}
+  ]
+}
+
+=base:main-content.tramaj-doc
+@d=$ctx.datasets.features-data
+import(&quot;corporate/feature-grid&quot;, {&quot;features&quot;: $d.features}).rendered
+</code></pre>
+</section><section class="main-section"><div class="output"><div class="feature-grid"><div class="feature-card"><h3>Live budgets</h3><p>Every team sees its own bucket update as spend happens.</p></div><div class="feature-card"><h3>Delegated keys</h3><p>Hand a scoped key to a sub-team or a robot.</p></div></div></div>
+</section><section class="main-section"><h3 id="pricing-table">pricing-table</h3>
+<p>Fields: <code>plans</code> (array of <code>{name, price}</code>, one column each) and <code>rows</code>
+(array of <code>{feature, values}</code>, one row each, where <code>values</code> is a plain
+array of strings that the data author has already lined up positionally
+with <code>plans</code> — the template has no way to check or compute that alignment,
+it only <code>map</code>s each side once).</p>
+<pre><code>=base:dataset.json pricing-data
+{ &quot;plans&quot;:
+  [ {&quot;name&quot;: &quot;Starter&quot;, &quot;price&quot;: &quot;$0&quot;}
+  , {&quot;name&quot;: &quot;Team&quot;, &quot;price&quot;: &quot;$29/mo&quot;}
+  ]
+, &quot;rows&quot;:
+  [ {&quot;feature&quot;: &quot;Buckets&quot;, &quot;values&quot;: [&quot;3&quot;, &quot;25&quot;]}
+  , {&quot;feature&quot;: &quot;Delegated keys&quot;, &quot;values&quot;: [&quot;1&quot;, &quot;20&quot;]}
+  ]
+}
+
+=base:main-content.tramaj-doc
+@d=$ctx.datasets.pricing-data
+import(&quot;corporate/pricing-table&quot;, {&quot;plans&quot;: $d.plans, &quot;rows&quot;: $d.rows}).rendered
+</code></pre>
+</section><section class="main-section"><div class="output"><table class="pricing-table"><thead><tr><th class="pricing-feature-header"></th><th class="pricing-plan-header"><div class="pricing-plan-name">Starter</div><div class="pricing-plan-price">$0</div></th><th class="pricing-plan-header"><div class="pricing-plan-name">Team</div><div class="pricing-plan-price">$29/mo</div></th></tr></thead><tbody><tr><td class="pricing-feature-name">Buckets</td><td class="pricing-value">3</td><td class="pricing-value">25</td></tr><tr><td class="pricing-feature-name">Delegated keys</td><td class="pricing-value">1</td><td class="pricing-value">20</td></tr></tbody></table></div>
+</section><section class="main-section"><h3 id="cta-banner">cta-banner</h3>
+<p>Fields: <code>title</code> (string), <code>body</code> (string), <code>label</code>/<code>href</code> (the button),
+and <code>id</code> (string, may be <code>&quot;&quot;</code>; set to a real id when the banner is also an
+in-page anchor target, as the corporate layout example does for its
+“Talk to sales” hero link).</p>
+<pre><code>=base:dataset.json cta-data
+{ &quot;title&quot;: &quot;Ready to see it on your own numbers?&quot;
+, &quot;body&quot;: &quot;No credit card required.&quot;
+, &quot;label&quot;: &quot;Get started&quot;
+, &quot;href&quot;: &quot;mailto:hello@example.invalid&quot;
+, &quot;id&quot;: &quot;&quot;
+}
+
+=base:main-content.tramaj-doc
+@d=$ctx.datasets.cta-data
+import(&quot;corporate/cta-banner&quot;, {&quot;title&quot;: $d.title, &quot;body&quot;: $d.body, &quot;label&quot;: $d.label, &quot;href&quot;: $d.href, &quot;id&quot;: $d.id}).rendered
+</code></pre>
+</section><section class="main-section"><div class="output"><div class="cta-banner" id><h2>Ready to see it on your own numbers?</h2><p>No credit card required.</p><a class="button" href="mailto:hello@example.invalid">Get started</a></div></div>
+</section><section class="main-section"><h3 id="testimonial-strip">testimonial-strip</h3>
+<p>Fields: <code>testimonials</code> (array of <code>{quote, author}</code>).</p>
+<pre><code>=base:dataset.json testimonials-data
+{ &quot;testimonials&quot;:
+  [ {&quot;quote&quot;: &quot;We went from a shared spreadsheet nobody trusted to a dashboard every team lead checks before standup.&quot;, &quot;author&quot;: &quot;Head of Platform, mid-size fintech&quot;}
+  ]
+}
+
+=base:main-content.tramaj-doc
+@d=$ctx.datasets.testimonials-data
+import(&quot;corporate/testimonial-strip&quot;, {&quot;testimonials&quot;: $d.testimonials}).rendered
+</code></pre>
+</section><section class="main-section"><div class="output"><div class="testimonial-strip"><div class="testimonial">We went from a shared spreadsheet nobody trusted to a dashboard every team lead checks before standup.<span class="testimonial-author">Head of Platform, mid-size fintech</span></div></div></div>
+</section><section class="main-section"><h3 id="footer-columns">footer-columns</h3>
+<p>Fields: <code>columns</code> (array of <code>{heading, links}</code>, where <code>links</code> is an array
+of <code>{label, href}</code>). This renders link columns as ordinary page content —
+<code>class=&quot;corp-footer-columns&quot;</code> — distinct from the site-wide
+<code>&lt;footer class=&quot;site-footer&quot;&gt;</code> chrome that <code>kitchen-sink.json</code>’s own
+<code>footer</code> configuration already renders below every page; use this
+component for an in-page “resources” band, not to replace the site
+footer.</p>
+<pre><code>=base:dataset.json footer-columns-data
+{ &quot;columns&quot;:
+  [ {&quot;heading&quot;: &quot;Product&quot;, &quot;links&quot;: [{&quot;label&quot;: &quot;Pricing&quot;, &quot;href&quot;: &quot;#pricing&quot;}, {&quot;label&quot;: &quot;Changelog&quot;, &quot;href&quot;: &quot;/changelog.html&quot;}]}
+  , {&quot;heading&quot;: &quot;Company&quot;, &quot;links&quot;: [{&quot;label&quot;: &quot;About&quot;, &quot;href&quot;: &quot;/about.html&quot;}]}
+  ]
+}
+
+=base:main-content.tramaj-doc
+@d=$ctx.datasets.footer-columns-data
+import(&quot;corporate/footer-columns&quot;, {&quot;columns&quot;: $d.columns}).rendered
+</code></pre>
+</section><section class="main-section"><div class="output"><div class="corp-footer-columns"><div class="corp-footer-column"><h2>Product</h2><ul><li><a href="#pricing">Pricing</a></li><li><a href="/changelog.html">Changelog</a></li></ul></div><div class="corp-footer-column"><h2>Company</h2><ul><li><a href="/about.html">About</a></li></ul></div></div></div>
+</section><section class="main-section"><p>See the <a href="/corporate-layout.html">corporate layout example</a> for all of
+<code>hero</code>, <code>feature-grid</code>, <code>pricing-table</code>, <code>cta-banner</code> and
+<code>testimonial-strip</code> composed into one landing page, and
+<a href="/sections-templating.html">tramaj sections</a> for the underlying language
+(imports, <code>.cmark-tramaj</code> library files, the <code>$ctx</code> object).</p>
+</section></div><nav class="doc-pager"><div class="doc-prev"><span class="doc-pager-label">Previous: </span><a href="/layouts.html">Layouts and extensions</a></div><div class="doc-next"><span class="doc-pager-label">Next: </span><a href="/documentation-layout.html">The documentation layout</a></div></nav><footer class="footing"><div class="social-links"><a href="https://twitter.com/lucasdicioccio">twitter</a><a href="https://github.com/lucasdicioccio">github</a><a href="https://linkedin.com/in/lucasdicioccio">linkedin</a></div></footer></article></div></body></html>

@@ -13,10 +13,21 @@
     {"type":"file","name":"auto-reload-002-liveedit.webm"},
     {"type":"file","name":"autoreload.js"},
     {"type":"file","name":"colors.css"},
+    {"type":"file","name":"comparison.cmark"},
     {"type":"file","name":"copy-snippets.js"},
+    {"type":"file","name":"corporate.cmark-tramaj"},
+    {"type":"file","name":"corporate-components.cmark"},
+    {"type":"file","name":"corporate.css"},
+    {"type":"file","name":"corporate-layout.cmark"},
     {"type":"file","name":"design-points.cmark"},
     {"type":"file","name":"dev.css"},
     {"type":"file","name":"development.cmark"},
+    {"type":"file","name":"doc-search.js"},
+    {"type":"file","name":"documentation.css"},
+    {"type":"file","name":"documentation-layout.cmark"},
+    {"type":"file","name":"documentation-navigation.cmark"},
+    {"type":"file","name":"documentation-ordering.cmark"},
+    {"type":"file","name":"dynamic.cmark"},
     {"type":"file","name":"echart-histogram.js"},
     {"type":"file","name":"echarts.min.js"},
     {"type":"file","name":"engine.cmark"},
@@ -33,6 +44,7 @@
     {"type":"file","name":"kitchen-sink-dot-json.cmark"},
     {"type":"file","name":"kitchen-sink.json"},
     {"type":"file","name":"layouts.cmark"},
+    {"type":"file","name":"logo.png"},
     {"type":"file","name":"navigation.css"},
     {"type":"file","name":"one-time-commands-001-produce.mp4"},
     {"type":"file","name":"one-time-commands-001-produce.webm"},
@@ -42,7 +54,6 @@
     {"type":"file","name":"robots.txt"},
     {"type":"file","name":"search-box.js"},
     {"type":"file","name":"sections.cmark"},
-    {"type":"file","name":"sections-dhall.cmark"},
     {"type":"file","name":"sections-templating.cmark"},
     {"type":"file","name":"shared.cmark-tramaj"},
     {"type":"file","name":"templating-playground-app.js"},
@@ -54,5 +65,5 @@
     {"type":"file","name":"wishlist.cmark"}
   ]}
 ,
-  {"type":"report","directories":1,"files":52}
+  {"type":"report","directories":1,"files":63}
 ]

@@ -1,0 +1,6 @@
+
+{ "features":
+  [ {"title": "Live budgets", "body": "Every team sees its own bucket update as spend happens."}
+  , {"title": "Delegated keys", "body": "Hand a scoped key to a sub-team or a robot."}
+  ]
+}

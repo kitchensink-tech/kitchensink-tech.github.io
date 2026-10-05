@@ -1,0 +1,8 @@
+
+{ "title": "Acme Cloud"
+, "subtitle": "Track team spend in real time, without the spreadsheet gymnastics."
+, "actions":
+  [ {"label": "See pricing", "href": "#pricing", "style": "primary"}
+  , {"label": "Talk to sales", "href": "#contact", "style": "secondary"}
+  ]
+}

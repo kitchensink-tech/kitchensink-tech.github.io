@@ -1,0 +1,6 @@
+
+{ "columns":
+  [ {"heading": "Product", "links": [{"label": "Pricing", "href": "#pricing"}, {"label": "Changelog", "href": "/changelog.html"}]}
+  , {"heading": "Company", "links": [{"label": "About", "href": "/about.html"}]}
+  ]
+}

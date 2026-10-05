@@ -1,0 +1,6 @@
+
+{ "testimonials":
+  [ {"quote": "We went from a shared spreadsheet nobody trusted to a dashboard every team lead checks before standup.", "author": "Head of Platform, mid-size fintech"}
+  , {"quote": "Delegated keys are the feature that sold the rest of the team: our robots finally have their own budget instead of one shared secret.", "author": "Staff engineer, dev tooling team"}
+  ]
+}
