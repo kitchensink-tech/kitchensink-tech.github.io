@@ -56,9 +56,10 @@ some form of storage on the client-side – we’ll eventually get there).&lt;/p
 leaving one’s preview browser. The gain is little but there is some
 satisfaction to press a button on an interface and see your website being
 generated or published.&lt;/p&gt;
-&lt;p&gt;Upon loading, the &lt;code&gt;add-dev-route.js&lt;/code&gt; script creates a few buttons in the
+&lt;p&gt;Upon loading, the &lt;code&gt;add-dev-route.js&lt;/code&gt; script creates two buttons in the
 &lt;code&gt;#navigation&lt;/code&gt; bar (i.e., the layout has to cooperate a bit, we’ll change that a
-bit later).  Buttons then trigger actions handled by the server.&lt;/p&gt;
+bit later): &lt;code&gt;produce&lt;/code&gt; writes the whole site to the output directory and
+&lt;code&gt;reload&lt;/code&gt; forces the server to reload the sources.&lt;/p&gt;
 &lt;h3 id="metrics-because-why-not"&gt;Metrics because why not&lt;/h3&gt;
 &lt;p&gt;The server exposes Prometheus metrics.
 There are some use to it:&lt;/p&gt;

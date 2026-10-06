@@ -44,7 +44,7 @@ For now the server-id information is passed in a query parameter as we cannot pa
 
 Another nicety is that we can trigger a full-rebuild of the website without leaving one's preview browser. The gain is little but there is some satisfaction to press a button on an interface and see your website being generated or published.
 
-Upon loading, the `add-dev-route.js` script creates a few buttons in the `#navigation` bar (i.e., the layout has to cooperate a bit, we'll change that a bit later).  Buttons then trigger actions handled by the server.
+Upon loading, the `add-dev-route.js` script creates two buttons in the `#navigation` bar (i.e., the layout has to cooperate a bit, we'll change that a bit later): `produce` writes the whole site to the output directory and `reload` forces the server to reload the sources.
 
 ## Metrics because why not
 

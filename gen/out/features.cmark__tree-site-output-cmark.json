@@ -4,11 +4,16 @@
     {"type":"directory","name":"audios","contents":[
       {"type":"file","name":"0001-we-wish-u-a-merry-xmas.mp3"}
     ]},
+    {"type":"file","name":"comparison.html"},
+    {"type":"file","name":"corporate-components.html"},
+    {"type":"file","name":"corporate-layout.html"},
     {"type":"directory","name":"css","contents":[
       {"type":"file","name":"article.css"},
       {"type":"file","name":"articles-listing.css"},
       {"type":"file","name":"colors.css"},
+      {"type":"file","name":"corporate.css"},
       {"type":"file","name":"dev.css"},
+      {"type":"file","name":"documentation.css"},
       {"type":"file","name":"index.css"},
       {"type":"file","name":"navigation.css"},
       {"type":"file","name":"tags.css"},
@@ -17,6 +22,9 @@
     ]},
     {"type":"file","name":"design-points.html"},
     {"type":"file","name":"development.html"},
+    {"type":"file","name":"documentation-layout.html"},
+    {"type":"file","name":"documentation-navigation.html"},
+    {"type":"file","name":"documentation-ordering.html"},
     {"type":"file","name":"engine.html"},
     {"type":"file","name":"features.html"},
     {"type":"directory","name":"gen","contents":[
@@ -54,13 +62,15 @@
     ]},
     {"type":"directory","name":"images","contents":[
       {"type":"file","name":"favicon.png"},
-      {"type":"file","name":"features-001-targetsizes-timeseries.png"}
+      {"type":"file","name":"features-001-targetsizes-timeseries.png"},
+      {"type":"file","name":"logo.png"}
     ]},
     {"type":"file","name":"index.html"},
     {"type":"directory","name":"js","contents":[
       {"type":"file","name":"add-dev-route.js"},
       {"type":"file","name":"autoreload.js"},
       {"type":"file","name":"copy-snippets.js"},
+      {"type":"file","name":"doc-search.js"},
       {"type":"file","name":"echart-histogram.js"},
       {"type":"file","name":"echarts.min.js"},
       {"type":"file","name":"explorer.js"},
@@ -70,8 +80,16 @@
       {"type":"file","name":"topicgraph.js"}
     ]},
     {"type":"directory","name":"json","contents":[
+      {"type":"file","name":"comparison.cmark.json"},
+      {"type":"file","name":"corporate-components.cmark.json"},
+      {"type":"file","name":"corporate-layout.cmark.json"},
       {"type":"file","name":"design-points.cmark.json"},
       {"type":"file","name":"development.cmark.json"},
+      {"type":"file","name":"doc-search.json"},
+      {"type":"file","name":"documentation-layout.cmark.json"},
+      {"type":"file","name":"documentation-navigation.cmark.json"},
+      {"type":"file","name":"documentation-ordering.cmark.json"},
+      {"type":"file","name":"dynamic.cmark.json"},
       {"type":"file","name":"engine.cmark.json"},
       {"type":"file","name":"features.cmark.json"},
       {"type":"file","name":"filecounts.json"},
@@ -100,6 +118,17 @@
     {"type":"file","name":"playground.html"},
     {"type":"directory","name":"raw","contents":[
       {"type":"directory","name":"data","contents":[
+        {"type":"file","name":"corporate-components.cmark__cta-data4.json"},
+        {"type":"file","name":"corporate-components.cmark__features-data2.json"},
+        {"type":"file","name":"corporate-components.cmark__footer-columns-data6.json"},
+        {"type":"file","name":"corporate-components.cmark__hero-data1.json"},
+        {"type":"file","name":"corporate-components.cmark__pricing-data3.json"},
+        {"type":"file","name":"corporate-components.cmark__testimonials-data5.json"},
+        {"type":"file","name":"corporate-layout.cmark__cta-data5.json"},
+        {"type":"file","name":"corporate-layout.cmark__features-data2.json"},
+        {"type":"file","name":"corporate-layout.cmark__hero-data1.json"},
+        {"type":"file","name":"corporate-layout.cmark__pricing-data3.json"},
+        {"type":"file","name":"corporate-layout.cmark__testimonials-data4.json"},
         {"type":"file","name":"sections.cmark__1.csv"},
         {"type":"file","name":"sections.cmark__2.json"},
         {"type":"file","name":"sections.cmark__items12.json"},
@@ -125,8 +154,15 @@
     {"type":"file","name":"sitemap.txt"},
     {"type":"file","name":"templating-playground.html"},
     {"type":"directory","name":"text","contents":[
+      {"type":"file","name":"comparison.cmark.text"},
+      {"type":"file","name":"corporate-components.cmark.text"},
+      {"type":"file","name":"corporate-layout.cmark.text"},
       {"type":"file","name":"design-points.cmark.text"},
       {"type":"file","name":"development.cmark.text"},
+      {"type":"file","name":"documentation-layout.cmark.text"},
+      {"type":"file","name":"documentation-navigation.cmark.text"},
+      {"type":"file","name":"documentation-ordering.cmark.text"},
+      {"type":"file","name":"dynamic.cmark.text"},
       {"type":"file","name":"engine.cmark.text"},
       {"type":"file","name":"features.cmark.text"},
       {"type":"file","name":"getting-started.cmark.text"},
@@ -147,6 +183,8 @@
     {"type":"directory","name":"topics","contents":[
       {"type":"file","name":"authoring-articles.atom"},
       {"type":"file","name":"authoring-articles.html"},
+      {"type":"file","name":"corporate.atom"},
+      {"type":"file","name":"corporate.html"},
       {"type":"file","name":"design.atom"},
       {"type":"file","name":"design.html"},
       {"type":"file","name":"haskell.atom"},
@@ -175,5 +213,5 @@
     {"type":"file","name":"wishlist.html"}
   ]}
 ,
-  {"type":"report","directories":15,"files":145}
+  {"type":"report","directories":15,"files":183}
 ]
