@@ -6,7 +6,7 @@ generators for very specific formats.&lt;/p&gt;
 &lt;h3 id="sounds"&gt;sounds&lt;/h3&gt;
 &lt;p&gt;KitchenSink copies &lt;code&gt;.ogg&lt;/code&gt;, &lt;code&gt;flac&lt;/code&gt;, &lt;code&gt;.wav&lt;/code&gt;, &lt;code&gt;.midi&lt;/code&gt;, and &lt;code&gt;.mp3&lt;/code&gt; files under &lt;code&gt;/videos&lt;/code&gt;.&lt;/p&gt;
 &lt;h3 id="images"&gt;images&lt;/h3&gt;
-&lt;p&gt;KitchenSink copies &lt;code&gt;.jpg&lt;/code&gt;, &lt;code&gt;.jpeg&lt;/code&gt;, and &lt;code&gt;.png&lt;/code&gt; files under &lt;code&gt;/images&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;KitchenSink copies &lt;code&gt;.jpg&lt;/code&gt;, &lt;code&gt;.jpeg&lt;/code&gt;, &lt;code&gt;.png&lt;/code&gt;, &lt;code&gt;.gif&lt;/code&gt;, &lt;code&gt;.svg&lt;/code&gt;, &lt;code&gt;.webp&lt;/code&gt;, &lt;code&gt;.avif&lt;/code&gt;, and &lt;code&gt;.ico&lt;/code&gt; files under &lt;code&gt;/images&lt;/code&gt;.&lt;/p&gt;
 &lt;h3 id="documents"&gt;documents&lt;/h3&gt;
 &lt;p&gt;KitchenSink copies &lt;code&gt;.pdf&lt;/code&gt; files under &lt;code&gt;/docs&lt;/code&gt;.&lt;/p&gt;
 &lt;h3 id="html"&gt;HTML&lt;/h3&gt;
@@ -194,7 +194,7 @@ produce static HTML. Kitchen-Sink’s &lt;a href="/sections-templating.html"&gt;
 can do the same, but in &lt;code&gt;serve&lt;/code&gt; mode the same engine can also evaluate
 &lt;strong&gt;per request&lt;/strong&gt;: opt-in with &lt;code&gt;--dynamic&lt;/code&gt;, a route can query a SQL datasource
 declared in &lt;code&gt;kitchen-sink.json&lt;/code&gt; and render a page from the result, in the
-spirit of &lt;a href="https://sql-page.com/"&gt;SQLPage&lt;/a&gt;. You can also &lt;a href="/playground.html"&gt;try tramaj directly
+spirit of &lt;a href="https://sql-page.com/"&gt;SQLPage&lt;/a&gt;. You can also &lt;a href="https://lucasdicioccio.github.io/tramaj/playground.html"&gt;try tramaj directly
 in your browser&lt;/a&gt; without installing anything.&lt;/p&gt;
 &lt;h4 id="the-dev-server-doubles-as-a-small-api-gateway"&gt;the dev server doubles as a small API gateway&lt;/h4&gt;
 &lt;p&gt;&lt;code&gt;kitchen-sink serve&lt;/code&gt; is not only a preview server: it can proxy an &lt;code&gt;/api&lt;/code&gt;
@@ -210,4 +210,5 @@ run the exact same &lt;code&gt;Site → Target → bytes&lt;/code&gt; pipeline �
 &lt;em&gt;when&lt;/em&gt; a target gets realized (ahead of time to disk, or on the fly per
 request). This is what makes on-the-fly dev-mode rendering and request-time
 dynamic pages possible without a second code path to keep in sync.&lt;/p&gt;
-&lt;/section&gt;&lt;div class="callout callout-note"&gt;&lt;p class="callout-title"&gt;When you might prefer one of the others&lt;/p&gt;&lt;p class="callout-body"&gt;If you want a large theme ecosystem, a big plugin marketplace, non-technical content editors, or a tool with a much bigger community for support, Hugo, Eleventy, Jekyll, and Zola are all solid, more established choices. Kitchen-Sink is a smaller, more opinionated tool, built first for its author&amp;#39;s own blog and now used as the demo of its own input format.&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;</content><link href="https://kitchensink-tech.github.io/comparison.html" rel="alternate"/><summary type="text">An honest, even-handed comparison of Kitchen-Sink against a few well-known static-site generators (Hugo, Eleventy, Jekyll, Zola), and a look at what is actually distinctive about Kitchen-Sink's own design.</summary></entry></feed>
+&lt;/section&gt;&lt;div class="callout callout-note"&gt;&lt;p class="callout-title"&gt;When you might prefer one of the others&lt;/p&gt;&lt;div class="callout-body"&gt;&lt;p&gt;If you want a large theme ecosystem, a big plugin marketplace, non-technical content editors, or a tool with a much bigger community for support, Hugo, Eleventy, Jekyll, and Zola are all solid, more established choices. Kitchen-Sink is a smaller, more opinionated tool, built first for its author’s own blog and now used as the demo of its own input format.&lt;/p&gt;
+&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;</content><link href="https://kitchensink-tech.github.io/comparison.html" rel="alternate"/><summary type="text">An honest, even-handed comparison of Kitchen-Sink against a few well-known static-site generators (Hugo, Eleventy, Jekyll, Zola), and a look at what is actually distinctive about Kitchen-Sink's own design.</summary></entry></feed>

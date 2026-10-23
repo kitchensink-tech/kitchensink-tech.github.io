@@ -1,6 +1,7 @@
 [
   {"type":"directory","name":"website-src","contents":[
     {"type":"file","name":"0001-we-wish-u-a-merry-xmas.mp3"},
+    {"type":"file","name":"404.cmark"},
     {"type":"file","name":"add-dev-route.js"},
     {"type":"file","name":"architecture-01-pipeline.dot"},
     {"type":"file","name":"architecture-02-engine-pipeline.dot"},
@@ -27,7 +28,6 @@
     {"type":"file","name":"documentation-layout.cmark"},
     {"type":"file","name":"documentation-navigation.cmark"},
     {"type":"file","name":"documentation-ordering.cmark"},
-    {"type":"file","name":"dynamic.cmark"},
     {"type":"file","name":"echart-histogram.js"},
     {"type":"file","name":"echarts.min.js"},
     {"type":"file","name":"engine.cmark"},
@@ -50,20 +50,16 @@
     {"type":"file","name":"one-time-commands-001-produce.webm"},
     {"type":"file","name":"other-formats.cmark"},
     {"type":"file","name":"philosophy.cmark"},
-    {"type":"file","name":"playground.cmark"},
     {"type":"file","name":"robots.txt"},
     {"type":"file","name":"search-box.js"},
     {"type":"file","name":"sections.cmark"},
     {"type":"file","name":"sections-templating.cmark"},
     {"type":"file","name":"shared.cmark-tramaj"},
-    {"type":"file","name":"templating-playground-app.js"},
-    {"type":"file","name":"templating-playground.css"},
-    {"type":"file","name":"templating-playground.html"},
     {"type":"file","name":"topicgraph.js"},
     {"type":"file","name":"topics.cmark"},
     {"type":"file","name":"topics.css"},
     {"type":"file","name":"wishlist.cmark"}
   ]}
 ,
-  {"type":"report","directories":1,"files":63}
+  {"type":"report","directories":1,"files":59}
 ]

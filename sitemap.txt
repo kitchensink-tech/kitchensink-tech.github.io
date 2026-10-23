@@ -3,7 +3,6 @@ https://kitchensink-tech.github.io/engine.html
 https://kitchensink-tech.github.io/comparison.html
 https://kitchensink-tech.github.io/wishlist.html
 https://kitchensink-tech.github.io/design-points.html
-https://kitchensink-tech.github.io/playground.html
 https://kitchensink-tech.github.io/philosophy.html
 https://kitchensink-tech.github.io/sections.html
 https://kitchensink-tech.github.io/sections-templating.html

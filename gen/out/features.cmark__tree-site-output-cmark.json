@@ -1,5 +1,6 @@
 [
-  {"type":"directory","name":"website-www","contents":[
+  {"type":"link","name":"website-www","contents":[
+    {"type":"file","name":"404.html"},
     {"type":"file","name":"atom.xml"},
     {"type":"directory","name":"audios","contents":[
       {"type":"file","name":"0001-we-wish-u-a-merry-xmas.mp3"}
@@ -17,7 +18,6 @@
       {"type":"file","name":"index.css"},
       {"type":"file","name":"navigation.css"},
       {"type":"file","name":"tags.css"},
-      {"type":"file","name":"templating-playground.css"},
       {"type":"file","name":"topics.css"}
     ]},
     {"type":"file","name":"design-points.html"},
@@ -76,10 +76,10 @@
       {"type":"file","name":"explorer.js"},
       {"type":"file","name":"search-box.js"},
       {"type":"file","name":"site-graph.js"},
-      {"type":"file","name":"templating-playground-app.js"},
       {"type":"file","name":"topicgraph.js"}
     ]},
     {"type":"directory","name":"json","contents":[
+      {"type":"file","name":"404.cmark.json"},
       {"type":"file","name":"comparison.cmark.json"},
       {"type":"file","name":"corporate-components.cmark.json"},
       {"type":"file","name":"corporate-layout.cmark.json"},
@@ -102,7 +102,6 @@
       {"type":"file","name":"other-formats.cmark.json"},
       {"type":"file","name":"paths.json"},
       {"type":"file","name":"philosophy.cmark.json"},
-      {"type":"file","name":"playground.cmark.json"},
       {"type":"file","name":"sections.cmark.json"},
       {"type":"file","name":"sections-dhall.cmark.json"},
       {"type":"file","name":"sections-templating.cmark.json"},
@@ -115,7 +114,6 @@
     {"type":"file","name":"layouts.html"},
     {"type":"file","name":"other-formats.html"},
     {"type":"file","name":"philosophy.html"},
-    {"type":"file","name":"playground.html"},
     {"type":"directory","name":"raw","contents":[
       {"type":"directory","name":"data","contents":[
         {"type":"file","name":"corporate-components.cmark__cta-data4.json"},
@@ -152,8 +150,8 @@
     {"type":"file","name":"sections.html"},
     {"type":"file","name":"sections-templating.html"},
     {"type":"file","name":"sitemap.txt"},
-    {"type":"file","name":"templating-playground.html"},
     {"type":"directory","name":"text","contents":[
+      {"type":"file","name":"404.cmark.text"},
       {"type":"file","name":"comparison.cmark.text"},
       {"type":"file","name":"corporate-components.cmark.text"},
       {"type":"file","name":"corporate-layout.cmark.text"},
@@ -173,7 +171,6 @@
       {"type":"file","name":"layouts.cmark.text"},
       {"type":"file","name":"other-formats.cmark.text"},
       {"type":"file","name":"philosophy.cmark.text"},
-      {"type":"file","name":"playground.cmark.text"},
       {"type":"file","name":"sections.cmark.text"},
       {"type":"file","name":"sections-dhall.cmark.text"},
       {"type":"file","name":"sections-templating.cmark.text"},
@@ -213,5 +210,5 @@
     {"type":"file","name":"wishlist.html"}
   ]}
 ,
-  {"type":"report","directories":15,"files":183}
+  {"type":"report","directories":15,"files":180}
 ]

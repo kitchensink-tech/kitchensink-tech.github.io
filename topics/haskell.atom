@@ -390,7 +390,7 @@ generators for very specific formats.&lt;/p&gt;
 &lt;h3 id="sounds"&gt;sounds&lt;/h3&gt;
 &lt;p&gt;KitchenSink copies &lt;code&gt;.ogg&lt;/code&gt;, &lt;code&gt;flac&lt;/code&gt;, &lt;code&gt;.wav&lt;/code&gt;, &lt;code&gt;.midi&lt;/code&gt;, and &lt;code&gt;.mp3&lt;/code&gt; files under &lt;code&gt;/videos&lt;/code&gt;.&lt;/p&gt;
 &lt;h3 id="images"&gt;images&lt;/h3&gt;
-&lt;p&gt;KitchenSink copies &lt;code&gt;.jpg&lt;/code&gt;, &lt;code&gt;.jpeg&lt;/code&gt;, and &lt;code&gt;.png&lt;/code&gt; files under &lt;code&gt;/images&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;KitchenSink copies &lt;code&gt;.jpg&lt;/code&gt;, &lt;code&gt;.jpeg&lt;/code&gt;, &lt;code&gt;.png&lt;/code&gt;, &lt;code&gt;.gif&lt;/code&gt;, &lt;code&gt;.svg&lt;/code&gt;, &lt;code&gt;.webp&lt;/code&gt;, &lt;code&gt;.avif&lt;/code&gt;, and &lt;code&gt;.ico&lt;/code&gt; files under &lt;code&gt;/images&lt;/code&gt;.&lt;/p&gt;
 &lt;h3 id="documents"&gt;documents&lt;/h3&gt;
 &lt;p&gt;KitchenSink copies &lt;code&gt;.pdf&lt;/code&gt; files under &lt;code&gt;/docs&lt;/code&gt;.&lt;/p&gt;
 &lt;h3 id="html"&gt;HTML&lt;/h3&gt;
@@ -427,6 +427,27 @@ frontend “helper JS tools”.&lt;/p&gt;
 &lt;p&gt;Both the engine code, the frontend helpers code, and the KitchenSink
 documentation (this site) sources are in a same repository out of simplicity: a
 feature can be added and documented in a same commit.&lt;/p&gt;
+&lt;h2 id="testing"&gt;testing&lt;/h2&gt;
+&lt;p&gt;There is no unit-test suite. Two scripts at the repository root check the
+built binary instead:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;bash scripts/smoke-test.sh&lt;/code&gt; runs &lt;code&gt;produce&lt;/code&gt; on a freshly scaffolded site and
+on this website, and checks the files it writes.
+&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;bash scripts/daemon-test.sh&lt;/code&gt; starts the daemons on local ports and checks
+what they answer: &lt;code&gt;serve&lt;/code&gt; in SERVE mode over HTTP and HTTPS, &lt;code&gt;serve&lt;/code&gt; in DEV
+mode (its &lt;code&gt;/dev&lt;/code&gt; API and the auto-reload script), and &lt;code&gt;multisite&lt;/code&gt; with two
+virtual hosts, each with its own certificate (SNI), an &lt;code&gt;/api&lt;/code&gt; reverse proxy
+and the fallback for unknown hosts. It needs &lt;code&gt;openssl&lt;/code&gt;, &lt;code&gt;curl&lt;/code&gt;, &lt;code&gt;jq&lt;/code&gt; and
+&lt;code&gt;python3&lt;/code&gt;.
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The HTTP checks of &lt;code&gt;daemon-test.sh&lt;/code&gt; live in &lt;code&gt;scripts/daemon-check.sh&lt;/code&gt;, which
+only needs an address. Point it at a deployed daemon, for example a VM that a
+&lt;a href="https://github.com/lucasdicioccio/salmon"&gt;salmon&lt;/a&gt; graph has just
+provisioned, to check the deployment:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;bash scripts/daemon-check.sh --host example.com --title &amp;quot;My site&amp;quot; https://203.0.113.7
+&lt;/code&gt;&lt;/pre&gt;
 &lt;h2 id="code-organization-and-basic-concepts"&gt;code organization and basic concepts&lt;/h2&gt;
 &lt;p&gt;At this point, the code grew mostly organically and suffers from arbitrary
 choices.  As we implement &lt;a href="/wishlist.html"&gt;new features&lt;/a&gt;, the need to rework

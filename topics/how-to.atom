@@ -319,7 +319,10 @@ listings, &lt;code&gt;documentation&lt;/code&gt; for &lt;a href="/documentation-
 (a sidebar table of contents and previous/next links between pages), and
 &lt;code&gt;corporate&lt;/code&gt; for &lt;a href="/corporate-layout.html"&gt;landing pages&lt;/a&gt; (wide sections instead
 of a reading column, no byline/date/topics), composed from the
-&lt;a href="/corporate-components.html"&gt;corporate components&lt;/a&gt; tramaj library. Overall, except for index,
+&lt;a href="/corporate-components.html"&gt;corporate components&lt;/a&gt; tramaj library, and
+&lt;code&gt;not-found&lt;/code&gt; for the page a web server shows for a missing URL (always written
+to &lt;code&gt;/404.html&lt;/code&gt; whatever the source file is named, &lt;code&gt;noindex&lt;/code&gt; by default, and
+left out of the sitemap, the feeds and the article listings). Overall, except for index,
 topics, documentation and corporate, the layout of content does not
 change significantly besides the HTML-nesting (which then allows you to modify
 CSS or hijack DOM elements for single-page apps).&lt;/p&gt;
@@ -417,12 +420,12 @@ any other free-form &lt;code&gt;kind&lt;/code&gt; string, which falls back to a 
 interleave prose and admonitions freely by writing several &lt;code&gt;main-content&lt;/code&gt;
 and &lt;code&gt;callout&lt;/code&gt; sections one after another.&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;title&lt;/code&gt; is optional and defaults to a capitalized version of &lt;code&gt;kind&lt;/code&gt;. &lt;code&gt;body&lt;/code&gt;
-is plain text (no markdown rendering, for now).&lt;/p&gt;
+is rendered as markdown, like a &lt;code&gt;main-content.cmark&lt;/code&gt; section.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;example&lt;/strong&gt;&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;=base:callout.json
 {&amp;quot;kind&amp;quot;: &amp;quot;warning&amp;quot;
 ,&amp;quot;title&amp;quot;: &amp;quot;Heads up&amp;quot;
-,&amp;quot;body&amp;quot;: &amp;quot;This behavior may change in a future release.&amp;quot;
+,&amp;quot;body&amp;quot;: &amp;quot;This behavior _may_ change in a [future release](/wishlist.html).&amp;quot;
 }
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
@@ -431,7 +434,8 @@ is plain text (no markdown rendering, for now).&lt;/p&gt;
 &lt;p&gt;A list of question/answer pairs, rendered as an accordion (&lt;code&gt;&amp;lt;details&amp;gt;&lt;/code&gt;
 elements, no JavaScript needed). Like &lt;code&gt;callout&lt;/code&gt;, &lt;code&gt;faq&lt;/code&gt; sections render in
 file order relative to &lt;code&gt;main-content&lt;/code&gt; and &lt;code&gt;callout&lt;/code&gt; sections, and you can
-have several of them in one article.&lt;/p&gt;
+have several of them in one article. Questions are plain text; answers are
+rendered as markdown, like a &lt;code&gt;main-content.cmark&lt;/code&gt; section.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;example&lt;/strong&gt;&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;=base:faq.json
 {&amp;quot;items&amp;quot;:

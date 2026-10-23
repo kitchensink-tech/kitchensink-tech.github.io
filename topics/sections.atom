@@ -3,7 +3,7 @@
 data half, a HAML-like block syntax for structure, and a deliberately tiny set
 of builtins. KitchenSink embeds its Haskell implementation, &lt;code&gt;tramaj-hs&lt;/code&gt;, as a
 section pre-processor. A
-&lt;a href="/playground.html"&gt;playground&lt;/a&gt; hosted on this site lets you try the language
+&lt;a href="https://lucasdicioccio.github.io/tramaj/playground.html"&gt;playground&lt;/a&gt; on the tramaj site lets you try the language
 itself, outside of any KitchenSink section.&lt;/p&gt;
 &lt;p&gt;Tramaj replaced Dhall as the section pre-processor: &lt;code&gt;dhall&lt;/code&gt; and &lt;code&gt;dhall-json&lt;/code&gt;
 were notoriously awkward to build and had repeatedly held KitchenSink back from
@@ -272,11 +272,33 @@ a program body and nothing else — and imports still only resolve by name
 within the same site, never across a networked location.&lt;/p&gt;
 &lt;/section&gt;&lt;section class="main-section"&gt;&lt;h2 id="notes-and-limitations"&gt;Notes and limitations&lt;/h2&gt;
 &lt;p&gt;Text interpolation goes through the language’s display rules: a string
-interpolates raw, an integral number drops its &lt;code&gt;.0&lt;/code&gt;, and anything else falls
+interpolates raw, a number is written by its type, and anything else falls
 back to a compact JSON encoding. In &lt;code&gt;.tramaj-doc&lt;/code&gt; mode an element’s node is
 left as-is — its text and attribute values keep whatever type they evaluated
 to (a number stays a number) — and it is KitchenSink’s HTML renderer, not the
-language, that turns them into display strings on the way out.&lt;/p&gt;
+language, that turns them into display strings on the way out, with the same
+rules as &lt;code&gt;str&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Numbers come in two types, integers and floats, told apart by how they are
+written: &lt;code&gt;3&lt;/code&gt; is an integer, &lt;code&gt;3.0&lt;/code&gt; and &lt;code&gt;3e0&lt;/code&gt; are floats. That holds for a
+literal in a program and for a number in a &lt;code&gt;=base:dataset.json&lt;/code&gt; cell alike
+(KitchenSink reads datasets with tramaj’s own JSON reader, which keeps the
+difference), and a &lt;code&gt;.sql&lt;/code&gt; dataset of a dynamic page gives an &lt;code&gt;INTEGER&lt;/code&gt; column
+as an integer and a &lt;code&gt;REAL&lt;/code&gt; one as a float. Nothing converts between the two:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;a whole-valued float displays with its fraction, so &lt;code&gt;`$x`&lt;/code&gt; and &lt;code&gt;str($x)&lt;/code&gt;
+write &lt;code&gt;1.0&lt;/code&gt; for the float &lt;code&gt;1.0&lt;/code&gt;, where an integer &lt;code&gt;1&lt;/code&gt; writes &lt;code&gt;1&lt;/code&gt;;
+&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;eq(1, 1.0)&lt;/code&gt; is &lt;code&gt;false&lt;/code&gt;;
+&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;lt&lt;/code&gt;, &lt;code&gt;lte&lt;/code&gt;, &lt;code&gt;gt&lt;/code&gt; and &lt;code&gt;gte&lt;/code&gt; over an integer and a float are a type error
+rather than a comparison, so compare a float with a float literal
+(&lt;code&gt;gt($price, 0.0)&lt;/code&gt;, not &lt;code&gt;gt($price, 0)&lt;/code&gt;);
+&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;has&lt;/code&gt; and &lt;code&gt;lookup&lt;/code&gt; take an integer index.
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;A &lt;code&gt;.tramaj-json&lt;/code&gt; section answering &lt;code&gt;format = &amp;quot;json&amp;quot;&lt;/code&gt; keeps the distinction in
+the JSON it is rewritten to, so a float stays &lt;code&gt;1.0&lt;/code&gt; there too.&lt;/p&gt;
 &lt;p&gt;String literals do have escape sequences now: &lt;code&gt;\n&lt;/code&gt;, &lt;code&gt;\t&lt;/code&gt;, &lt;code&gt;\r&lt;/code&gt;, &lt;code&gt;\\&lt;/code&gt;, &lt;code&gt;\&amp;quot;&lt;/code&gt;,
 &lt;code&gt;\`&lt;/code&gt;, &lt;code&gt;\0&lt;/code&gt; and a braced &lt;code&gt;\u{1F600}&lt;/code&gt; for an arbitrary code point, so a &lt;code&gt;&amp;quot;&lt;/code&gt;
 or a backtick can appear inside a literal when escaped — the backtick stays the
@@ -358,7 +380,10 @@ listings, &lt;code&gt;documentation&lt;/code&gt; for &lt;a href="/documentation-
 (a sidebar table of contents and previous/next links between pages), and
 &lt;code&gt;corporate&lt;/code&gt; for &lt;a href="/corporate-layout.html"&gt;landing pages&lt;/a&gt; (wide sections instead
 of a reading column, no byline/date/topics), composed from the
-&lt;a href="/corporate-components.html"&gt;corporate components&lt;/a&gt; tramaj library. Overall, except for index,
+&lt;a href="/corporate-components.html"&gt;corporate components&lt;/a&gt; tramaj library, and
+&lt;code&gt;not-found&lt;/code&gt; for the page a web server shows for a missing URL (always written
+to &lt;code&gt;/404.html&lt;/code&gt; whatever the source file is named, &lt;code&gt;noindex&lt;/code&gt; by default, and
+left out of the sitemap, the feeds and the article listings). Overall, except for index,
 topics, documentation and corporate, the layout of content does not
 change significantly besides the HTML-nesting (which then allows you to modify
 CSS or hijack DOM elements for single-page apps).&lt;/p&gt;
@@ -456,12 +481,12 @@ any other free-form &lt;code&gt;kind&lt;/code&gt; string, which falls back to a 
 interleave prose and admonitions freely by writing several &lt;code&gt;main-content&lt;/code&gt;
 and &lt;code&gt;callout&lt;/code&gt; sections one after another.&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;title&lt;/code&gt; is optional and defaults to a capitalized version of &lt;code&gt;kind&lt;/code&gt;. &lt;code&gt;body&lt;/code&gt;
-is plain text (no markdown rendering, for now).&lt;/p&gt;
+is rendered as markdown, like a &lt;code&gt;main-content.cmark&lt;/code&gt; section.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;example&lt;/strong&gt;&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;=base:callout.json
 {&amp;quot;kind&amp;quot;: &amp;quot;warning&amp;quot;
 ,&amp;quot;title&amp;quot;: &amp;quot;Heads up&amp;quot;
-,&amp;quot;body&amp;quot;: &amp;quot;This behavior may change in a future release.&amp;quot;
+,&amp;quot;body&amp;quot;: &amp;quot;This behavior _may_ change in a [future release](/wishlist.html).&amp;quot;
 }
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
@@ -470,7 +495,8 @@ is plain text (no markdown rendering, for now).&lt;/p&gt;
 &lt;p&gt;A list of question/answer pairs, rendered as an accordion (&lt;code&gt;&amp;lt;details&amp;gt;&lt;/code&gt;
 elements, no JavaScript needed). Like &lt;code&gt;callout&lt;/code&gt;, &lt;code&gt;faq&lt;/code&gt; sections render in
 file order relative to &lt;code&gt;main-content&lt;/code&gt; and &lt;code&gt;callout&lt;/code&gt; sections, and you can
-have several of them in one article.&lt;/p&gt;
+have several of them in one article. Questions are plain text; answers are
+rendered as markdown, like a &lt;code&gt;main-content.cmark&lt;/code&gt; section.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;example&lt;/strong&gt;&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;=base:faq.json
 {&amp;quot;items&amp;quot;:
@@ -692,17 +718,7 @@ fully-form ideas about the details. In particular, I have some PHP-envy to turn 
 &lt;/li&gt;
 &lt;/ul&gt;
 &lt;/section&gt;&lt;section class="main-section"&gt;&lt;hr /&gt;
-&lt;/section&gt;&lt;/div&gt;</content><link href="https://kitchensink-tech.github.io/sections.html" rel="alternate"/><summary type="text">Writing articles in KitchenSink requires to write text files with a specific format called the section-based authoring format. A section-based format consists of delimited sections of text. Sections either configure the page (e.g., the tile of the page) or provide _meaty content_ for readers to read.  This article describes the section-based format and sections available to write articles.</summary></entry><entry><id>https://kitchensink-tech.github.io/playground.html</id><title type="text">Tramaj playground</title><updated>1970-01-01T00:00:00Z</updated><author><name>Lucas DiCioccio</name></author><content type="html">&lt;div class="main-article"&gt;&lt;section class="main-section"&gt;&lt;p&gt;This is the same playground built from the
-&lt;a href="https://github.com/lucasdicioccio/tramaj"&gt;tramaj&lt;/a&gt; repository’s PureScript
-sources, published here as a static bundle so it can be tried without a local
-build. It parses and evaluates tramaj expressions and documents in the
-browser — nothing is sent to a server.&lt;/p&gt;
-&lt;p&gt;See &lt;a href="/sections-templating.html"&gt;Tramaj sections&lt;/a&gt; for how the same language is
-embedded server-side, as a section pre-processor, by KitchenSink itself.&lt;/p&gt;
-&lt;iframe class="playground-frame" src="/templating-playground.html" title="tramaj playground"&gt;&lt;/iframe&gt;
-&lt;p&gt;If the embedded frame does not load, open the
-&lt;a href="/templating-playground.html"&gt;playground&lt;/a&gt; directly.&lt;/p&gt;
-&lt;/section&gt;&lt;/div&gt;</content><link href="https://kitchensink-tech.github.io/playground.html" rel="alternate"/><summary type="text">An in-browser playground for [tramaj](https://github.com/lucasdicioccio/tramaj) — formerly "templating-lang" — the expression/document language behind [`.tramaj-json` and `.tramaj-doc` sections](/sections-templating.html), hosted directly on this site.</summary></entry><entry><id>https://kitchensink-tech.github.io/corporate-components.html</id><title type="text">Corporate components</title><updated>1970-01-01T00:00:00Z</updated><author><name>Lucas DiCioccio</name></author><content type="html">&lt;div class="main-article"&gt;&lt;section class="main-section"&gt;&lt;p&gt;&lt;code&gt;corporate.cmark-tramaj&lt;/code&gt; is a &lt;code&gt;.cmark-tramaj&lt;/code&gt; library file (see
+&lt;/section&gt;&lt;/div&gt;</content><link href="https://kitchensink-tech.github.io/sections.html" rel="alternate"/><summary type="text">Writing articles in KitchenSink requires to write text files with a specific format called the section-based authoring format. A section-based format consists of delimited sections of text. Sections either configure the page (e.g., the tile of the page) or provide _meaty content_ for readers to read.  This article describes the section-based format and sections available to write articles.</summary></entry><entry><id>https://kitchensink-tech.github.io/corporate-components.html</id><title type="text">Corporate components</title><updated>1970-01-01T00:00:00Z</updated><author><name>Lucas DiCioccio</name></author><content type="html">&lt;div class="main-article"&gt;&lt;section class="main-section"&gt;&lt;p&gt;&lt;code&gt;corporate.cmark-tramaj&lt;/code&gt; is a &lt;code&gt;.cmark-tramaj&lt;/code&gt; library file (see
 &lt;a href="/sections-templating.html"&gt;tramaj sections&lt;/a&gt; for what that extension means
 and how cross-file imports resolve). It has no page of its own; every
 article imports from it as &lt;code&gt;corporate/&amp;lt;name&amp;gt;&lt;/code&gt;, most visibly the
