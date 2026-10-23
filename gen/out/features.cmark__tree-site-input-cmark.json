@@ -2,7 +2,6 @@
   {"type":"directory","name":"website-src","contents":[
     {"type":"file","name":"0001-we-wish-u-a-merry-xmas.mp3"},
     {"type":"file","name":"404.cmark"},
-    {"type":"file","name":"add-dev-route.js"},
     {"type":"file","name":"architecture-01-pipeline.dot"},
     {"type":"file","name":"architecture-02-engine-pipeline.dot"},
     {"type":"file","name":"architecture-03-in-depth-engine-pipeline.dot"},
@@ -61,5 +60,5 @@
     {"type":"file","name":"wishlist.cmark"}
   ]}
 ,
-  {"type":"report","directories":1,"files":59}
+  {"type":"report","directories":1,"files":58}
 ]

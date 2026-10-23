@@ -84,6 +84,33 @@ Note that if you run both HTTP and HTTPS the listening ports should differ. Plai
 
 If you specify neither HTTP nor HTTPS the binary will load and exit immediately.
 
+### automatic HTTPS (ACME)
+
+Instead of certificate files, Kitchen-Sink can obtain its certificates from an ACME server such as [Let's Encrypt](https://letsencrypt.org/ ), keep them on disk and renew them before they expire, in the spirit of Caddy. It uses TLS-ALPN-01 challenges (RFC 8737): the ACME server validates a domain by connecting to port 443 of that domain, and the HTTPS server answers the challenge itself, so no port 80 is needed. This is built on the [acme-not-a-joke](https://lucasdicioccio.github.io/acme-not-a-joke/ ) libraries.
+
+`$ kitchen-sink serve --srcDir website-src --servMode SERVE --acmeDomain example.com --acmeContact certmaster@example.com --acmeDirectory letsencrypt --acmeStateDir /var/lib/kitchen-sink/acme`
+
+- `--acmeDomain <name>` turns ACME on, repeat it for several names (one certificate per name; the first one is presented to clients asking for no name or an unknown one). The HTTPS port then defaults to 443, the only one the ACME server connects to: use `--httpsPort` only when something forwards port 443 to another port without terminating TLS. It cannot be combined with `--tlsCertFile`/`--tlsKeyFile`.
+
+- `--acmeDirectory` is required: `letsencrypt`, `letsencrypt-staging` (its certificates are not trusted by browsers, but its rate limits are much higher: try it first), or the URL of the directory of another ACME server. Using an ACME server means agreeing to its terms of service.
+
+- `--acmeContact <email-or-URL>` gives the contacts of the ACME account (repeatable, `mailto:` is added to bare addresses).
+
+- `--acmeStateDir` is where the account key (`account.jwk`) and, per domain, `<domain>/key.pem` and `<domain>/certificate.pem` are kept (default: `./acme-state`). Keep it across restarts: a stored certificate is served right away and only renewed when two thirds of its validity have elapsed.
+
+
+Until the first certificate is obtained, TLS handshakes for that name fail. A failure to get a certificate does not stop the daemon: it is logged and retried later, with an increasing delay. The machine must be reachable from the Internet on port 443 under each domain name.
+
+The `multisite` command takes `--acmeContact`, `--acmeDirectory` and `--acmeStateDir` too, and a TLS stanza of its JSON configuration asks for ACME certificates with an `AcmeCertificate` source, for its `sniDomains` (or the site's `domain` when they are `null`):
+
+```json
+{ "sniDomains": ["example.com", "www.example.com"]
+, "certificate": { "tag": "AcmeCertificate" }
+}
+```
+
+Sites with certificate files (`CertificateFileSource`) and sites with ACME certificates can share one daemon; a name listed with both is served from its files. With ACME, `multisite` serves HTTPS even without `--tlsCertFile`/`--tlsKeyFile`: a client asking for an unknown name then gets the certificate of the first ACME domain.
+
 ### auto-reload
 
 The executable server has a special API route with a mechanism to wait for changes of source files on the file-system.  We also bundle a [small JavaScript](/js/autoreload.js ) that subscribes to changes and reload the page on a change. This JavaScript gets injected in the layout only in dev-server mode. This setup allows to auto-reload on change.
@@ -99,22 +126,6 @@ To use the dev-server mode, use `--servMode DEV`. That is, the full-command to r
 
 `kitchen-sink serve --srcDir website-src --outDir website-www --servMode DEV --port 7655`
 
-### one-time commands
-
-In addition to the above auto-reload script. The default executable's layout insert some buttons to get one-click.
-
-- the `produce` button will regenerate the whole HTML output
-
-- the `publish` button will call the `publishScript` command in the [kitchen-sink.json file](/kitchen-sink-dot-json.html ) . As a data-point, I use [this publish-script](/gen/out/features.cmark__cat-publish-script ) for this documentation site.
-
-
-```html
-<video width="640" height="480" controls>
-  <source src="/videos/one-time-commands-001-produce.mp4" type="video/mp4">
-  <source src="/videos/one-time-commands-001-produce.webm" type="video/webm">
-</video>
-```
-
 ### API-proxy mode
 
 KitchenSink, when acting as a server, will proxy calls on the `/api` route to a web backend of your choice (configured in [kitchen-sink.json](/kitchen-sink-dot-json.html )). This setup allows you to run local development of single-page-apps against an API-server running aside. A goal of this feature is to allow devs to build web-app without CORS or HTTP-routing complications (concerns that should matter in production, however). The only requirement (as of now) is that the proxified API uses the `/api` route prefix.
@@ -127,7 +138,7 @@ I've not really explored this avenue, but it should be possible to incorporate t
 
 ### server metrics
 
-Why not? to build the webserver-library I've used some set of [curated and bundled libraries named ProdAPI](https://github.com/lucasdicioccio/prodapi ). Which means the server inherits a number of features; among which a number of [Prometheus counters](https://prometheus.io/ ). An example set of metrics is available on [this extract](/gen/out/features.cmark__gen-local-server-metrics.txt ). Thus, rather than bragging how much Kitchen-Sink is fast, you get to see for yourself directly (e.g., with the `blog_fullbuild_time` counters in the Prometheus summary). Other usages would be to track how fast you add content to articles by collecting and storing the counters. For instance, the following picture is a screenshot of a Prometheus timeseries showing the size of the article while editing this paragraph (screenshot is made using [a Firefox extension I built](https://dicioccio.fr/prometheus-monitor.html ))
+Why not? to build the webserver-library I've used some set of [curated and bundled libraries named ProdAPI](https://github.com/lucasdicioccio/prodapi ). Which means the server inherits a number of features; among which a number of [Prometheus counters](https://prometheus.io/ ). An example set of metrics is available on [this extract](/gen/out/features.cmark__gen-local-server-metrics.txt ). Thus, rather than bragging how much Kitchen-Sink is fast, you get to see for yourself directly (e.g., with the `ks_ontheflybuild_time` counters in the Prometheus summary). Other usages would be to track how fast you add content to articles by collecting and storing the counters. For instance, the following picture is a screenshot of a Prometheus timeseries showing the size of the article while editing this paragraph (screenshot is made using [a Firefox extension I built](https://dicioccio.fr/prometheus-monitor.html ))
 
 ![a timeseries graph showing the `blog_targets_sizes` prometheus counter](/images/features-001-targetsizes-timeseries.png )
 

@@ -18,8 +18,6 @@ As the time of writing this article, `kitchen-sink.json` supports the following 
 
 - `twitterLogin` (optional): the Twitter handle for the website, which may differ from the Twitter handle of individual authors
 
-- `publishScript` (optional, deprecated): the path to a script that the dev-server runs when its `/dev/publish` route is called. This is documented only if you ever encounter a kitchen-sink.json with this field, the support for this field will be removed in the future.
-
 - `api` (required,experimental): asks kitchen-sink, **when run in DEV mode**, to proxy `/api`-prefixed requests to an `[host,port]` destination
 - - the proper type is an Aeson-encoded Haskell datatype (i.e., using a level of JSON-object containing `tag` and `contents` keys)
 
@@ -58,7 +56,7 @@ An example of kitchen-sink.json
 }
 ```
 
-Earlier versions had a `commands` key, listing scripts that the dev-server exposed as buttons. This feature is gone: a `kitchen-sink.json` that still has a `commands` key keeps loading and the key is ignored (you can delete it). Run your scripts from a terminal instead.
+Earlier versions had a `commands` key, listing scripts that the dev-server exposed as buttons, and a `publishScript` key, a script the dev-server ran when its `/dev/publish` route was called. Both features are gone: a `kitchen-sink.json` that still has a `commands` or `publishScript` key keeps loading and the key is ignored (you can delete it). Run your scripts from a terminal instead.
 
 # specifying a special-location
 

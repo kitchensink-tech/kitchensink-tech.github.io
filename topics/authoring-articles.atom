@@ -113,6 +113,53 @@ GET /js/search-box.js
 &lt;p&gt;Note that if you run both HTTP and HTTPS the listening ports should differ.
 Plain-text (a.k.a., insecure connections) are disabled on the TLS server.&lt;/p&gt;
 &lt;p&gt;If you specify neither HTTP nor HTTPS the binary will load and exit immediately.&lt;/p&gt;
+&lt;h4 id="automatic-https-acme"&gt;automatic HTTPS (ACME)&lt;/h4&gt;
+&lt;p&gt;Instead of certificate files, Kitchen-Sink can obtain its certificates from an
+ACME server such as &lt;a href="https://letsencrypt.org/"&gt;Let’s Encrypt&lt;/a&gt;, keep them on
+disk and renew them before they expire, in the spirit of Caddy. It uses
+TLS-ALPN-01 challenges (RFC 8737): the ACME server validates a domain by
+connecting to port 443 of that domain, and the HTTPS server answers the
+challenge itself, so no port 80 is needed. This is built on the
+&lt;a href="https://lucasdicioccio.github.io/acme-not-a-joke/"&gt;acme-not-a-joke&lt;/a&gt;
+libraries.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;$ kitchen-sink serve --srcDir website-src --servMode SERVE --acmeDomain example.com --acmeContact certmaster@example.com --acmeDirectory letsencrypt --acmeStateDir /var/lib/kitchen-sink/acme&lt;/code&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;--acmeDomain &amp;lt;name&amp;gt;&lt;/code&gt; turns ACME on, repeat it for several names (one
+certificate per name; the first one is presented to clients asking for no
+name or an unknown one). The HTTPS port then defaults to 443, the only one
+the ACME server connects to: use &lt;code&gt;--httpsPort&lt;/code&gt; only when something forwards
+port 443 to another port without terminating TLS. It cannot be combined with
+&lt;code&gt;--tlsCertFile&lt;/code&gt;/&lt;code&gt;--tlsKeyFile&lt;/code&gt;.
+&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;--acmeDirectory&lt;/code&gt; is required: &lt;code&gt;letsencrypt&lt;/code&gt;, &lt;code&gt;letsencrypt-staging&lt;/code&gt; (its
+certificates are not trusted by browsers, but its rate limits are much
+higher: try it first), or the URL of the directory of another ACME server.
+Using an ACME server means agreeing to its terms of service.
+&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;--acmeContact &amp;lt;email-or-URL&amp;gt;&lt;/code&gt; gives the contacts of the ACME account
+(repeatable, &lt;code&gt;mailto:&lt;/code&gt; is added to bare addresses).
+&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;--acmeStateDir&lt;/code&gt; is where the account key (&lt;code&gt;account.jwk&lt;/code&gt;) and, per domain,
+&lt;code&gt;&amp;lt;domain&amp;gt;/key.pem&lt;/code&gt; and &lt;code&gt;&amp;lt;domain&amp;gt;/certificate.pem&lt;/code&gt; are kept (default:
+&lt;code&gt;./acme-state&lt;/code&gt;). Keep it across restarts: a stored certificate is served
+right away and only renewed when two thirds of its validity have elapsed.
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Until the first certificate is obtained, TLS handshakes for that name fail.
+A failure to get a certificate does not stop the daemon: it is logged and
+retried later, with an increasing delay. The machine must be reachable from
+the Internet on port 443 under each domain name.&lt;/p&gt;
+&lt;p&gt;The &lt;code&gt;multisite&lt;/code&gt; command takes &lt;code&gt;--acmeContact&lt;/code&gt;, &lt;code&gt;--acmeDirectory&lt;/code&gt; and
+&lt;code&gt;--acmeStateDir&lt;/code&gt; too, and a TLS stanza of its JSON configuration asks for ACME
+certificates with an &lt;code&gt;AcmeCertificate&lt;/code&gt; source, for its &lt;code&gt;sniDomains&lt;/code&gt; (or the
+site’s &lt;code&gt;domain&lt;/code&gt; when they are &lt;code&gt;null&lt;/code&gt;):&lt;/p&gt;
+&lt;div class="code code--highlighted"&gt;&lt;div class="sourceCode"&gt;&lt;pre class="sourceCode"&gt;&lt;code class="sourceCode"&gt;&lt;span id="1"&gt;&lt;a href="#1" aria-hidden="true" tabindex="-1"&gt;&lt;/a&gt;&lt;span class="fu"&gt;{&lt;/span&gt; &lt;span class="dt"&gt;&amp;quot;sniDomains&amp;quot;&lt;/span&gt;&lt;span class="fu"&gt;:&lt;/span&gt; &lt;span class="ot"&gt;[&lt;/span&gt;&lt;span class="st"&gt;&amp;quot;example.com&amp;quot;&lt;/span&gt;&lt;span class="ot"&gt;,&lt;/span&gt; &lt;span class="st"&gt;&amp;quot;www.example.com&amp;quot;&lt;/span&gt;&lt;span class="ot"&gt;]&lt;/span&gt;&lt;/span&gt;
+&lt;span id="2"&gt;&lt;a href="#2" aria-hidden="true" tabindex="-1"&gt;&lt;/a&gt;&lt;span class="fu"&gt;,&lt;/span&gt; &lt;span class="dt"&gt;&amp;quot;certificate&amp;quot;&lt;/span&gt;&lt;span class="fu"&gt;:&lt;/span&gt; &lt;span class="fu"&gt;{&lt;/span&gt; &lt;span class="dt"&gt;&amp;quot;tag&amp;quot;&lt;/span&gt;&lt;span class="fu"&gt;:&lt;/span&gt; &lt;span class="st"&gt;&amp;quot;AcmeCertificate&amp;quot;&lt;/span&gt; &lt;span class="fu"&gt;}&lt;/span&gt;&lt;/span&gt;
+&lt;span id="3"&gt;&lt;a href="#3" aria-hidden="true" tabindex="-1"&gt;&lt;/a&gt;&lt;span class="fu"&gt;}&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;&lt;p&gt;Sites with certificate files (&lt;code&gt;CertificateFileSource&lt;/code&gt;) and sites with ACME
+certificates can share one daemon; a name listed with both is served from its
+files. With ACME, &lt;code&gt;multisite&lt;/code&gt; serves HTTPS even without
+&lt;code&gt;--tlsCertFile&lt;/code&gt;/&lt;code&gt;--tlsKeyFile&lt;/code&gt;: a client asking for an unknown name then gets
+the certificate of the first ACME domain.&lt;/p&gt;
 &lt;h4 id="auto-reload"&gt;auto-reload&lt;/h4&gt;
 &lt;p&gt;The executable server has a special API route with a mechanism to wait for changes
 of source files on the file-system.  We also bundle a &lt;a href="/js/autoreload.js"&gt;small JavaScript&lt;/a&gt; that
@@ -124,18 +171,6 @@ injected in the layout only in dev-server mode. This setup allows to auto-reload
 &lt;/video&gt;
 &lt;p&gt;To use the dev-server mode, use &lt;code&gt;--servMode DEV&lt;/code&gt;. That is, the full-command to run with the default executable is:&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;kitchen-sink serve --srcDir website-src --outDir website-www --servMode DEV --port 7655&lt;/code&gt;&lt;/p&gt;
-&lt;h4 id="one-time-commands"&gt;one-time commands&lt;/h4&gt;
-&lt;p&gt;In addition to the above auto-reload script. The default executable’s layout insert some buttons to get one-click.&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;the &lt;code&gt;produce&lt;/code&gt; button will regenerate the whole HTML output
-&lt;/li&gt;
-&lt;li&gt;the &lt;code&gt;publish&lt;/code&gt; button will call the &lt;code&gt;publishScript&lt;/code&gt; command in the &lt;a href="/kitchen-sink-dot-json.html"&gt;kitchen-sink.json file&lt;/a&gt; . As a data-point, I use &lt;a href="/gen/out/features.cmark__cat-publish-script"&gt;this publish-script&lt;/a&gt; for this documentation site.
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;video width="640" height="480" controls&gt;
-  &lt;source src="/videos/one-time-commands-001-produce.mp4" type="video/mp4"&gt;
-  &lt;source src="/videos/one-time-commands-001-produce.webm" type="video/webm"&gt;
-&lt;/video&gt;
 &lt;h4 id="api-proxy-mode"&gt;API-proxy mode&lt;/h4&gt;
 &lt;p&gt;KitchenSink, when acting as a server, will proxy calls on the &lt;code&gt;/api&lt;/code&gt; route to a
 web backend of your choice (configured in
@@ -162,7 +197,7 @@ Which means the server inherits a number of features; among which a number of
 available on &lt;a href="/gen/out/features.cmark__gen-local-server-metrics.txt"&gt;this
 extract&lt;/a&gt;. Thus, rather
 than bragging how much Kitchen-Sink is fast, you get to see for yourself
-directly (e.g., with the &lt;code&gt;blog_fullbuild_time&lt;/code&gt; counters in the Prometheus
+directly (e.g., with the &lt;code&gt;ks_ontheflybuild_time&lt;/code&gt; counters in the Prometheus
 summary). Other usages would be to track how fast you add content to articles
 by collecting and storing the counters. For instance, the following picture is a screenshot of a Prometheus timeseries showing the size of the article
 while editing this paragraph (screenshot is made using &lt;a href="https://dicioccio.fr/prometheus-monitor.html"&gt;a Firefox extension I

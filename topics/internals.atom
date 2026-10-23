@@ -34,10 +34,9 @@ data-types and functions.&lt;/p&gt;
 &lt;p&gt;Generating files from pipelines is mundane, and I wrote KitchenSink to support
 some advanced features that help me stay “in the flow” while writing article
 contents.&lt;/p&gt;
-&lt;p&gt;Among the &lt;code&gt;scaffolding&lt;/code&gt; source files, some two interesting JavaScript files
-exist only for the support of the live-server: &lt;code&gt;autoreload.js&lt;/code&gt; and
-&lt;code&gt;add-dev-route.js&lt;/code&gt;.  Their respective name may change in future versions but
-the feature will be maintained.&lt;/p&gt;
+&lt;p&gt;Among the &lt;code&gt;scaffolding&lt;/code&gt; source files, one interesting JavaScript file exists
+only for the support of the live-server: &lt;code&gt;autoreload.js&lt;/code&gt;.  Its name may change
+in future versions but the feature will be maintained.&lt;/p&gt;
 &lt;h3 id="the-autoreloadjs-script"&gt;The &lt;code&gt;autoreload.js&lt;/code&gt; script&lt;/h3&gt;
 &lt;p&gt;The auto-reload script is a small loop that tries to make sure that at any given time,
 the page shown on the web-browser is up-to-date.
@@ -51,15 +50,10 @@ clients to know the server has new content.  The client remembers what is the
 &lt;p&gt;For now the server-id information is passed in a query parameter as we cannot
 pass a bunch of informations in a HTTP-get at reload times (alternatives are
 some form of storage on the client-side – we’ll eventually get there).&lt;/p&gt;
-&lt;h3 id="the-add-dev-routejs-script"&gt;The &lt;code&gt;add-dev-route.js&lt;/code&gt; script&lt;/h3&gt;
-&lt;p&gt;Another nicety is that we can trigger a full-rebuild of the website without
-leaving one’s preview browser. The gain is little but there is some
-satisfaction to press a button on an interface and see your website being
-generated or published.&lt;/p&gt;
-&lt;p&gt;Upon loading, the &lt;code&gt;add-dev-route.js&lt;/code&gt; script creates two buttons in the
-&lt;code&gt;#navigation&lt;/code&gt; bar (i.e., the layout has to cooperate a bit, we’ll change that a
-bit later): &lt;code&gt;produce&lt;/code&gt; writes the whole site to the output directory and
-&lt;code&gt;reload&lt;/code&gt; forces the server to reload the sources.&lt;/p&gt;
+&lt;p&gt;Earlier versions also injected an &lt;code&gt;add-dev-route.js&lt;/code&gt; script that drew
+&lt;code&gt;produce&lt;/code&gt;, &lt;code&gt;reload&lt;/code&gt; and &lt;code&gt;publish&lt;/code&gt; buttons in the navigation bar. They are gone:
+run &lt;code&gt;kitchen-sink produce&lt;/code&gt; from a terminal to write the site to disk; the
+dev-server already reloads the sources on every filesystem change.&lt;/p&gt;
 &lt;h3 id="metrics-because-why-not"&gt;Metrics because why not&lt;/h3&gt;
 &lt;p&gt;The server exposes Prometheus metrics.
 There are some use to it:&lt;/p&gt;

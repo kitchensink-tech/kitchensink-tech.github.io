@@ -1,30 +1,31 @@
 git commits:
-245
+249
 src files:
-62
+63
 code size (lines):
-7829
+7967
 code size (bytes):
-301337
+308239
 details:
-    94    553   4014 ./hs/src/KitchenSink/Engine.hs
+   104    707   5209 ./hs/src/KitchenSink/Engine.hs
    193   1006   7609 ./hs/src/KitchenSink/Engine/Templating.hs
    109    502   4495 ./hs/src/KitchenSink/Engine/OnTheFly.hs
-   115    422   3516 ./hs/src/KitchenSink/Engine/Config.hs
-    79    215   2080 ./hs/src/KitchenSink/Engine/MultiSiteConfig.hs
+   114    417   3478 ./hs/src/KitchenSink/Engine/Config.hs
+    83    237   2251 ./hs/src/KitchenSink/Engine/MultiSiteConfig.hs
     95    345   2920 ./hs/src/KitchenSink/Engine/NewArticle.hs
-    50    164   1531 ./hs/src/KitchenSink/Engine/Track.hs
-   134    697   5923 ./hs/src/KitchenSink/Engine/Handlers.hs
+    48    159   1483 ./hs/src/KitchenSink/Engine/Track.hs
+    81    408   3501 ./hs/src/KitchenSink/Engine/Handlers.hs
    203    997   7712 ./hs/src/KitchenSink/Engine/Runtime.hs
    106    482   4313 ./hs/src/KitchenSink/Engine/Produce.hs
     66    258   2241 ./hs/src/KitchenSink/Engine/SiteBuilder.hs
-   185    748   7404 ./hs/src/KitchenSink/Engine/Serve.hs
-    50    151   1354 ./hs/src/KitchenSink/Engine/Api.hs
-   448   2135  19458 ./hs/src/KitchenSink/Engine/MultiSite.hs
-    77    347   3169 ./hs/src/KitchenSink/Engine/Counters.hs
+   201    854   8316 ./hs/src/KitchenSink/Engine/Serve.hs
+    31     87    778 ./hs/src/KitchenSink/Engine/Api.hs
+   479   2347  21291 ./hs/src/KitchenSink/Engine/MultiSite.hs
+    62    248   2281 ./hs/src/KitchenSink/Engine/Counters.hs
     33    155   1152 ./hs/src/KitchenSink/Engine/Utils.hs
    153    729   6616 ./hs/src/KitchenSink/Engine/Toolbox.hs
    366   2209  17025 ./hs/src/KitchenSink/Engine/Dynamic.hs
+   167    858   6763 ./hs/src/KitchenSink/Engine/Acme.hs
     34    113    986 ./hs/src/KitchenSink/Engine/Diagnostics.hs
    286   1402  11337 ./hs/src/KitchenSink/Engine/Auth.hs
    456   2528  19651 ./hs/src/KitchenSink/Engine/SiteLoader.hs
@@ -69,4 +70,4 @@ details:
     61    284   2357 ./hs/src/KitchenSink/Commonmark/BlogHTML.hs
     55    165   1364 ./hs/src/KitchenSink/Commonmark/HashTag.hs
     26     81    764 ./hs/src/KitchenSink/Commonmark/Highlighting.hs
-  7829  35748 301337 total
+  7967  36638 308239 total

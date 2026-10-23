@@ -52,8 +52,6 @@ articles. Enters the &lt;code&gt;kitchen-sink.json&lt;/code&gt; configuration fi
 &lt;/li&gt;
 &lt;li&gt;&lt;code&gt;twitterLogin&lt;/code&gt; (optional): the Twitter handle for the website, which may differ from the Twitter handle of individual authors
 &lt;/li&gt;
-&lt;li&gt;&lt;code&gt;publishScript&lt;/code&gt; (optional, deprecated): the path to a script that the dev-server runs when its &lt;code&gt;/dev/publish&lt;/code&gt; route is called. This is documented only if you ever encounter a kitchen-sink.json with this field, the support for this field will be removed in the future.
-&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;api&lt;/code&gt; (required,experimental): asks kitchen-sink, &lt;strong&gt;when run in DEV mode&lt;/strong&gt;, to proxy &lt;code&gt;/api&lt;/code&gt;-prefixed requests to an &lt;code&gt;[host,port]&lt;/code&gt; destination
 &lt;ul&gt;
 &lt;li&gt;the proper type is an Aeson-encoded Haskell datatype (i.e., using a level of JSON-object containing &lt;code&gt;tag&lt;/code&gt; and &lt;code&gt;contents&lt;/code&gt; keys)
@@ -91,9 +89,11 @@ articles. Enters the &lt;code&gt;kitchen-sink.json&lt;/code&gt; configuration fi
 &lt;span id="7"&gt;&lt;a href="#7" aria-hidden="true" tabindex="-1"&gt;&lt;/a&gt;  &lt;span class="ot"&gt;,&lt;/span&gt; &lt;span class="fu"&gt;{&lt;/span&gt;&lt;span class="dt"&gt;&amp;quot;baseURL&amp;quot;&lt;/span&gt;&lt;span class="fu"&gt;:&lt;/span&gt; &lt;span class="st"&gt;&amp;quot;https://en.wikipedia.org/&amp;quot;&lt;/span&gt;&lt;span class="fu"&gt;,&lt;/span&gt; &lt;span class="dt"&gt;&amp;quot;siteTitle&amp;quot;&lt;/span&gt;&lt;span class="fu"&gt;:&lt;/span&gt; &lt;span class="st"&gt;&amp;quot;The English WikiPedia.&amp;quot;&lt;/span&gt;&lt;span class="fu"&gt;,&lt;/span&gt; &lt;span class="dt"&gt;&amp;quot;siteType&amp;quot;&lt;/span&gt;&lt;span class="fu"&gt;:&lt;/span&gt; &lt;span class="st"&gt;&amp;quot;website&amp;quot;&lt;/span&gt;&lt;span class="fu"&gt;}&lt;/span&gt;&lt;/span&gt;
 &lt;span id="8"&gt;&lt;a href="#8" aria-hidden="true" tabindex="-1"&gt;&lt;/a&gt;  &lt;span class="ot"&gt;]&lt;/span&gt;&lt;/span&gt;
 &lt;span id="9"&gt;&lt;a href="#9" aria-hidden="true" tabindex="-1"&gt;&lt;/a&gt;&lt;span class="fu"&gt;}&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;&lt;p&gt;Earlier versions had a &lt;code&gt;commands&lt;/code&gt; key, listing scripts that the dev-server
-exposed as buttons. This feature is gone: a &lt;code&gt;kitchen-sink.json&lt;/code&gt; that still has
-a &lt;code&gt;commands&lt;/code&gt; key keeps loading and the key is ignored (you can delete it). Run
-your scripts from a terminal instead.&lt;/p&gt;
+exposed as buttons, and a &lt;code&gt;publishScript&lt;/code&gt; key, a script the dev-server ran
+when its &lt;code&gt;/dev/publish&lt;/code&gt; route was called. Both features are gone: a
+&lt;code&gt;kitchen-sink.json&lt;/code&gt; that still has a &lt;code&gt;commands&lt;/code&gt; or &lt;code&gt;publishScript&lt;/code&gt; key keeps
+loading and the key is ignored (you can delete it). Run your scripts from a
+terminal instead.&lt;/p&gt;
 &lt;h2 id="specifying-a-special-location"&gt;specifying a special-location&lt;/h2&gt;
 &lt;p&gt;The normal mode for KitchenSink is to locate &lt;code&gt;kitchen-sink.json&lt;/code&gt; in your site source directory.
 Thus, if your &lt;code&gt;--srcDir&lt;/code&gt; parameter is &lt;code&gt;foobar&lt;/code&gt;, KitchenSink will look for &lt;code&gt;foobar/kitchen-sink.json&lt;/code&gt;.&lt;/p&gt;
